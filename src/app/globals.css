@@ -41,6 +41,18 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  /* Font family*/
+  --font-outfit: "Outfit", sans-serif;
+  --font-ovo: "Ovo", serif;
+
+  /* colors */
+  --color-lighthover: #fcf4ff;
+  --color-darkhover: #2a004a;
+  --color-darktheme: #11001f;
+
+  /* Box Shadow styles */
+  --box-shadow-lightboxshadow: 4px 4px 0 #000;
+  --box-shadow-darkboxshadow: 4px 4px 0 #fff;
 }
 
 :root {
@@ -119,4 +131,8 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+* {
+  font-family: var(--font-outfit);
 }

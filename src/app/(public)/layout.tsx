@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Outfit as OutfitFont, Ovo as OvoFont } from "next/font/google";
 import "@/app/globals.css";
-import { ThemeProvider } from "@/provider/themeProvider";
-import Navbar from "@/components/modules/layout/navbar";
+// import Navbar from "@/components/modules/layout/navbar";
 import Footer from "@/components/modules/layout/footer";
-
+import ThemeProviderWrapper from "@/provider/themeProviderWrapper";
+import { Navbar2 } from "@/components/modules/layout/nav";
 
 const Outfit = OutfitFont({
   subsets: ["latin"],
@@ -31,18 +31,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${Outfit.variable} ${Ovo.variable} antialiased leading-8 dark:bg-darktheme dark:text-white overflow-x-hidden`}
+        className={`${Outfit.variable} ${Ovo.variable} antialiased leading-8 dark:bg-[#11001f] dark:text-white overflow-x-hidden`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Navbar />
+        <ThemeProviderWrapper>
+          <Navbar2 />
           {children}
           <Footer />
-        </ThemeProvider>
+        </ThemeProviderWrapper>
       </body>
     </html>
   );
