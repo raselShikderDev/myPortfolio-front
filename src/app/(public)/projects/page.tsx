@@ -1,21 +1,17 @@
-import { assets, workData } from "@/assets/assets";
-import { MotionDiv, MotionH2, MotionH3, MotionP  } from "@/components/modules/animations/motionElements";
-import Image from "next/image";
+// import { assets, workData } from "@/assets/assets";
+import {
+  MotionDiv,
+  MotionH2,
+  MotionP,
+} from "@/components/modules/animations/motionElements";
+import ProjectCard from "@/components/modules/projects/projectCard";
+// import Image from "next/image";
 import Link from "next/link";
 import { MdArrowRightAlt } from "react-icons/md";
-
 
 const Projects = () => {
   return (
     <div className="w-full px-[12%] py-10 md:mt-0 scroll-mt-20 mx-auto">
-      <MotionH3
-        initial={{ opacity: 0, y: -50 }}
-        whileInView={{ opacity: 100, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="text-base md:text-2xl mb-1 font-ovo ovo text-center"
-      >
-        My portfolio
-      </MotionH3>
       <MotionH2
         initial={{ opacity: 0, y: -40 }}
         whileInView={{ opacity: 100, y: 0 }}
@@ -33,7 +29,7 @@ const Projects = () => {
         Explore my collection of MERN stack projects, where modern design meets
         responsive, full-stack functionality and cutting-edge web technologies.
       </MotionP>
-      <div className="grid grid-cols-1 my-16 mt-10 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 items-center">
+      {/* <div className="grid grid-cols-1 my-16 mt-10 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 items-center">
         {workData.map(({ bgImage, title, description, delay, link }, index) => {
           return (
             <MotionDiv
@@ -64,7 +60,18 @@ const Projects = () => {
               </div>
             </MotionDiv>
           );
-        })}
+        })} 
+      </div> */}
+      <div className="grid grid-cols-1 my-16 mt-10 sm:grid-cols-2 xl:grid-cols-2 gap-6 items-center">
+        {/* <ProjectCard/> */}
+        <ProjectCard
+          title="MERN Library Manager"
+          description="A full-featured library system built with the MERN stack, featuring authentication, book borrowing, and admin controls."
+          image="/projects/library.png"
+          techStack={["React", "Node.js", "Express", "MongoDB", "TypeScript"]}
+          liveUrl="https://libraryapp.vercel.app"
+          githubUrl="https://github.com/raselshikder/library-system"
+        />
       </div>
       <MotionDiv
         initial={{ opacity: 0, y: 100 }}

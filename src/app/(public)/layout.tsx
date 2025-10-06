@@ -29,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${Outfit.variable} ${Ovo.variable} antialiased leading-8 dark:bg-[#11001f] dark:text-white overflow-x-hidden`}
       >

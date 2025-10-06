@@ -21,10 +21,10 @@ interface NavbarProps {
 
 export const Navbar2 = ({
   menu = [
-    { title: "Home", url: "#" },
+    { title: "Home", url: "/" },
     { title: "About me", url: "/about" },
-    { title: "Blogs", url: "#" },
-    { title: "Projects", url: "#" },
+    { title: "Blogs", url: "/blogs" },
+    { title: "Projects", url: "/projects" },
   ],
 }: NavbarProps) => {
   const [isScroll, setIsScroll] = useState(false);
@@ -38,7 +38,7 @@ export const Navbar2 = ({
   }, []);
   return (
     <>
-      <div className="-z-10 fixed top-0 w-11/12 right-0 translate-y-[-80%] dark:hidden">
+      <div className="-z-50 fixed top-0 w-11/12 right-0 translate-y-[-80%] dark:hidden">
         <Image
           alt="Header bg"
           className="w-full"
@@ -114,15 +114,6 @@ export const Navbar2 = ({
                       {item.title}
                     </Link>
                   ))}
-
-                  <div className="flex flex-col gap-2 mt-4">
-                    <Button asChild variant="outline">
-                      <Link href="#">Login</Link>
-                    </Button>
-                    <Button asChild>
-                      <Link href="#">Sign up</Link>
-                    </Button>
-                  </div>
                 </div>
               </SheetContent>
             </Sheet>
