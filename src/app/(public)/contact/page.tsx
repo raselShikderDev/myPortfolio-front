@@ -1,145 +1,133 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+"use client"; 
+
 import { useState } from "react";
 import { IoIosSend } from "react-icons/io";
-import { motion } from "framer-motion";
-import { MotionAextarea, MotionH2, MotionH3 } from "@/components/modules/animations/motionElements";
+import { MotionH2, MotionH3, MotionAextarea } from "@/components/modules/animations/motionElements";
 import { useTheme } from "next-themes";
+import { Button } from "@/components/ui/button";
 
-const Contact = () => {
+export const metadata = {
+  title: "Contact | Rasel Shikder",
+  description: "Get in touch with Rasel Shikder for projects, collaborations, or inquiries.",
+  keywords: ["Contact", "Rasel Shikder", "Portfolio", "MERN Stack Developer", "Frontend", "Fullstack"],
+};
+
+export default function ContactPage() {
   const [result, setResult] = useState("");
-  const {theme} = useTheme()
+  const { theme } = useTheme();
 
-  const onSubmit = async (event:any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setResult("Sending....");
+    setResult("Sending...");
 
-    // Creating form data from the form
-    const formData = new FormData(event.target);
-
-    // Appending access key
-    formData.append("access_key", "0e603e92-0127-45bf-941a-6fbc380b94f8");
+    const formData = new FormData(event.currentTarget);
+    formData.append("access_key", "YOUR_WEB3FORMS_KEY"); // Replace with your Web3Forms key
 
     try {
-      // Sending the form data to Web3Forms API
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         body: formData,
       });
 
-      // Checking for response status
-      if (!response.ok) {
-        throw new Error("Failed to submit the form");
-      }
-
       const data = await response.json();
 
       if (data.success) {
-        setResult("Form Submitted Successfully");
-        event.target.reset();
+        setResult("Form submitted successfully!");
+        event.currentTarget.reset();
       } else {
-        console.log("Error in form submission:", data);
-        setResult(data.message || "An error occurred");
+        setResult(data.message || "An error occurred.");
       }
-    } catch (error:any) {
+    } catch (error: any) {
       setResult("Error: " + error.message);
-      console.error("Error occurred:", error);
     }
   };
 
   return (
     <div
+      className="relative w-full min-h-screen px-4 sm:px-6 md:px-12 py-16 dark:bg-gray-950"
       style={{
-        backgroundImage: theme ? "" : `url("/footer-bg-color.png")`,
-        backgroundSize: "90% auto",
+        backgroundImage: theme === "light" ? `url("/footer-bg-color.png")` : "none",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
-      className="w-full px-[12%] py-10 md:mt-0 dark:bg-darktheme scroll-mt-20 mx-auto bg-no-repeat bg-center"
     >
-      <MotionH3
-        initial={{ opacity: 0, y: -50 }}
-        whileInView={{ opacity: 100, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="text-xl md:text-2xl mb-1 ovo font-ovo text-center"
-      >
-        Contact with me
-      </MotionH3>
-      <MotionH2
-        initial={{ opacity: 0, y: -40 }}
-        whileInView={{ opacity: 100, y: 0 }}
-        transition={{ duration: 1, delay: 0.4 }}
-        className="text-2xl md:text-5xl ovo font-ovo text-center"
-      >
-        Get in touch
-      </MotionH2>
-      <motion.p
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 100, y: 0 }}
-        transition={{ duration: 1, delay: 0.7 }}
-        className="max-w-3xl sm:text-lg ovo text-sm mx-auto mt-4 font-ovo text-center"
-      >
-        Have a project in mind or just want to say hello? Feel free to reach
-        out! I’m always open to discussing new opportunities, collaborations, or
-        any exciting ideas.
-      </motion.p>
-      <form
-        onSubmit={onSubmit}
-        className="my-14 max-w-2xl mx-auto space-y-7 sm:space-y-10"
-      >
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-          <input type="hidden" name="subject" value="Portfolio - Rasel" />
-          <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            whileInView={{ opacity: 100, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="w-full md:w-1/2"
-          >
+      {/* Optional overlay for light mode */}
+      {theme === "light" && (
+        <div className="absolute inset-0 bg-white/50 pointer-events-none"></div>
+      )}
+
+      <div className="relative z-10 max-w-2xl mx-auto text-center">
+        <MotionH3
+          initial={{ opacity: 0, y: -50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-xl md:text-2xl font-ovo mb-2"
+        >
+          Contact with me
+        </MotionH3>
+
+        <MotionH2
+          initial={{ opacity: 0, y: -40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.4 }}
+          className="text-2xl md:text-5xl font-ovo mb-4"
+        >
+          Get in touch
+        </MotionH2>
+
+        <MotionAextarea
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.7 }}
+          className="text-sm sm:text-lg text-gray-700 dark:text-gray-300 font-ovo mb-10 pointer-events-none"
+          value="Have a project in mind or just want to say hello? Feel free to reach out! I’m always open to discussing new opportunities, collaborations, or exciting ideas."
+          readOnly
+        />
+
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-6 sm:space-y-8 flex flex-col items-center w-full"
+        >
+          <div className="flex flex-col md:flex-row gap-4 w-full">
             <input
               type="text"
-              className="bg-white w-full  dark:text-white/90 dark:bg-darkhover dark:border-gray-500 px-4 py-2.5 focus-visible:outline-none rounded-sm border-[0.5px] border-gray-400  shadow-sm"
-              placeholder="Enter your name"
               name="name"
+              placeholder="Enter your name"
               required
+              className="w-full px-4 py-3 rounded-md border border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:outline-none"
             />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            whileInView={{ opacity: 100, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="w-full md:w-1/2"
-          >
             <input
               type="email"
-              className="bg-white w-full  dark:text-white/90 dark:bg-darkhover dark:border-gray-500 px-4 py-2.5 focus-visible:outline-none rounded-sm border-[0.5px] border-gray-400 shadow-sm"
-              placeholder="Enter your email"
               name="email"
+              placeholder="Enter your email"
               required
+              className="w-full px-4 py-3 rounded-md border border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:outline-none"
             />
-          </motion.div>
-        </div>
-        <MotionAextarea
-          initial={{ opacity: 0, y: 100 }}
-          whileInView={{ opacity: 100, y: 0 }}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="bg-white w-full dark:text-white/90 dark:bg-darkhover dark:border-gray-500 px-4 py-2.5 focus-visible:outline-none rounded-sm border-[0.5px] border-gray-400 shadow-sm"
-          placeholder="Enter your message"
-          name="message"
-          id="message"
-          rows={3}
-          required
-        ></MotionAextarea>
-        <motion.button
-          initial={{ opacity: 0, y: 100 }}
-          whileInView={{ opacity: 100, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.3 }}
-          className="flex w-max mx-auto text-center gap-2 items-center px-5 sm:px-10 py-1 sm:py-2.5 font-ovo duration-500 border bg-darkhover text-white hover:text-black hover:bg-lighthover dark:bg-white dark:text-black dark:hover:bg-transparent dark:hover:text-white active:scale-105 border-gray-700 rounded-full"
-          type="submit"
-        >
-          Send now <IoIosSend />
-        </motion.button>
-        <p className="text-center mt-5">{result}</p>
-      </form>
+          </div>
+
+          <MotionAextarea
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1 }}
+            name="message"
+            placeholder="Enter your message"
+            rows={4}
+            required
+            className="w-full px-4 py-3 rounded-md border border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:outline-none"
+          />
+
+          <Button
+            type="submit"
+            className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 text-white hover:bg-gray-700 dark:bg-white dark:text-black dark:hover:bg-gray-800 transition-transform transform hover:scale-105"
+          >
+            Send now <IoIosSend />
+          </Button>
+
+          {result && <p className="mt-4 text-center text-gray-800 dark:text-gray-200">{result}</p>}
+        </form>
+      </div>
     </div>
   );
-};
-
-export default Contact;
+}
