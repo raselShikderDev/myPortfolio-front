@@ -96,6 +96,37 @@ const Projects = () => {
           liveUrl="https://libraryapp.vercel.app"
           githubUrl="https://github.com/raselshikder/library-system"
         />
+        <ProjectCard
+          title="AI Blog Generator"
+          description="An AI-powered content generation app that helps users create SEO-friendly blog posts using OpenAI APIs."
+          image="/projects/aiblog.png"
+          techStack={["Next.js", "TypeScript", "OpenAI API", "TailwindCSS"]}
+          liveUrl="https://aiblog.vercel.app"
+          githubUrl="https://github.com/raselshikder/aiblog"
+        />
+        <ProjectCard
+          title="ShopSmart – E-Commerce Platform"
+          description="A responsive e-commerce web app with product search, filters, secure checkout, and admin product management."
+          image="/projects/shopsmart.png"
+          techStack={["React", "Node.js", "Express", "MongoDB", "Stripe API"]}
+          liveUrl="https://shopsmart.vercel.app"
+          githubUrl="https://github.com/raselshikder/shopsmart"
+        />
+        <ProjectCard
+          title="TeamCollab – Project Management App"
+          description="A real-time project management tool for teams. Features task tracking, Kanban boards, team chat, and role-based access built with the MERN stack."
+          image="/projects/teamcollab.png"
+          techStack={[
+            "Next.js",
+            "React",
+            "Node.js",
+            "Express",
+            "MongoDB",
+            "Socket.io",
+          ]}
+          liveUrl="https://teamcollab.vercel.app"
+          githubUrl="https://github.com/raselshikder/teamcollab"
+        />
       </div>
       <MotionDiv
         initial={{ opacity: 0, y: 100 }}
