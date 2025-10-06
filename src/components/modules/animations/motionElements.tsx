@@ -10,3 +10,5 @@ export const MotionH3 = motion.h3;
 export const MotionH5 = motion.h5;
 export const MotionUl = motion.ul;
 export const MotionLi = motion.li;
+export const MotionAextarea = motion.textarea;
+

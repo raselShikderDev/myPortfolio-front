@@ -25,6 +25,7 @@ export const Navbar2 = ({
     { title: "About me", url: "/about" },
     { title: "Blogs", url: "/blogs" },
     { title: "Projects", url: "/projects" },
+    { title: "Contact", url: "/contact" },
   ],
 }: NavbarProps) => {
   const [isScroll, setIsScroll] = useState(false);
