@@ -33,6 +33,12 @@ export const metadata: Metadata = {
     "TypeScript",
     "React",
     "Portfolio",
+    "Node.js",
+    "MongoDB",
+    "PostgresSQL",
+     "Prisma",
+     "MERN Stack",
+     "Mongoose"
   ],
 };
 

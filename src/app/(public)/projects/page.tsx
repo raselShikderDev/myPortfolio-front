@@ -5,9 +5,33 @@ import {
   MotionP,
 } from "@/components/modules/animations/motionElements";
 import ProjectCard from "@/components/modules/projects/projectCard";
+import { ExperienceCard } from "@/components/modules/projects/workExperiencecard";
+import { Metadata } from "next";
 // import Image from "next/image";
 import Link from "next/link";
 import { MdArrowRightAlt } from "react-icons/md";
+
+export const metadata: Metadata = {
+  title: "Projects | Your Name",
+  description:
+    "Showcasing my best projects built with React, Next.js, and Node.js.",
+  keywords: [
+    "Projects",
+    "Rasel Shikder",
+    "Full-stack developer",
+    "Portfolio",
+    "Next.js",
+    "TypeScript",
+    "React",
+    "Portfolio",
+    "Node.js",
+    "MongoDB",
+    "PostgresSQL",
+    "Prisma",
+    "MERN Stack",
+    "Mongoose",
+  ],
+};
 
 const Projects = () => {
   return (
@@ -85,6 +109,35 @@ const Projects = () => {
           Show more <MdArrowRightAlt />
         </Link>
       </MotionDiv>
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="max-w-5xl mx-auto space-y-8">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">
+            Work Experience
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 items-stretch">
+            <div className="flex">
+              <ExperienceCard
+                companyName="TechNova Labs"
+                role="MERN Stack Developer"
+                description="Built and maintained scalable web applications using MongoDB, Express, React, and Node.js. Collaborated with cross-functional teams to deliver high-performance solutions."
+                startDate={new Date("2022-03-01")}
+                endDate={new Date("2024-07-01")}
+              />
+            </div>
+
+            <div className="flex">
+              <ExperienceCard
+                companyName="Codeverse Solutions"
+                role="Frontend Engineer"
+                description="Developed modern, responsive UIs using React, TailwindCSS, and TypeScript. Improved performance, accessibility, and overall user experience across devices."
+                startDate={new Date("2021-01-01")}
+                endDate={new Date("2022-02-01")}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
