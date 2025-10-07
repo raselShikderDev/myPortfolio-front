@@ -6,6 +6,7 @@ import {
 } from "@/components/modules/animations/motionElements";
 import ProjectCard from "@/components/modules/projects/projectCard";
 import { ExperienceCard } from "@/components/modules/projects/workExperiencecard";
+import { IProject } from "@/interfaces/projects.interfaces";
 import { Metadata } from "next";
 // import Image from "next/image";
 import Link from "next/link";
@@ -33,27 +34,27 @@ export const metadata: Metadata = {
   ],
 };
 
-const projectsData = [
-  {
-    title: "MERN Library Manager",
-    description:
-      "A full-featured library system built with the MERN stack, featuring authentication, book borrowing, and admin controls.",
-    image: "/projects/library.png",
-    techStack: ["React", "Node.js", "Express", "MongoDB", "TypeScript"],
-    liveUrl: "https://libraryapp.vercel.app",
-    githubUrl: "https://github.com/raselshikder/library-system",
-  },
-  {
-    title: "AI Blog Generator",
-    description:
-      "An AI-powered content generation app that helps users create SEO-friendly blog posts using OpenAI APIs.",
-    image: "/projects/aiblog.png",
-    techStack: ["Next.js", "TypeScript", "OpenAI API", "TailwindCSS"],
-    liveUrl: "https://aiblog.vercel.app",
-    githubUrl: "https://github.com/raselshikder/aiblog",
-  },
-  // Add more projects dynamically...
-];
+// const projectsData = [
+//   {
+//     title: "MERN Library Manager",
+//     description:
+//       "A full-featured library system built with the MERN stack, featuring authentication, book borrowing, and admin controls.",
+//     image: "/projects/library.png",
+//     techStack: ["React", "Node.js", "Express", "MongoDB", "TypeScript"],
+//     liveUrl: "https://libraryapp.vercel.app",
+//     githubUrl: "https://github.com/raselshikder/library-system",
+//   },
+//   {
+//     title: "AI Blog Generator",
+//     description:
+//       "An AI-powered content generation app that helps users create SEO-friendly blog posts using OpenAI APIs.",
+//     image: "/projects/aiblog.png",
+//     techStack: ["Next.js", "TypeScript", "OpenAI API", "TailwindCSS"],
+//     liveUrl: "https://aiblog.vercel.app",
+//     githubUrl: "https://github.com/raselshikder/aiblog",
+//   },
+//   // Add more projects dynamically...
+// ];
 
 const experiences = [
   {
@@ -74,7 +75,16 @@ const experiences = [
   },
 ];
 
-const ProjectsPage = () => {
+const ProjectsPage = async () => {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
+    cache: "no-store",
+  });
+  console.log(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`);
+  console.log(res);
+
+  const { data: projectsData }: { data: IProject[] } = await res.json();
+  console.log(projectsData);
+
   return (
     <div className="w-full px-[12%] py-10 md:mt-0 scroll-mt-20 mx-auto">
       <MotionH2
@@ -143,6 +153,5 @@ const ProjectsPage = () => {
     </div>
   );
 };
-
 
 export default ProjectsPage;

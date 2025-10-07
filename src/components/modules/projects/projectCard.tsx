@@ -33,7 +33,7 @@ export default function ProjectCard({
       whileHover={{ scale: 1.03 }}
       className="h-full"
     >
-      <Card className="relative overflow-hidden border bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300">
+      <Card className="relative mt-0 pt-0 overflow-hidden border bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300">
         {/* Image Section */}
         <MotionDiv className="relative group w-full h-52 overflow-hidden">
           <Image

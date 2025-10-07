@@ -5,6 +5,7 @@ import "@/app/globals.css";
 import Footer from "@/components/modules/layout/footer";
 import ThemeProviderWrapper from "@/provider/themeProviderWrapper";
 import { Navbar2 } from "@/components/modules/layout/nav";
+import { Toaster } from "sonner";
 
 const Outfit = OutfitFont({
   subsets: ["latin"],
@@ -35,7 +36,8 @@ export default function RootLayout({
       >
         <ThemeProviderWrapper>
           <Navbar2 />
-          {children}
+          <main>{children}</main>
+          <Toaster />
           <Footer />
         </ThemeProviderWrapper>
       </body>

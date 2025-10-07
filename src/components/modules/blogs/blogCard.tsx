@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { MotionDiv } from "../animations/motionElements";
 
 export default function BlogCard({ post }: { post: IBlog }) {
-  const authorImage = "https://cdn-icons-png.flaticon.com/512/9385/9385289.png";
+  const authorImage = post.author?.avater as string ? post.author?.avater as string : "https://cdn-icons-png.flaticon.com/512/9385/9385289.png";
   const authorName = post.author?.name || "Owner";
 
   return (

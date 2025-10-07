@@ -18,7 +18,7 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
-  avater?: string | null;
+  avater: string;
   skills: string[];
   address: string;
   phone: string;

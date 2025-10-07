@@ -1,17 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client"; 
+"use client";
 
 import { useState } from "react";
 import { IoIosSend } from "react-icons/io";
-import { MotionH2, MotionH3, MotionAextarea } from "@/components/modules/animations/motionElements";
+import {
+  MotionH2,
+  MotionH3,
+  MotionAextarea,
+} from "@/components/modules/animations/motionElements";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
-export const metadata = {
-  title: "Contact | Rasel Shikder",
-  description: "Get in touch with Rasel Shikder for projects, collaborations, or inquiries.",
-  keywords: ["Contact", "Rasel Shikder", "Portfolio", "MERN Stack Developer", "Frontend", "Fullstack"],
-};
+// export const metadata = {
+//   title: "Contact | Rasel Shikder",
+//   description: "Get in touch with Rasel Shikder for projects, collaborations, or inquiries.",
+//   keywords: ["Contact", "Rasel Shikder", "Portfolio", "MERN Stack Developer", "Frontend", "Fullstack"],
+// };
 
 export default function ContactPage() {
   const [result, setResult] = useState("");
@@ -22,7 +26,7 @@ export default function ContactPage() {
     setResult("Sending...");
 
     const formData = new FormData(event.currentTarget);
-     formData.append("access_key", "0e603e92-0127-45bf-941a-6fbc380b94f8");
+    formData.append("access_key", "0e603e92-0127-45bf-941a-6fbc380b94f8");
 
     try {
       const response = await fetch("https://api.web3forms.com/submit", {
@@ -47,7 +51,8 @@ export default function ContactPage() {
     <div
       className="relative w-full min-h-screen px-4 sm:px-6 md:px-12 py-16 dark:bg-gray-950"
       style={{
-        backgroundImage: theme === "light" ? `url("/footer-bg-color.png")` : "none",
+        backgroundImage:
+          theme === "light" ? `url("/footer-bg-color.png")` : "none",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -72,19 +77,10 @@ export default function ContactPage() {
           initial={{ opacity: 0, y: -40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4 }}
-          className="text-2xl md:text-5xl font-ovo mb-4"
+          className="text-2xl md:text-5xl font-ovo mb-4 md:mb-16"
         >
           Get in touch
         </MotionH2>
-
-        <MotionAextarea
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.7 }}
-          className="text-sm sm:text-lg text-gray-700 dark:text-gray-300 font-ovo mb-10 pointer-events-none"
-          value="Have a project in mind or just want to say hello? Feel free to reach out! I’m always open to discussing new opportunities, collaborations, or exciting ideas."
-          readOnly
-        />
 
         <form
           onSubmit={handleSubmit}
@@ -125,7 +121,11 @@ export default function ContactPage() {
             Send now <IoIosSend />
           </Button>
 
-          {result && <p className="mt-4 text-center text-gray-800 dark:text-gray-200">{result}</p>}
+          {result && (
+            <p className="mt-4 text-center text-gray-800 dark:text-gray-200">
+              {result}
+            </p>
+          )}
         </form>
       </div>
     </div>
