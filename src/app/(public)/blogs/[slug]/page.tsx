@@ -7,33 +7,44 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }): Promise<Metadata> {
-  const slug = params.slug;
+  const { slug } = await params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/blogs/${slug}`);
-  const result = await res.json();
-  const blog: IBlog = result.data;
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${slug}`);
+
+  if (!res.ok) {
+    return {
+      title: "Blog Post Not Found",
+      description: "The requested blog post could not be loaded.",
+    };
+  }
+
+  const blog: IBlog = await res.json();
 
   return {
     title: blog.title || "Default Blog Title",
-    description: blog.content
-      ? blog.content.substring(0, 150) + "..."
-      : "Read the full story here.",
-    keywords: blog.tags ? blog.tags.join(", ") : "blog, article, technology",
+    description:
+      blog.content?.substring(0, 150) + "..." || "Read the full story here.",
+    keywords: blog.tags?.join(", ") || "blog, article, technology",
   };
 }
 
 const BlogDetailsPage = async ({ params }: { params: { slug: string } }) => {
-  const slug = params.slug;
+  const { slug } = await params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/blogs/${slug}`);
-  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${slug}`, {
+    cache: "no-store",
+  });
 
-  const result = await res.json();
-  const blog: IBlog = result.data;
+  if (!res.ok) {
+    throw new Error(`Failed to fetch blog post: HTTP status ${res.status}`);
+  }
+
+
+  const {data} = await res.json();
 
   return (
-    <div className="py-30 max-w-7xl mx-auto justify-center">
-      <BlogDetailsCard blog={blog} />
+    <div className="py-8 max-w-7xl mx-auto justify-center">
+      <BlogDetailsCard blog={data} />
     </div>
   );
 };
