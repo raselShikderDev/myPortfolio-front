@@ -18,7 +18,8 @@ export async function generateMetadata({
     };
   }
 
-  const blog: IBlog = await res.json();
+  const data = await res.json();
+  const blog:IBlog = data.data
 
   return {
     title: blog.title || "Default Blog Title",

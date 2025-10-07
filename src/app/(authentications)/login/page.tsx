@@ -1,11 +1,13 @@
+"use client";
+
 import { LoginForm } from "@/components/modules/authentications/login";
 
 
-export const metadata = {
-  title: "Login | Rasel Shikder",
-  description: "Login to access your account and manage projects.",
-  keywords: ["Login", "Rasel Shikder", "Portfolio", "MERN Stack Developer"],
-};
+// export const metadata = {
+//   title: "Login | Rasel Shikder",
+//   description: "Login to access your account and manage projects.",
+//   keywords: ["Login", "Rasel Shikder", "Portfolio", "MERN Stack Developer"],
+// };
 
 export default function Page() {
   return (
