@@ -50,6 +50,10 @@ const data = {
           title: "Manage Experiences",
           url: "/manage-experiences",
         },
+        {
+          title: "Manage Blogs",
+          url: "/manage-blogs",
+        },
       ],
     },
   ],
