@@ -13,7 +13,7 @@ import Link from "next/link";
 import { MdArrowRightAlt } from "react-icons/md";
 
 export const metadata: Metadata = {
-  title: "Projects | Your Name",
+  title: "Projects | Rasel Shikder",
   description:
     "Showcasing my best projects built with React, Next.js, and Node.js.",
   keywords: [

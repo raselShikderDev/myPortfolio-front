@@ -21,7 +21,7 @@ const data = {
       url: "#",
       items: [
         {
-          title: "Bbout",
+          title: "About",
           url: "/about",
         },
         {
@@ -36,9 +36,19 @@ const data = {
           title: "projects",
           url: "/projects",
         },
+      ],
+    },
+    {
+      title: "Owner Options",
+      url: "#",
+      items: [
         {
-          title: "Add Project",
-          url: "/add-project",
+          title: "Manage Projects",
+          url: "/manage-projects",
+        },
+        {
+          title: "Manage Experiences",
+          url: "/manage-experiences",
         },
       ],
     },

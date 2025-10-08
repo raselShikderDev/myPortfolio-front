@@ -1,7 +1,5 @@
-// src/components/AddProjectModal.tsx (or wherever your component resides)
 "use client";
 
-import SingleFileImageUploader from "@/components/singelFileuploader";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,57 +23,43 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-interface ProjectFormValues {
-  title: string;
-  description: string;
-  techStack: string;
-  liveUrl: string;
-  githubUrl: string;
+interface WorkExperienceFormValues {
+  companyName: string;
+  role: string;
+  descreption: string;
+  startDate: string;
+  endDate: string;
 }
 
-export function AddProjectModal() {
-  const [image, setImage] = useState<File | null>(null);
+export function AddWorkExperienceModal() {
   const [open, setOpen] = useState<boolean>(false);
-  const form = useForm<ProjectFormValues>({
+
+  const form = useForm<WorkExperienceFormValues>({
     defaultValues: {
-      title: "",
-      description: "",
-      techStack: "",
-      liveUrl: "",
-      githubUrl: "",
+      companyName: "",
+      role: "",
+      descreption: "",
+      startDate: "",
+      endDate: "",
     },
   });
-  const onsubmit = async (data: ProjectFormValues) => {
-    const processedTechStack = data.techStack
-      .split(",")
-      .map((tech) => tech.trim())
-      .filter(Boolean);
 
-    const finalProjectData = {
+  const onsubmit = async (data: WorkExperienceFormValues) => {
+    const finalWorkExpData = {
       ...data,
-      techStack: processedTechStack,
-      image: image ? image.name : null,
+      userId: 1, 
     };
 
-    console.log("🚀 Project Form Data:", data);
-    console.log("🖼️ Image File:", image);
-    console.log("✅ FINAL PROCESSED PROJECT DATA:", finalProjectData);
-
-
-    const formData = new FormData();
-    formData.append(
-      "data",
-      JSON.stringify({ ...data, techStack: processedTechStack })
-    );
-    if (image) formData.append("file", image);
+    console.log("🚀 Work Experience Form Data:", data);
+    console.log("✅ FINAL PROCESSED WORK EXPERIENCE DATA:", finalWorkExpData);
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/create`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/create`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
+          body: JSON.stringify(finalWorkExpData),
           credentials: "include",
         }
       );
@@ -83,17 +67,18 @@ export function AddProjectModal() {
       const responseData = await response.json();
 
       if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Project adding failed");
+        toast.error(responseData.message || "Adding work experience failed");
         return;
       }
 
-      // const toastId = toast.loading("Adding project...");
-      toast.success("Project added");
+      toast.success("Work experience added successfully");
+      console.log("✅ Work experience added:", responseData);
 
-      console.log("Login successful, response:", responseData);
+      form.reset();
+      setOpen(false);
     } catch (err) {
       console.error(err);
-      toast.error("Adding project is failed");
+      toast.error("Failed to add work experience");
     }
   };
 
@@ -101,56 +86,44 @@ export function AddProjectModal() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          Add Project
+          Add Work Experience
         </Button>
       </DialogTrigger>
+
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Project</DialogTitle>
+          <DialogTitle>Add Work Experience</DialogTitle>
         </DialogHeader>
+
         <Form {...form}>
           <form
             className="space-y-5"
-            id="add-project" // Changed from 'add-division'
+            id="add-work-exp"
             onSubmit={form.handleSubmit(onsubmit)}
           >
-            {/* --- Project Title Field (was 'name') --- */}
+            {/* --- Company Name --- */}
             <FormField
               control={form.control}
-              name="title"
+              name="companyName"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Project Title" {...field} />
+                    <Input placeholder="Company Name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* --- Project Description Field (unchanged name) --- */}
+            {/* --- Role --- */}
             <FormField
               control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea placeholder="Project Description" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* --- New Field: Tech Stack --- */}
-            <FormField
-              control={form.control}
-              name="techStack"
+              name="role"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="Tech Stack (e.g., React, Node.js)"
+                      placeholder="Role (e.g., Senior Software Engineer)"
                       {...field}
                     />
                   </FormControl>
@@ -159,35 +132,48 @@ export function AddProjectModal() {
               )}
             />
 
-            {/* --- New Field: Live URL --- */}
+            {/* --- Description --- */}
             <FormField
               control={form.control}
-              name="liveUrl"
+              name="descreption"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Live Site URL" {...field} />
+                    <Textarea placeholder="Job Description" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* --- New Field: GitHub URL --- */}
+            {/* --- Start Date --- */}
             <FormField
               control={form.control}
-              name="githubUrl"
+              name="startDate"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="GitHub Repository URL" {...field} />
+                    <Input type="date" placeholder="Start Date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* --- End Date --- */}
+            <FormField
+              control={form.control}
+              name="endDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input type="date" placeholder="End Date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </form>
-          <SingleFileImageUploader onChange={setImage} />
         </Form>
 
         <DialogFooter>
@@ -199,10 +185,10 @@ export function AddProjectModal() {
           <Button
             className="cursor-pointer"
             type="submit"
-            form="add-project" // Changed from 'add-division'
+            form="add-work-exp"
             disabled={form.formState.isSubmitting}
           >
-            Save Project
+            Save Experience
           </Button>
         </DialogFooter>
       </DialogContent>

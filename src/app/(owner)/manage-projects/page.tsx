@@ -1,7 +1,16 @@
 import { AddProjectModal } from "@/components/modules/owner/addProjectModal";
 import ProjectsTable from "@/components/modules/owner/projectDatatable";
+import { IProject } from "@/interfaces/projects.interfaces";
 
-export default function AddProjectPage() {
+export default async function ProjectShowCasePage() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
+    cache: "no-store",
+  });
+  console.log(res);
+
+  const { data: projects }: { data: IProject[] } = await res.json();
+  console.log(projects);
+
   return (
     <main className="min-h-screen bg-background px-4 sm:px-6 lg:px-10 py-10 space-y-10">
       {/* Page Header */}
@@ -13,30 +22,20 @@ export default function AddProjectPage() {
           Add, edit, and manage your portfolio projects easily.
         </p>
       </div>
-
-      {/* Add Project Section */}
-      <section className="w-full max-w-3xl mx-auto bg-card shadow-md border border-border rounded-2xl p-6 sm:p-8">
-        <h2 className="text-xl sm:text-2xl font-semibold text-foreground mb-6 text-center">
-          Add New Project
-        </h2>
-
-        <div className="flex justify-center">
-          <AddProjectModal />
-        </div>
-      </section>
-
       {/* Project List Section */}
       <section className="w-full max-w-6xl mx-auto bg-card shadow-sm border border-border rounded-2xl p-4 sm:p-6 overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
-          <h2 className="text-lg sm:text-xl font-semibold text-foreground">
-            All Projects
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Manage existing projects below.
-          </p>
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground">
+              All Projects
+            </h2>
+          </div>
+          <div>
+            <AddProjectModal />
+          </div>
         </div>
 
-        <ProjectsTable />
+        <ProjectsTable projects={projects} />
       </section>
     </main>
   );

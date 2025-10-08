@@ -1,5 +1,5 @@
+"use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,97 +12,72 @@ import {
 } from "@/components/ui/table";
 import { Edit2, Trash2 } from "lucide-react";
 import { IProject } from "@/interfaces/projects.interfaces";
+import Link from "next/link";
 
-// interface Project {
-//   id: string;
-//   title: string;
-//   techStack: string[];
-//   liveUrl: string;
-//   githubUrl: string;
-// }
-
-export default async function ProjectsTable() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
-      cache: "no-store",
-    });
-    console.log(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`);
-    console.log(res);
-  
-    const { data: projects }: { data: IProject[] } = await res.json();
-    console.log(projects);
-
+export default function ProjectsTable({ projects }: { projects: IProject[] }) {
   const handleEdit = (id: string) => {
     console.log(`Editing project ${id}`);
   };
 
   const handleDelete = (id: string) => {
-    
-    console.log("Project deleted successfully");
+    console.log("Project deleted successfully", id);
   };
 
   return (
     <div className="overflow-x-auto rounded-md border border-border">
       <Table>
         <TableCaption className="text-sm text-muted-foreground">
-          {projects.length > 0
-            ? "List of your projects"
-            : "No projects found."}
+          {!(projects.length > 0) && "No projects found."}
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="min-w-[150px]">Title</TableHead>
-            <TableHead className="min-w-[180px]">Tech Stack</TableHead>
-            <TableHead className="min-w-[150px] hidden sm:table-cell">
+            <TableHead className="min-w-[150px] text-center">Title</TableHead>
+            <TableHead className="min-w-[150px] hidden sm:table-cell text-center">
               Live URL
             </TableHead>
-            <TableHead className="min-w-[150px] hidden md:table-cell">
+            <TableHead className="min-w-[150px] hidden md:table-cell text-center">
               GitHub URL
             </TableHead>
-            <TableHead className="text-right min-w-[100px]">Actions</TableHead>
+            <TableHead className=" min-w-[100px] text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {projects.map((project) => (
+          {projects.map((project: IProject) => (
             <TableRow key={project.id}>
               <TableCell className="font-medium">
-                {project.title}
+                <Link
+                  href={project.liveUrl}
+                  target="_blank"
+                  className="hover:underline hover:text-blue-500"
+                >
+                  {project.title}
+                </Link>
               </TableCell>
-              <TableCell>
-                <div className="flex flex-wrap gap-1">
-                  {project.techStack.map((tech) => (
-                    <span
-                      key={tech}
-                      className="text-xs bg-muted px-2 py-1 rounded-md"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </TableCell>
+
               <TableCell className="hidden sm:table-cell truncate max-w-[200px]">
-                <a
+                <Link
                   href={project.liveUrl}
                   target="_blank"
                   className="text-blue-500 hover:underline text-sm"
                 >
                   {project.liveUrl}
-                </a>
+                </Link>
               </TableCell>
               <TableCell className="hidden md:table-cell truncate max-w-[200px]">
-                <a
+                <Link
                   href={project.githubUrl}
                   target="_blank"
                   className="text-blue-500 hover:underline text-sm"
                 >
                   {project.githubUrl}
-                </a>
+                </Link>
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => handleEdit(project.id)}
+                    onClick={() => handleEdit(String(project.id))}
                     className="flex items-center gap-1"
                   >
                     <Edit2 className="w-4 h-4" />
@@ -111,7 +86,7 @@ export default async function ProjectsTable() {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => handleDelete(project.id)}
+                    onClick={() => handleDelete(String(project.id))}
                     className="flex items-center gap-1"
                   >
                     <Trash2 className="w-4 h-4" />
