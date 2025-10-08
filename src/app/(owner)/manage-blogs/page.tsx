@@ -53,3 +53,5 @@ export default async function ManageBlogsPage() {
     );
   }
 }
+
+// https://chatgpt.com/share/68e689a3-5388-800f-b1d9-dc70e2c1d4ca
