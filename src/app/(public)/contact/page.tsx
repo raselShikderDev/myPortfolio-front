@@ -6,10 +6,10 @@ import { IoIosSend } from "react-icons/io";
 import {
   MotionH2,
   MotionH3,
-  MotionAextarea,
 } from "@/components/modules/animations/motionElements";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 
 // export const metadata = {
 //   title: "Contact | Rasel Shikder",
@@ -67,7 +67,7 @@ export default function ContactPage() {
         <MotionH3
           initial={{ opacity: 0, y: -50 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.4 }}
           className="text-xl md:text-2xl font-ovo mb-2"
         >
           Contact with me
@@ -76,7 +76,7 @@ export default function ContactPage() {
         <MotionH2
           initial={{ opacity: 0, y: -40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
           className="text-2xl md:text-5xl font-ovo mb-4 md:mb-16"
         >
           Get in touch
@@ -103,10 +103,17 @@ export default function ContactPage() {
             />
           </div>
 
-          <MotionAextarea
+          {/* <MotionAextarea
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1 }}
+            name="message"
+            placeholder="Enter your message"
+            rows={4}
+            required
+            className="w-full px-4 py-3 rounded-md border border-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-white shadow-sm focus:outline-none"
+          /> */}
+          <Textarea
             name="message"
             placeholder="Enter your message"
             rows={4}
@@ -116,7 +123,7 @@ export default function ContactPage() {
 
           <Button
             type="submit"
-            className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 text-white hover:bg-gray-700 dark:bg-white dark:text-black dark:hover:bg-gray-800 transition-transform transform hover:scale-105"
+            className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 text-white hover:bg-gray-700 dark:bg-white dark:text-black dark:hover:bg-gray-300 transition-transform transform hover:scale-105"
           >
             Send now <IoIosSend />
           </Button>

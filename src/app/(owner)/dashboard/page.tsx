@@ -1,6 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Card, CardContent } from "@/components/ui/card";
+import { cookies } from "next/headers";
 
 export default async function Page() {
+  const cookiesStore = cookies();
+  const token = (await cookiesStore).get("accessToken")?.value;
   let stats = {
     totalBlog: 0,
     totalViews: 0,
@@ -18,14 +22,15 @@ export default async function Page() {
   let lastMonthPostCount = 0;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/stats`, {
-      next: {
-        revalidate: 60,
+    const res = await fetch("http://localhost:5000/api/v1/blogs/stats", {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
+      cache: "no-store",
     });
-    console.log(res);
+    console.log("Fetch response object:", res); // server-side log
 
-    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    // if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
     const result = await res.json();
     const data = result.data;
@@ -71,7 +76,7 @@ export default async function Page() {
         </p>
       </header>
 
-      <section className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+      {/* <section className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
         <CompactCard title="Total Blogs" value={stats.totalBlog} />
         <CompactCard title="Total Views" value={stats.totalViews} />
         <CompactCard title="Average Views" value={stats.avgViews?.toFixed(0)} />
@@ -86,7 +91,7 @@ export default async function Page() {
         />
         <CompactCard title="Posts Last Week" value={lastWeekPostCount} />
         <CompactCard title="Posts Last Month" value={lastMonthPostCount} />
-      </section>
+      </section> */}
     </main>
   );
 }

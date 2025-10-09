@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordToggler from "@/components/passwordToggler";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 // Zod schema for validation
 const LoginFormSchema = z.object({
@@ -24,6 +25,7 @@ interface LoginResponse {
 }
 
 export default function LoginPage() {
+  const router = useRouter()
   const { register, handleSubmit, formState } = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
     mode: "onChange",
@@ -53,7 +55,7 @@ export default function LoginPage() {
 
       const toastId = toast.loading("Logging in...");
       toast.success("Successfully logged in", { id: toastId });
-
+      router.push("/dashboard")
       console.log("Login successful, response:", responseData);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err:any) {

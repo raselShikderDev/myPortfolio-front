@@ -44,15 +44,15 @@ const data = {
       items: [
         {
           title: "Manage Projects",
-          url: "/manage-projects",
+          url: "/dashboard/manage-projects",
         },
         {
           title: "Manage Experiences",
-          url: "/manage-experiences",
+          url: "/dashboard/manage-experiences",
         },
         {
           title: "Manage Blogs",
-          url: "/manage-blogs",
+          url: "/dashboard/manage-blogs",
         },
       ],
     },
