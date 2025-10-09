@@ -18,14 +18,18 @@ export default async function Page() {
   let lastMonthPostCount = 0;
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`, {
-      cache: "no-store",
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/stats`, {
+      next: {
+        revalidate: 60,
+      },
     });
+    console.log(res);
 
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
     const result = await res.json();
     const data = result.data;
+    console.log(data);
 
     stats = data?.stats ?? stats;
     featured = data?.featured ?? featured;

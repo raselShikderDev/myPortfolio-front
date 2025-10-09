@@ -55,9 +55,10 @@ export default function LoginPage() {
       toast.success("Successfully logged in", { id: toastId });
 
       console.log("Login successful, response:", responseData);
-    } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err:any) {
       console.error(err);
-      toast.error("Your credentials are not valid");
+      toast.error(err.message);
     }
   };
 

@@ -77,7 +77,9 @@ const experiences = [
 
 const ProjectsPage = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
-    cache: "no-store",
+    next: {
+      revalidate: 60,
+    },
   });
   console.log(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`);
   console.log(res);
