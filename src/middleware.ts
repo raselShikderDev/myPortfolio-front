@@ -2,7 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("accessToken")?.value; // your cookie name
+  const token =
+    request.cookies.get("accessToken")?.value ||
+    request.cookies.get("next-auth.session-token")?.value ||
+    request.cookies.get("__Secure-next-auth.session-token")?.value;
   const { pathname } = request.nextUrl;
 
   // 🔒 Protect dashboard routes

@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import PasswordToggler from "@/components/passwordToggler";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import Image from "next/image";
+import { Separator } from "@/components/ui/separator";
 
 // Zod schema for validation
 const LoginFormSchema = z.object({
@@ -17,15 +20,8 @@ const LoginFormSchema = z.object({
 
 type LoginFormValues = z.infer<typeof LoginFormSchema>;
 
-// Define your API response type
-interface LoginResponse {
-  success: boolean;
-  token?: string;
-  message?: string;
-}
-
 export default function LoginPage() {
-  const router = useRouter()
+  const router = useRouter();
   const { register, handleSubmit, formState } = useForm<LoginFormValues>({
     resolver: zodResolver(LoginFormSchema),
     mode: "onChange",
@@ -36,29 +32,43 @@ export default function LoginPage() {
     console.log("Form submitted:", data);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-          credentials: "include",
-        }
-      );
+      // const response = await fetch(
+      //   `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
+      //   {
+      //     method: "POST",
+      //     headers: { "Content-Type": "application/json" },
+      //     body: JSON.stringify(data),
+      //     credentials: "include",
+      //   }
+      // );
 
-      const responseData: LoginResponse = await response.json();
+      // const responseData: {
+      //   success: boolean;
+      //   token?: string;
+      //   message?: string;
+      // } = await response.json();
 
-      if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Login failed");
-        return;
-      }
+      // if (!response.ok || !responseData.success) {
+      //   toast.error(responseData.message || "Login failed");
+      //   return;
+      // }
 
-      const toastId = toast.loading("Logging in...");
-      toast.success("Successfully logged in", { id: toastId });
-      router.push("/dashboard")
-      console.log("Login successful, response:", responseData);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err:any) {
+      // const toastId = toast.loading("Logging in...");
+      // toast.success("Successfully logged in", { id: toastId });
+      // router.push("/dashboard");
+      const result = await signIn("credentials", {
+  ...data,
+  redirect: false,
+});
+
+if (result?.error) {
+  toast.error(result.error);
+} else {
+  toast.success("Logged in!");
+  router.push("/dashboard");
+}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
       console.error(err);
       toast.error(err.message);
     }
@@ -104,6 +114,28 @@ export default function LoginPage() {
             Submit
           </Button>
         </form>
+        <div>
+          <Separator className="mt-5" />
+          <Button
+            variant="outline"
+            className="w-full cursor-pointer"
+            onClick={() =>
+              signIn("google", {
+                callbackUrl: "/dashboard",
+              })
+            }
+          >
+            {/* Google */}
+            <Image
+              src="https://img.icons8.com/color/24/google-logo.png"
+              alt="Google"
+              className="w-5 h-5"
+              width={20}
+              height={20}
+            />
+            Login with Google
+          </Button>
+        </div>
       </div>
     </section>
   );

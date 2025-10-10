@@ -78,10 +78,10 @@ export const Navbar2 = ({
             <ModeToggle />
 
             <Link
-              href="#"
+              href="/login"
               className="hidden md:flex items-center gap-2 px-6 py-2 font-ovo border md:text-lg border-gray-600 rounded-full hover:bg-darktheme hover:text-white dark:hover:bg-white dark:hover:text-black transition"
             >
-              Connect
+              Login
               <span className="text-lg">→</span>
             </Link>
 
