@@ -21,7 +21,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IWorkExperince } from "@/interfaces/workExperience";
-import { useState } from "react";
+import { Edit2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -33,14 +34,32 @@ interface WorkExperienceFormValues {
   endDate: string;
 }
 
+interface AuthResponse {
+  user: {
+    id: number;
+    email: string;
+    role: "OWNER";
+    iat: number;
+    exp: number;
+  };
+  token: string;
+}
+
 export function UpdateWorkExperienceModal({
-  token,
   workExp,
 }: {
-  token: string;
   workExp: IWorkExperince;
 }) {
   const [open, setOpen] = useState<boolean>(false);
+  const [tokens, setTokens] = useState<null | AuthResponse>(null);
+  useEffect(() => {
+    fetch("/api/profile")
+      .then((res) => res.json())
+      .then((data) => setTokens(data))
+      .catch(console.error);
+  }, []);
+
+  console.log(tokens);
 
   const form = useForm<WorkExperienceFormValues>({
     defaultValues: {
@@ -58,10 +77,7 @@ export function UpdateWorkExperienceModal({
       userId: 1,
     };
 
-    console.log(" Work Experience Form Data:", data);
-    console.log("FINAL PROCESSED WORK EXPERIENCE DATA:", finalWorkExpData);
-
-    console.log(token);
+    // console.log(token);
     const jsonData = JSON.stringify(finalWorkExpData);
     console.log(jsonData);
 
@@ -72,7 +88,7 @@ export function UpdateWorkExperienceModal({
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: tokens?.token as string,
           },
           body: jsonData,
           credentials: "include",
@@ -86,18 +102,16 @@ export function UpdateWorkExperienceModal({
       const responseData = await response.json();
 
       if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Adding work experience failed");
+        toast.error(responseData.message || "Updating work experience failed");
         return;
       }
 
-      toast.success("Work experience added successfully");
-      console.log("✅ Work experience added:", responseData);
-
+      toast.success("Work experience Updated successfully");
       form.reset();
       setOpen(false);
     } catch (err) {
       console.error(err);
-      toast.error("Failed to add work experience");
+      toast.error("Failed to update work experience");
     }
   };
 
@@ -105,7 +119,7 @@ export function UpdateWorkExperienceModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          Edit
+          <Edit2 />
         </Button>
       </DialogTrigger>
 
@@ -205,7 +219,7 @@ export function UpdateWorkExperienceModal({
             className="cursor-pointer"
             type="submit"
             form="add-work-exp"
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || !tokens?.token}
           >
             Save Experience
           </Button>
