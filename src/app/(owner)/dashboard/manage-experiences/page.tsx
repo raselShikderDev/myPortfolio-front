@@ -1,12 +1,17 @@
 import { AddWorkExperienceModal } from "@/components/modules/owner/addWorkExpModal";
 import WorkExperienceTable from "@/components/modules/owner/workExpDataTable";
 import { IWorkExperince } from "@/interfaces/workExperience";
+import { getUserSession } from "@/lib/getUserSession";
 
 export default async function WorkExperiencePage() {
+  const token = await getUserSession();
+
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/all`,
     {
-      cache: "no-store",
+      next: {
+        tags: ["workExp"],
+      },
     }
   );
   console.log(res);
@@ -35,7 +40,7 @@ export default async function WorkExperiencePage() {
             </h2>
           </div>
           <div>
-            <AddWorkExperienceModal />
+            <AddWorkExperienceModal token={token} />
           </div>
         </div>
 

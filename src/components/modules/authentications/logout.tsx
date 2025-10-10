@@ -6,6 +6,8 @@ import { signOut, useSession } from "next-auth/react";
 
 const Logout = () => {
   const session = useSession();
+  console.log(session);
+  
   if (session.status !== "authenticated" || !session.data.user.email) return null;
 
   return (

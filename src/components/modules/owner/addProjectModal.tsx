@@ -33,7 +33,7 @@ interface ProjectFormValues {
   githubUrl: string;
 }
 
-export function AddProjectModal() {
+export function AddProjectModal({token}:{token:string}) {
   const [image, setImage] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const form = useForm<ProjectFormValues>({
@@ -61,7 +61,6 @@ export function AddProjectModal() {
     console.log("🖼️ Image File:", image);
     console.log("✅ FINAL PROCESSED PROJECT DATA:", finalProjectData);
 
-
     const formData = new FormData();
     formData.append(
       "data",
@@ -69,14 +68,22 @@ export function AddProjectModal() {
     );
     if (image) formData.append("file", image);
 
+    
+
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/projects/create`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
           body: JSON.stringify(data),
           credentials: "include",
+          next:{
+            tags:["projects"]
+          }
         }
       );
 

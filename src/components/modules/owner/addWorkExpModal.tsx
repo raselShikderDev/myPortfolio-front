@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
 import {
   Form,
   FormControl,
@@ -31,7 +32,7 @@ interface WorkExperienceFormValues {
   endDate: string;
 }
 
-export function AddWorkExperienceModal() {
+export function AddWorkExperienceModal({ token }: { token: string }) {
   const [open, setOpen] = useState<boolean>(false);
 
   const form = useForm<WorkExperienceFormValues>({
@@ -47,22 +48,33 @@ export function AddWorkExperienceModal() {
   const onsubmit = async (data: WorkExperienceFormValues) => {
     const finalWorkExpData = {
       ...data,
-      userId: 1, 
+      userId: 1,
     };
 
     console.log("🚀 Work Experience Form Data:", data);
     console.log("✅ FINAL PROCESSED WORK EXPERIENCE DATA:", finalWorkExpData);
+
+    console.log(token);
+    const jsonData = JSON.stringify(finalWorkExpData);
+    console.log(jsonData);
 
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/create`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(finalWorkExpData),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:token,
+          },
+          body: jsonData,
           credentials: "include",
+          next:{
+            tags:["workExp"]
+          }
         }
       );
+      console.log(response);
 
       const responseData = await response.json();
 

@@ -1,10 +1,14 @@
 import { AddProjectModal } from "@/components/modules/owner/addProjectModal";
 import ProjectsTable from "@/components/modules/owner/projectDatatable";
 import { IProject } from "@/interfaces/projects.interfaces";
+import { getUserSession } from "@/lib/getUserSession";
 
 export default async function ProjectShowCasePage() {
+  const token = await getUserSession();
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
-    cache: "no-store",
+    next: {
+      tags: ["projects"],
+    },
   });
   console.log(res);
 
@@ -31,7 +35,7 @@ export default async function ProjectShowCasePage() {
             </h2>
           </div>
           <div>
-            <AddProjectModal />
+            <AddProjectModal token={token} />
           </div>
         </div>
 
