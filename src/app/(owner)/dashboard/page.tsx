@@ -1,48 +1,37 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Card, CardContent } from "@/components/ui/card";
-import { cookies } from "next/headers";
+import { getUserSession } from "@/lib/getUserSession";
+
+
+interface BlogStatsResponse {
+  stats: {
+    totalBlog: number;
+    totalViews: number;
+    avgViews: number;
+    totalExperience: number;
+    totalProject: number;
+  };
+  featuredCount: number;
+  lastWeekPostCount: number;
+  lastMonthPostCount: number;
+}
 
 export default async function Page() {
-  const cookiesStore = cookies();
-  const token = (await cookiesStore).get("accessToken")?.value;
-  let stats = {
-    totalBlog: 0,
-    totalViews: 0,
-    avgViews: 0,
-    minViews: 0,
-    maxViews: 0,
-  };
+  const token = await getUserSession();
 
-  let featured = {
-    count: 0,
-    topPost: null as { title: string } | null,
-  };
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/stats`, {
+    method: "GET",
+    headers: {
+      Authorization: token,
+    },
+    next: {
+      revalidate: 60,
+    },
+  });
+  // console.log("Fetch response object:", res);
 
-  let lastWeekPostCount = 0;
-  let lastMonthPostCount = 0;
-
-  try {
-    const res = await fetch("http://localhost:5000/api/v1/blogs/stats", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    });
-    console.log("Fetch response object:", res); // server-side log
-
-    // if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-
-    const result = await res.json();
-    const data = result.data;
-    console.log(data);
-
-    stats = data?.stats ?? stats;
-    featured = data?.featured ?? featured;
-    lastWeekPostCount = data?.lastWeekPostCount ?? 0;
-    lastMonthPostCount = data?.lastMonthPostCount ?? 0;
-  } catch (error) {
-    console.error("Failed to fetch blogs, using default stats:", error);
-  }
+  const result = await res.json();
+  const data:BlogStatsResponse = result.data;
 
   // Compact card component
   const CompactCard = ({
@@ -76,22 +65,16 @@ export default async function Page() {
         </p>
       </header>
 
-      {/* <section className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-        <CompactCard title="Total Blogs" value={stats.totalBlog} />
-        <CompactCard title="Total Views" value={stats.totalViews} />
-        <CompactCard title="Average Views" value={stats.avgViews?.toFixed(0)} />
-        <CompactCard title="Min Views" value={stats.minViews} />
-        <CompactCard title="Max Views" value={stats.maxViews} />
-        <CompactCard
-          title="Featured Blogs"
-          value={featured.count}
-          description={
-            featured.topPost ? `Top: ${featured.topPost.title}` : "No top post"
-          }
-        />
-        <CompactCard title="Posts Last Week" value={lastWeekPostCount} />
-        <CompactCard title="Posts Last Month" value={lastMonthPostCount} />
-      </section> */}
+      <section className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+        <CompactCard title="Total Blogs" value={data.stats.totalViews} />
+        <CompactCard title="Featured Blogs" value={data.featuredCount} />
+        <CompactCard title="Total Views" value={data.stats.totalViews} />
+        <CompactCard title="Average Views" value={data.stats.avgViews?.toFixed(0)} />
+        <CompactCard title="Experiences" value={data.stats.totalExperience} />
+        <CompactCard title="Projects" value={data.stats.totalProject} />
+        <CompactCard title="Posts Last Week" value={data.lastWeekPostCount} />
+        <CompactCard title="Posts Last Month" value={data.lastMonthPostCount} />
+      </section>
     </main>
   );
 }

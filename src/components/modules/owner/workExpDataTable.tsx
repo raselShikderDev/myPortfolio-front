@@ -14,16 +14,63 @@ import { Trash2 } from "lucide-react";
 import { IWorkExperince } from "@/interfaces/workExperience";
 import { format } from "date-fns";
 import { UpdateWorkExperienceModal } from "./updateWorkExpModal";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { DeleteWorkExpConfirmationModal } from "./deleteWorkExpConfirmModal";
+
+interface AuthResponse {
+  user: {
+    id: number;
+    email: string;
+    role: "OWNER";
+    iat: number;
+    exp: number;
+  };
+  token: string;
+}
 
 export default function WorkExperienceTable({
   workExp = [],
 }: {
   workExp?: IWorkExperince[];
 }) {
-  console.log(workExp);
+  const [tokens, setTokens] = useState<null | AuthResponse>(null);
+  useEffect(() => {
+    fetch("/api/profile")
+      .then((res) => res.json())
+      .then((data) => setTokens(data))
+      .catch(console.error);
+  }, []);
 
-  const handleDelete = (id: string | number) => {
-    console.log("Work experience deleted successfully", id);
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: tokens?.token as string,
+          },
+          credentials: "include",
+          next: {
+            tags: ["workExp"],
+          },
+        }
+      );
+      console.log(response);
+
+      const responseData = await response.json();
+
+      if (!response.ok || !responseData.success) {
+        toast.error(responseData.message || "Deleting work experience failed");
+        return;
+      }
+
+      toast.success("Work experience deleted");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete work experience");
+    }
   };
 
   const hasData = Array.isArray(workExp) && workExp.length > 0;
@@ -76,15 +123,17 @@ export default function WorkExperienceTable({
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <UpdateWorkExperienceModal workExp={exp} />
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDelete(String(exp.id))}
-                      className="flex items-center gap-1"
+                    <DeleteWorkExpConfirmationModal
+                      onConfirm={() => handleDelete(exp.id)}
                     >
-                      <Trash2 className="w-4 h-4" />
-                      <span className="hidden sm:inline">Delete</span>
-                    </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        className="flex items-center gap-1"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </DeleteWorkExpConfirmationModal>
                   </div>
                 </TableCell>
               </TableRow>

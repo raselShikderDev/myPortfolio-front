@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import {
   Sidebar,
@@ -16,6 +17,16 @@ import Link from "next/link";
 import Logout from "./modules/authentications/logout";
 import { getUserSession } from "@/lib/getUserSession";
 import { IUser } from "@/interfaces/user.interfaces";
+import { redirect } from "next/navigation";
+import jwt, { JwtPayload } from "jsonwebtoken";
+
+interface decoded {
+  id: number;
+  email: string;
+  role: "OWNER";
+  iat: number;
+  exp: number;
+}
 
 // This is sample data.
 const data = {
@@ -47,6 +58,10 @@ const data = {
       url: "#",
       items: [
         {
+          title: "Dashboard",
+          url: "/dashboard",
+        },
+        {
           title: "Manage Projects",
           url: "/dashboard/manage-projects",
         },
@@ -67,27 +82,38 @@ export async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const token = await getUserSession();
-  console.log(token);
+  let decoded: decoded | null = null;
 
+  try {
+    decoded = jwt.verify(
+      token,
+      process.env.JWT_ACCESS_SECRET as string
+    ) as decoded;
+    console.log(decoded);
+  } catch (err) {
+    redirect("/login");
+  }
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: token,
+      },
+      next: {
+        revalidate: 60,
+      },
+    }
+  );
+  console.log(response);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: token,
-        },
-        next: {
-          revalidate: 60,
-        },
-      }
-    );
-    console.log(response);
-
-    const responseData = await response.json();
-    console.log("response:", response);
-    console.log("response Data:", responseData);
-    const  user:IUser = responseData.data
+  const responseData = await response.json();
+  console.log("response:", response);
+  console.log("response Data:", responseData);
+  // if (responseData.message === "jwt expired") {
+  //   redirect("/login");
+  // }
+  const user: IUser = responseData.data;
 
   return (
     <Sidebar {...props}>
@@ -107,7 +133,7 @@ export async function AppSidebar({
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <a href={item.url}>{item.title}</a>
+                      <Link href={item.url}>{item.title}</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
