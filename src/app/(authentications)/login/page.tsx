@@ -8,9 +8,9 @@ import { Input } from "@/components/ui/input";
 import PasswordToggler from "@/components/passwordToggler";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
-import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
+// import { signIn } from "next-auth/react";
+// import Image from "next/image";
+// import { Separator } from "@/components/ui/separator";
 
 // Zod schema for validation
 const LoginFormSchema = z.object({
@@ -30,43 +30,45 @@ export default function LoginPage() {
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     console.log("Form submitted:", data);
-
+// For manual
     try {
-      // const response = await fetch(
-      //   `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
-      //   {
-      //     method: "POST",
-      //     headers: { "Content-Type": "application/json" },
-      //     body: JSON.stringify(data),
-      //     credentials: "include",
-      //   }
-      // );
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+          credentials: "include",
+        }
+      );
 
-      // const responseData: {
-      //   success: boolean;
-      //   token?: string;
-      //   message?: string;
-      // } = await response.json();
+      const responseData: {
+        success: boolean;
+        token?: string;
+        message?: string;
+      } = await response.json();
 
-      // if (!response.ok || !responseData.success) {
-      //   toast.error(responseData.message || "Login failed");
-      //   return;
-      // }
+      if (!response.ok || !responseData.success) {
+        toast.error(responseData.message || "Login failed");
+        return;
+      }
 
-      // const toastId = toast.loading("Logging in...");
-      // toast.success("Successfully logged in", { id: toastId });
-      // router.push("/dashboard");
-      const result = await signIn("credentials", {
-  ...data,
-  redirect: false,
-});
+      const toastId = toast.loading("Logging in...");
+      toast.success("Successfully logged in", { id: toastId });
+      router.push("/dashboard");
 
-if (result?.error) {
-  toast.error(result.error);
-} else {
-  toast.success("Logged in!");
-  router.push("/dashboard");
-}
+      // // For next-auth
+//       const result = await signIn("credentials", {
+//   ...data,
+//   redirect: false,
+// });
+
+// if (result?.error) {
+//   toast.error(result.error);
+// } else {
+//   toast.success("Logged in!");
+//   router.push("/dashboard");
+// }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
@@ -114,7 +116,7 @@ if (result?.error) {
             Submit
           </Button>
         </form>
-        <div>
+        {/* <div>
           <Separator className="mt-5" />
           <Button
             variant="outline"
@@ -125,7 +127,7 @@ if (result?.error) {
               })
             }
           >
-            {/* Google */}
+            
             <Image
               src="https://img.icons8.com/color/24/google-logo.png"
               alt="Google"
@@ -135,7 +137,7 @@ if (result?.error) {
             />
             Login with Google
           </Button>
-        </div>
+        </div> */}
       </div>
     </section>
   );

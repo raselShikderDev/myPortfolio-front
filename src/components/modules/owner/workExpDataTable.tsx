@@ -13,18 +13,16 @@ import {
 import { Edit2, Trash2 } from "lucide-react";
 import { IWorkExperince } from "@/interfaces/workExperience";
 import { format } from "date-fns";
+import { UpdateWorkExperienceModal } from "./updateWorkExpModal";
 
 export default function WorkExperienceTable({
   workExp = [],
 }: {
-  workExp?: IWorkExperince[]; // optional to prevent crashes
+  workExp?: IWorkExperince[]; 
 }) {
 
     console.log(workExp);
     
-  const handleEdit = (id: string | number) => {
-    console.log(`Editing work experience ${id}`);
-  };
 
   const handleDelete = (id: string | number) => {
     console.log("Work experience deleted successfully", id);
@@ -79,15 +77,7 @@ export default function WorkExperienceTable({
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEdit(String(exp.id))}
-                      className="flex items-center gap-1"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                      <span className="hidden sm:inline">Edit</span>
-                    </Button>
+                    <UpdateWorkExperienceModal workExp={exp} token={token}/>
                     <Button
                       variant="destructive"
                       size="sm"

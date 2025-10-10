@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IUser } from "@/interfaces/user.interfaces";
+import { IWorkExperince } from "@/interfaces/workExperience";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -33,43 +33,32 @@ interface WorkExperienceFormValues {
   endDate: string;
 }
 
-export function AddWorkExperienceModal({ token }: { token: string }) {
+export function UpdateWorkExperienceModal({
+  token,
+  workExp,
+}: {
+  token: string;
+  workExp: IWorkExperince;
+}) {
   const [open, setOpen] = useState<boolean>(false);
 
   const form = useForm<WorkExperienceFormValues>({
     defaultValues: {
-      companyName: "",
-      role: "",
-      descreption: "",
+      companyName: workExp.companyName,
+      role: workExp.role,
+      descreption: workExp.descreption,
       startDate: "",
       endDate: "",
     },
   });
 
   const onsubmit = async (data: WorkExperienceFormValues) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: token,
-        },
-        next: {
-          revalidate: 60,
-        },
-      }
-    );
-    console.log(response);
-
-    const responseData = await response.json();
-    const user: IUser = responseData.data;
-
     const finalWorkExpData = {
       ...data,
-      userId: user.id,
+      userId: 1,
     };
 
-    console.log("Work Experience Form Data:", data);
+    console.log(" Work Experience Form Data:", data);
     console.log("FINAL PROCESSED WORK EXPERIENCE DATA:", finalWorkExpData);
 
     console.log(token);
@@ -78,9 +67,9 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/create`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/edit/${workExp.id}`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: token,
@@ -116,13 +105,13 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          Add Work Experience
+          Edit
         </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Work Experience</DialogTitle>
+          <DialogTitle>Update Work Experience</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>

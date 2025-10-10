@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/components/AddProjectModal.tsx (or wherever your component resides)
 "use client";
 
@@ -21,22 +22,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+// import { ProjectCreateSchema } from "@/zodSchema/projects.schema";
+// import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+// import z from "zod";
 
-interface ProjectFormValues {
-  title: string;
-  description: string;
-  techStack: string;
-  liveUrl: string;
-  githubUrl: string;
-}
-
-export function AddProjectModal({token}:{token:string}) {
+export function AddProjectModal({ token }: { token: string }) {
   const [image, setImage] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const form = useForm<ProjectFormValues>({
+  const form = useForm({
     defaultValues: {
       title: "",
       description: "",
@@ -45,10 +41,11 @@ export function AddProjectModal({token}:{token:string}) {
       githubUrl: "",
     },
   });
-  const onsubmit = async (data: ProjectFormValues) => {
+
+  const onsubmit = async (data: any) => {
     const processedTechStack = data.techStack
       .split(",")
-      .map((tech) => tech.trim())
+      .map((tech: any) => tech.trim())
       .filter(Boolean);
 
     const finalProjectData = {
@@ -57,9 +54,9 @@ export function AddProjectModal({token}:{token:string}) {
       image: image ? image.name : null,
     };
 
-    console.log("🚀 Project Form Data:", data);
-    console.log("🖼️ Image File:", image);
-    console.log("✅ FINAL PROCESSED PROJECT DATA:", finalProjectData);
+    console.log("Project Form Data:", data);
+    console.log("Image File:", image);
+    console.log("FINAL PROCESSED PROJECT DATA:", finalProjectData);
 
     const formData = new FormData();
     formData.append(
@@ -68,22 +65,19 @@ export function AddProjectModal({token}:{token:string}) {
     );
     if (image) formData.append("file", image);
 
-    
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/projects/create`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
             Authorization: token,
           },
-          body: JSON.stringify(data),
+          body: formData, 
           credentials: "include",
-          next:{
-            tags:["projects"]
-          }
+          next: {
+            tags: ["projects"],
+          },
         }
       );
 

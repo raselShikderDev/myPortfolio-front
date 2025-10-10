@@ -70,7 +70,7 @@ export function AddBlogModal() {
       images: images.filter(isFile).map((file) => file.name),
     };
 
-    console.log("🚀 Blog Form Data:", finalBlogData);
+    console.log(" Blog Form Data:", finalBlogData);
 
     const formData = new FormData();
     formData.append("data", JSON.stringify(finalBlogData));

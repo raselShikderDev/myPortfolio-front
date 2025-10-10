@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import Logout from "./modules/authentications/logout";
+import { getUserSession } from "@/lib/getUserSession";
+import { IUser } from "@/interfaces/user.interfaces";
 
 // This is sample data.
 const data = {
@@ -61,7 +63,32 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export async function AppSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
+  const token = await getUserSession();
+  console.log(token);
+
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
+        next: {
+          revalidate: 60,
+        },
+      }
+    );
+    console.log(response);
+
+    const responseData = await response.json();
+    console.log("response:", response);
+    console.log("response Data:", responseData);
+    const  user:IUser = responseData.data
+
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -90,7 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <Logout />
+        <Logout user={user} token={token} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
