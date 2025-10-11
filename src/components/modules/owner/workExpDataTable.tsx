@@ -57,7 +57,6 @@ export default function WorkExperienceTable({
           },
         }
       );
-      console.log(response);
 
       const responseData = await response.json();
 

@@ -14,10 +14,8 @@ export default async function WorkExperiencePage() {
       },
     }
   );
-  console.log(res);
 
   const { data: workExp }: { data: IWorkExperince[] } = await res.json();
-  console.log(workExp);
 
   return (
     <main className="min-h-screen bg-background px-4 sm:px-6 lg:px-10 py-10 space-y-10">

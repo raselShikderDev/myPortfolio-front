@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Card, CardContent } from "@/components/ui/card";
 import { getUserSession } from "@/lib/getUserSession";
-
 
 interface BlogStatsResponse {
   stats: {
@@ -28,10 +26,9 @@ export default async function Page() {
       revalidate: 60,
     },
   });
-  // console.log("Fetch response object:", res);
 
   const result = await res.json();
-  const data:BlogStatsResponse = result.data;
+  const data: BlogStatsResponse = result.data;
 
   // Compact card component
   const CompactCard = ({
@@ -69,7 +66,10 @@ export default async function Page() {
         <CompactCard title="Total Blogs" value={data.stats.totalViews} />
         <CompactCard title="Featured Blogs" value={data.featuredCount} />
         <CompactCard title="Total Views" value={data.stats.totalViews} />
-        <CompactCard title="Average Views" value={data.stats.avgViews?.toFixed(0)} />
+        <CompactCard
+          title="Average Views"
+          value={data.stats.avgViews?.toFixed(0)}
+        />
         <CompactCard title="Experiences" value={data.stats.totalExperience} />
         <CompactCard title="Projects" value={data.stats.totalProject} />
         <CompactCard title="Posts Last Week" value={data.lastWeekPostCount} />

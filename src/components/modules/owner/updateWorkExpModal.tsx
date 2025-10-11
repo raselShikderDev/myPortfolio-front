@@ -59,7 +59,6 @@ export function UpdateWorkExperienceModal({
       .catch(console.error);
   }, []);
 
-  console.log(tokens);
 
   const form = useForm<WorkExperienceFormValues>({
     defaultValues: {
@@ -77,9 +76,7 @@ export function UpdateWorkExperienceModal({
       userId: 1,
     };
 
-    // console.log(token);
     const jsonData = JSON.stringify(finalWorkExpData);
-    console.log(jsonData);
 
     try {
       const response = await fetch(
@@ -97,7 +94,6 @@ export function UpdateWorkExperienceModal({
           },
         }
       );
-      console.log(response);
 
       const responseData = await response.json();
 

@@ -76,18 +76,14 @@ const experiences = [
 ];
 
 const ProjectsPage = async () => {
-  console.log("BASE_URL:", process.env.NEXT_PUBLIC_BASE_URL);
 
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
     next: {
       revalidate: 60,
     },
   });
-  console.log(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`);
-  console.log(res);
 
   const { data: projectsData }: { data: IProject[] } = await res.json();
-  console.log(projectsData);
 
   return (
     <div className="w-full px-[12%] py-10 md:mt-0 scroll-mt-20 mx-auto">

@@ -17,7 +17,6 @@ export async function middleware(request: NextRequest) {
     request.cookies.get("next-auth.session-token")?.value ||
     request.cookies.get("__Secure-next-auth.session-token")?.value;
   const { pathname } = request.nextUrl;
-  // console.log(token);
 
   if (pathname.startsWith("/dashboard")) {
     if (!token) {
@@ -26,17 +25,17 @@ export async function middleware(request: NextRequest) {
   }
   try {
     const decoded = jwt.verify(token as string, process.env.JWT_ACCESS_SECRET as string);
-    console.log('decoded: ', decoded);
+    console.log('decoded in middleware: ', decoded);
   } catch (error) {
     if (error instanceof jwt.TokenExpiredError) {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-token`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/generate-token`,
         {
           method: "POST",
         }
       );
       const data = await res.json();
-      console.log(data);
+      console.log("In middleware after generating token:", data);
 
       if (res.ok) {
         return NextResponse.next();

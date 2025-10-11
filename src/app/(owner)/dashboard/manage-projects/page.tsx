@@ -3,17 +3,28 @@ import ProjectsTable from "@/components/modules/owner/projectDatatable";
 import { IProject } from "@/interfaces/projects.interfaces";
 import { getUserSession } from "@/lib/getUserSession";
 
+export const dynamic = "force-dynamic";
+
 export default async function ProjectShowCasePage() {
   const token = await getUserSession();
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
-    next: {
-      tags: ["projects"],
-    },
-  });
-  console.log(res);
 
-  const { data: projects }: { data: IProject[] } = await res.json();
-  console.log(projects);
+  let projects: IProject[] = [];
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
+      cache: "no-store", 
+      next: { tags: ["projects"] },
+    });
+
+    if (!res.ok) {
+      console.error("Failed to fetch projects:", await res.text());
+    } else {
+      const json = await res.json();
+      projects = json.data as IProject[];
+    }
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+  }
 
   return (
     <main className="min-h-screen bg-background px-4 sm:px-6 lg:px-10 py-10 space-y-10">
@@ -26,6 +37,7 @@ export default async function ProjectShowCasePage() {
           Add, edit, and manage your portfolio projects easily.
         </p>
       </div>
+
       {/* Project List Section */}
       <section className="w-full max-w-6xl mx-auto bg-card shadow-sm border border-border rounded-2xl p-4 sm:p-6 overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">

@@ -5,7 +5,9 @@ import { IBlog } from "@/interfaces/blogs.interfaces";
 export default async function ManageBlogsPage() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`, {
-      cache: "no-store",
+      next:{
+        tags:["BLOGS"]
+      }
     });
 
     if (!res.ok) {

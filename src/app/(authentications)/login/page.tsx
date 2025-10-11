@@ -29,7 +29,6 @@ export default function LoginPage() {
   });
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
-    console.log("Form submitted:", data);
 // For manual
     try {
       const response = await fetch(

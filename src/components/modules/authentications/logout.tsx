@@ -7,7 +7,6 @@ import { toast } from "sonner";
 
 const Logout = ({ user, token }: { user: IUser; token: string }) => {
   const router = useRouter();
-console.log(user);
 
   const hanldeSignOut = async ()=> {
     const response = await fetch(
@@ -19,8 +18,6 @@ console.log(user);
         },
       }
     );
-
-    console.log(response);
     
 
     const responseData: {

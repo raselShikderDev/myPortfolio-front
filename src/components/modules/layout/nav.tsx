@@ -19,6 +19,17 @@ interface NavbarProps {
   menu?: { title: string; url: string }[];
 }
 
+interface AuthResponse {
+  user: {
+    id: number;
+    email: string;
+    role: "OWNER";
+    iat: number;
+    exp: number;
+  };
+  token: string;
+}
+
 export const Navbar2 = ({
   menu = [
     { title: "Home", url: "/" },
@@ -29,6 +40,13 @@ export const Navbar2 = ({
   ],
 }: NavbarProps) => {
   const [isScroll, setIsScroll] = useState(false);
+  const [tokens, setTokens] = useState<null | AuthResponse>(null);
+  useEffect(() => {
+    fetch("/api/profile")
+      .then((res) => res.json())
+      .then((data) => setTokens(data))
+      .catch(console.error);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,10 +96,10 @@ export const Navbar2 = ({
             <ModeToggle />
 
             <Link
-              href="/login"
+              href={tokens?.user.email ? "/contact" : "/login"}
               className="hidden md:flex items-center gap-2 px-6 py-2 font-ovo border md:text-lg border-gray-600 rounded-full hover:bg-darktheme hover:text-white dark:hover:bg-white dark:hover:text-black transition"
             >
-              Login
+              {tokens?.user.email ? "Contact" : "Login"}
               <span className="text-lg">→</span>
             </Link>
 

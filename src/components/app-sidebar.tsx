@@ -89,7 +89,6 @@ export async function AppSidebar({
       token,
       process.env.JWT_ACCESS_SECRET as string
     ) as decoded;
-    console.log(decoded);
   } catch (err) {
     redirect("/login");
   }
@@ -105,11 +104,8 @@ export async function AppSidebar({
       },
     }
   );
-  console.log(response);
 
   const responseData = await response.json();
-  console.log("response:", response);
-  console.log("response Data:", responseData);
   // if (responseData.message === "jwt expired") {
   //   redirect("/login");
   // }

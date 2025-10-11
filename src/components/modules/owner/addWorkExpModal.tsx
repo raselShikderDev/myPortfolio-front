@@ -59,7 +59,6 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
         },
       }
     );
-    console.log(response);
 
     const responseData = await response.json();
     const user: IUser = responseData.data;
@@ -69,12 +68,7 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
       userId: user.id,
     };
 
-    console.log("Work Experience Form Data:", data);
-    console.log("FINAL PROCESSED WORK EXPERIENCE DATA:", finalWorkExpData);
-
-    console.log(token);
     const jsonData = JSON.stringify(finalWorkExpData);
-    console.log(jsonData);
 
     try {
       const response = await fetch(
@@ -92,7 +86,6 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
           },
         }
       );
-      console.log(response);
 
       const responseData = await response.json();
 
@@ -102,7 +95,6 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
       }
 
       toast.success("Work experience added successfully");
-      console.log("✅ Work experience added:", responseData);
 
       form.reset();
       setOpen(false);
