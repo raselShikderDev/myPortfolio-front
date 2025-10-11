@@ -8,7 +8,7 @@ import { toast } from "sonner";
 const Logout = ({ user, token }: { user: IUser; token: string }) => {
   const router = useRouter();
 
-  const hanldeSignOut = async ()=> {
+  const hanldeSignOut = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`,
       {
@@ -18,7 +18,6 @@ const Logout = ({ user, token }: { user: IUser; token: string }) => {
         },
       }
     );
-    
 
     const responseData: {
       success: boolean;
@@ -38,7 +37,7 @@ const Logout = ({ user, token }: { user: IUser; token: string }) => {
 
   return (
     <div className="p-4 border-t border-gray-500">
-      {user.email && (
+      {user?.email && (
         <Button
           variant="destructive"
           className="w-full justify-start gap-2 cursor-pointer"

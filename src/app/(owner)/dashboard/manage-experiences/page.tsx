@@ -1,5 +1,5 @@
-import { AddWorkExperienceModal } from "@/components/modules/owner/addWorkExpModal";
-import WorkExperienceTable from "@/components/modules/owner/workExpDataTable";
+import { AddWorkExperienceModal } from "@/components/modules/owner/workExperiences/addWorkExpModal";
+import WorkExperienceTable from "@/components/modules/owner/workExperiences/workExpDataTable";
 import { IWorkExperince } from "@/interfaces/workExperience";
 import { getUserSession } from "@/lib/getUserSession";
 

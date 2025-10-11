@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import SingleFileImageUploaderWithPreview from "@/components/previewImage/singleImageUploaderWithPreview";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+
 import {
   Form,
   FormControl,
@@ -21,85 +20,88 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IProject } from "@/interfaces/projects.interfaces";
 import { IUser } from "@/interfaces/user.interfaces";
-import { Edit2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-export function UpdateProjectModal({
-  token,
-  project,
-}: {
-  token: string;
-  project: IProject;
-}) {
-  const [image, setImage] = useState<File | null>(null);
+interface WorkExperienceFormValues {
+  companyName: string;
+  role: string;
+  descreption: string;
+  startDate: string;
+  endDate: string;
+}
+
+export function AddWorkExperienceModal({ token }: { token: string }) {
   const [open, setOpen] = useState<boolean>(false);
 
-  const form = useForm({
+  const form = useForm<WorkExperienceFormValues>({
+    mode:"onChange",
     defaultValues: {
-      title: project.title || "",
-      description: project.description || "",
-      techStack: project.techStack.join(", ") || "",
-      liveUrl: project.liveUrl || "",
-      githubUrl: project.githubUrl || "",
+      companyName: "",
+      role: "",
+      descreption: "",
+      startDate: "",
+      endDate: "",
     },
   });
 
-  const onsubmit = async (data: any) => {
+  const onsubmit = async (data: WorkExperienceFormValues) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
       {
         method: "GET",
-        headers: { Authorization: token },
-        next: { revalidate: 60 },
+        headers: {
+          Authorization: token,
+        },
+        next: {
+          revalidate: 60,
+        },
       }
     );
 
     const responseData = await response.json();
     const user: IUser = responseData.data;
 
-    const processedTechStack = data.techStack
-      .split(",")
-      .map((tech: any) => tech.trim())
-      .filter(Boolean);
+    const finalWorkExpData = {
+      ...data,
+      userId: user.id,
+    };
 
-    data.userId = user.id || 1;
-
-    const formData = new FormData();
-    formData.append(
-      "data",
-      JSON.stringify({ ...data, techStack: processedTechStack })
-    );
-    if (image) formData.append("file", image);
+    const jsonData = JSON.stringify(finalWorkExpData);
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/edit/${project.id}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/create`,
         {
-          method: "PATCH",
-          headers: { Authorization: token },
-          body: formData,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: jsonData,
           credentials: "include",
-          next: { tags: ["projects"] },
+          next: {
+            tags: ["workExp"],
+          },
         }
       );
 
       const responseData = await response.json();
 
       if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Project updating failed");
+        toast.error(responseData.message || "Adding work experience failed");
         return;
       }
 
-      toast.success("Project Updated");
+      toast.success("Work experience added successfully");
+
       form.reset();
-      setOpen(false); 
+      setOpen(false);
     } catch (err) {
       console.error(err);
-      toast.error("Updating project failed");
+      toast.error("Failed to add work experience");
     }
   };
 
@@ -107,57 +109,45 @@ export function UpdateProjectModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          <Edit2 className="w-4 h-4" />
+          Add Work Experience
         </Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Update Project</DialogTitle>
+          <DialogTitle>Add Work Experience</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
           <form
             className="space-y-5"
-            id="update-project"
+            id="add-work-exp"
             onSubmit={form.handleSubmit(onsubmit)}
           >
+            {/* --- Company Name --- */}
             <FormField
               control={form.control}
-              name="title"
+              name="companyName"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Project Title" {...field} />
+                    <Input placeholder="Company Name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
+            {/* --- Role --- */}
             <FormField
               control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea placeholder="Project Description" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="techStack"
+              name="role"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="Tech Stack (e.g., React, Node.js)"
-                      value={field.value || ""}
-                      onChange={(e) => field.onChange(e.target.value)}
+                      placeholder="Role (e.g., Senior Software Engineer)"
+                      {...field}
                     />
                   </FormControl>
                   <FormMessage />
@@ -165,53 +155,63 @@ export function UpdateProjectModal({
               )}
             />
 
+            {/* --- Description --- */}
             <FormField
               control={form.control}
-              name="liveUrl"
+              name="descreption"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Live Site URL" {...field} />
+                    <Textarea placeholder="Job Description" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
+            {/* --- Start Date --- */}
             <FormField
               control={form.control}
-              name="githubUrl"
+              name="startDate"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="GitHub Repository URL" {...field} />
+                    <Input type="date" placeholder="Start Date" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* --- End Date --- */}
+            <FormField
+              control={form.control}
+              name="endDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input type="date" placeholder="End Date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </form>
-
-          <SingleFileImageUploaderWithPreview
-            previewExistingUrl={project.image}
-            onChange={setImage}
-          />
         </Form>
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline" className="cursor-pointer">
+            <Button className="cursor-pointer" variant="outline">
               Cancel
             </Button>
           </DialogClose>
-
           <Button
-            type="submit"
-            form="update-project"
             className="cursor-pointer"
+            type="submit"
+            form="add-work-exp"
             disabled={form.formState.isSubmitting}
           >
-            Save Project
+            Save Experience
           </Button>
         </DialogFooter>
       </DialogContent>

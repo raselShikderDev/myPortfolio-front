@@ -13,10 +13,10 @@ import {
 import { Trash2 } from "lucide-react";
 import { IProject } from "@/interfaces/projects.interfaces";
 import Link from "next/link";
-import { UpdateProjectModal } from "./updateProjectModal";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { DeleteConfirmationModal } from "./deleteWorkExpConfirmModal";
+import { UpdateProjectModal } from "./updateProjectModal";
+import { DeleteConfirmationModal } from "../deleteWorkExpConfirmModal";
 
 interface AuthResponse {
   user: {
@@ -72,7 +72,7 @@ export default function ProjectsTable({ projects }: { projects: IProject[] }) {
     <div className="overflow-x-auto rounded-md border border-border">
       <Table>
         <TableCaption className="text-sm text-muted-foreground">
-          {!(projects.length > 0) && "No projects found."}
+          {!(projects?.length > 0) && "No projects found."}
         </TableCaption>
         <TableHeader>
           <TableRow>
@@ -89,7 +89,7 @@ export default function ProjectsTable({ projects }: { projects: IProject[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {projects.map((project: IProject) => (
+          {projects?.map((project: IProject) => (
             <TableRow key={project.id}>
               <TableCell className="font-medium">
                 <Link

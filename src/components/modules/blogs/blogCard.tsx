@@ -22,7 +22,6 @@ export default function BlogCard({ post }: { post: IBlog }) {
         href={`/blogs/${post.slug}`}
         className="block group rounded-2xl overflow-hidden bg-white dark:bg-gray-900 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
       >
-        {/* Image Section */}
         {post.images && post.images.length > 0 ? (
           <div className="relative w-full h-48 sm:h-56 md:h-60 lg:h-64 overflow-hidden">
             <Image

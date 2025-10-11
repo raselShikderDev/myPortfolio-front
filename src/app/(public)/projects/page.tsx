@@ -105,7 +105,7 @@ const ProjectsPage = async () => {
         responsive, full-stack functionality and cutting-edge web technologies.
       </MotionP>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 my-16 mt-10">
-        {projectsData.map((project: IProject, index: number) => (
+        {projectsData?.map((project: IProject, index: number) => (
           <div key={index} className="flex">
             <ProjectCard
               title={project.title}

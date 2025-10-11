@@ -1,6 +1,6 @@
 // import { getAllProjects } from "@/actions/getProjects";
-import { AddProjectModal } from "@/components/modules/owner/addProjectModal";
-import ProjectsTable from "@/components/modules/owner/projectDatatable";
+import { AddProjectModal } from "@/components/modules/owner/projects/addProjectModal";
+import ProjectsTable from "@/components/modules/owner/projects/projectDatatable";
 import { getUserSession } from "@/lib/getUserSession";
 
 export default async function ProjectShowCasePage() {

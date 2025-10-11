@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import MultipleImageUploader from "@/components/multipleFileUploader";
@@ -24,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { IUser } from "@/interfaces/user.interfaces";
 
 interface BlogFormValues {
   title: string;
@@ -32,7 +34,6 @@ interface BlogFormValues {
   published: boolean;
   publishedDate: string;
   slug: string;
-  authorId: number;
   tags: string;
 }
 
@@ -41,27 +42,45 @@ function isFile(file: File | FileMetadata): file is File {
   return file instanceof File;
 }
 
-export function AddBlogModal() {
+export function AddBlogModal({ token }: { token: string }) {
   const [images, setImages] = useState<(File | FileMetadata)[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
   const form = useForm<BlogFormValues>({
+    mode:"onChange",
     defaultValues: {
       title: "",
       content: "",
       images: [],
       published: false,
-      publishedDate: new Date().toISOString().slice(0, 16), // datetime-local
+      publishedDate: new Date().toISOString().slice(0, 16),
       slug: "",
-      authorId: 1,
       tags: "",
     },
   });
 
-  const onsubmit = async (data: BlogFormValues) => {
+  const onsubmit = async (data: any) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
+        next: {
+          tags: ["projects"],
+        },
+      }
+    );
+
+    const responseData = await response.json();
+    const user: IUser = responseData.data;
+    console.log(user);
+
+    data.authorId = user.id;
     const processedTags = data.tags
       .split(",")
-      .map((tag) => tag.trim())
+      .map((tag:any) => tag.trim())
       .filter(Boolean);
 
     const finalBlogData = {
@@ -124,7 +143,6 @@ export function AddBlogModal() {
             id="add-blog-form"
             onSubmit={form.handleSubmit(onsubmit)}
           >
-            {/* Blog Title */}
             <FormField
               control={form.control}
               name="title"
@@ -138,7 +156,6 @@ export function AddBlogModal() {
               )}
             />
 
-            {/* Blog Content */}
             <FormField
               control={form.control}
               name="content"
@@ -151,8 +168,6 @@ export function AddBlogModal() {
                 </FormItem>
               )}
             />
-
-            {/* Tags */}
             <FormField
               control={form.control}
               name="tags"
@@ -165,22 +180,21 @@ export function AddBlogModal() {
                 </FormItem>
               )}
             />
-
-            {/* Slug */}
             <FormField
               control={form.control}
               name="slug"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Slug (e.g., ai-changing-web)" {...field} />
+                    <Input
+                      placeholder="Slug (e.g., ai-changing-web)"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
-            {/* Published Checkbox */}
             <FormField
               control={form.control}
               name="published"
@@ -198,8 +212,6 @@ export function AddBlogModal() {
                 </FormItem>
               )}
             />
-
-            {/* Published Date */}
             <FormField
               control={form.control}
               name="publishedDate"
@@ -213,7 +225,6 @@ export function AddBlogModal() {
               )}
             />
 
-            {/* Multiple Images */}
             <MultipleImageUploader onChange={setImages} />
           </form>
         </Form>

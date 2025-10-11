@@ -91,6 +91,7 @@ export default function MulptipleImageUploader({
                     src={file.preview as string}
                     alt={file.file.name}
                     className="size-full rounded-[inherit] object-cover"
+                    fill
                   />
                   <Button
                     onClick={() => removeFile(file.id)}

@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// src/components/AddProjectModal.tsx (or wherever your component resides)
 "use client";
 
-import SingleFileImageUploader from "@/components/singelFileuploader";
+import MultipleImageUploader from "@/components/multipleFileUploader";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { FileMetadata } from "@/hooks/use-file-uploader";
 import {
   Form,
   FormControl,
@@ -22,24 +22,48 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IUser } from "@/interfaces/user.interfaces";
-// import { ProjectCreateSchema } from "@/zodSchema/projects.schema";
-// import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-// import z from "zod";
+import { IUser } from "@/interfaces/user.interfaces";
+import { Edit2 } from "lucide-react";
+import { IBlog } from "@/interfaces/blogs.interfaces";
 
-export function AddProjectModal({ token }: { token: string }) {
-  const [image, setImage] = useState<File | null>(null);
+interface BlogFormValues {
+  title: string;
+  content: string;
+  images: string[];
+  published: boolean;
+  publishedDate: string;
+  slug: string;
+  tags: string;
+}
+
+// Type guard to narrow File | FileMetadata -> File
+function isFile(file: File | FileMetadata): file is File {
+  return file instanceof File;
+}
+
+export function UpdateBlogModal({
+  token,
+  blog,
+}: {
+  token: string;
+  blog: IBlog;
+}) {
+  const [images, setImages] = useState<(File | FileMetadata)[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  const form = useForm({
+
+  const form = useForm<BlogFormValues>({
+    mode:"onChange",
     defaultValues: {
-      title: "",
-      description: "",
-      techStack: "",
-      liveUrl: "",
-      githubUrl: "",
+      title: blog.title,
+      content: blog.content,
+      images: [],
+      published: blog.published,
+      publishedDate: new Date().toISOString().slice(0, 16),
+      slug: blog.slug,
+      tags: blog.tags.join(", "),
     },
   });
 
@@ -61,58 +85,50 @@ export function AddProjectModal({ token }: { token: string }) {
     const user: IUser = responseData.data;
     console.log(user);
 
-    const processedTechStack = data.techStack
+    data.authorId = user.id;
+    const processedTags = data.tags
       .split(",")
-      .map((tech: any) => tech.trim())
+      .map((tag:any) => tag.trim())
       .filter(Boolean);
-    data.userId = 1;
-    console.log("Data after putting userid");
 
-    const finalProjectData = {
+    const finalBlogData = {
       ...data,
-      techStack: processedTechStack,
-      image: image ? image.name : null,
+      tags: processedTags,
+      images: images.filter(isFile).map((file) => file.name),
     };
 
-    console.log("FINAL PROCESSED PROJECT DATA:", finalProjectData);
+    console.log(" Blog Form Data:", finalBlogData);
 
     const formData = new FormData();
-    formData.append(
-      "data",
-      JSON.stringify({ ...data, techStack: processedTechStack })
-    );
-    if (image) formData.append("file", image);
+    formData.append("data", JSON.stringify(finalBlogData));
+
+    // Append only actual File objects
+    images.filter(isFile).forEach((file) => formData.append("files", file));
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/create`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/create`,
         {
           method: "POST",
-          headers: {
-            Authorization: token,
-          },
           body: formData,
           credentials: "include",
-          next: {
-            tags: ["projects"],
-          },
         }
       );
 
       const responseData = await response.json();
 
       if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Project adding failed");
+        toast.error(responseData.message || "Blog adding failed");
         return;
       }
 
-      toast.success("Project added");
+      toast.success("Blog added successfully!");
+      setOpen(false);
       form.reset();
-      setImage(null);
-      console.log("Login successful, response:", responseData);
+      setImages([]);
     } catch (err) {
       console.error(err);
-      toast.error("Adding project is failed");
+      toast.error("Adding blog failed");
     }
   };
 
@@ -120,17 +136,18 @@ export function AddProjectModal({ token }: { token: string }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          Add Project
+          <Edit2 className="w-4 h-4"/>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Add Project</DialogTitle>
+          <DialogTitle>Update Blog</DialogTitle>
         </DialogHeader>
+
         <Form {...form}>
           <form
             className="space-y-5"
-            id="add-project" // Changed from 'add-division'
+            id="add-blog-form"
             onSubmit={form.handleSubmit(onsubmit)}
           >
             <FormField
@@ -139,7 +156,7 @@ export function AddProjectModal({ token }: { token: string }) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Project Title" {...field} />
+                    <Input placeholder="Blog Title" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,25 +165,36 @@ export function AddProjectModal({ token }: { token: string }) {
 
             <FormField
               control={form.control}
-              name="description"
+              name="content"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea placeholder="Project Description" {...field} />
+                    <Textarea placeholder="Blog Content" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
-              name="techStack"
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Tags (comma separated)" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="slug"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
-                      placeholder="Tech Stack (e.g., React, Node.js)"
+                      placeholder="Slug (e.g., ai-changing-web)"
                       {...field}
                     />
                   </FormControl>
@@ -174,50 +202,50 @@ export function AddProjectModal({ token }: { token: string }) {
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
-              name="liveUrl"
+              name="published"
+              render={({ field }) => (
+                <FormItem className="flex items-center space-x-2">
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      checked={field.value}
+                      onChange={(e) => field.onChange(e.target.checked)}
+                      className="w-4 h-4"
+                    />
+                  </FormControl>
+                  <label>Published</label>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="publishedDate"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Live Site URL" {...field} />
+                    <Input type="datetime-local" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* --- New Field: GitHub URL --- */}
-            <FormField
-              control={form.control}
-              name="githubUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="GitHub Repository URL" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <MultipleImageUploader onChange={setImages} />
           </form>
-          <SingleFileImageUploader onChange={setImage} />
         </Form>
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button className="cursor-pointer" variant="outline">
-              Cancel
-            </Button>
+            <Button variant="outline">Cancel</Button>
           </DialogClose>
           <Button
-            className="cursor-pointer"
             type="submit"
-            form="add-project" // Changed from 'add-division'
+            form="add-blog-form"
             disabled={form.formState.isSubmitting}
           >
-            Save Project
+            Save Blog
           </Button>
         </DialogFooter>
       </DialogContent>

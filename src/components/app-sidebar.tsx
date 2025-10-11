@@ -19,6 +19,7 @@ import { getUserSession } from "@/lib/getUserSession";
 import { IUser } from "@/interfaces/user.interfaces";
 import { redirect } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import SomeThingWrong from "./wrongPage";
 
 interface decoded {
   id: number;
@@ -104,6 +105,13 @@ export async function AppSidebar({
       },
     }
   );
+
+  console.log(response);
+  
+
+  if (!response.ok) {
+    return <SomeThingWrong />;
+  }
 
   const responseData = await response.json();
   // if (responseData.message === "jwt expired") {

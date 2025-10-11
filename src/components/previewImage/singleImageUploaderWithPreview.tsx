@@ -5,11 +5,10 @@ import Image from "next/image";
 import { useFileUpload } from "@/hooks/use-file-uploader";
 
 type OnChangeProps = {
-  previewExistingUrl?:string
   onChange: (file: File | null) => void;
 };
 
-export default function SingleFileImageUploaderWithPreview({ previewExistingUrl, onChange }: OnChangeProps) {
+export default function SingleFileImageUploaderWithPreview({ onChange }: OnChangeProps) {
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024;
 
@@ -30,6 +29,7 @@ export default function SingleFileImageUploaderWithPreview({ previewExistingUrl,
   });
 
     console.log("inside file uploder", files);
+console.log(removeFile);
 
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function SingleFileImageUploaderWithPreview({ previewExistingUrl,
     }
   }, [files, onChange]);
 
-  const previewUrl = files[0]?.preview || previewExistingUrl || null;
+  const previewUrl = files[0]?.preview || null;
 
   return (
     <div className="flex flex-col gap-2">

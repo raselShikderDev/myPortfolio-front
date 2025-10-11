@@ -13,10 +13,10 @@ import {
 import { Trash2 } from "lucide-react";
 import { IWorkExperince } from "@/interfaces/workExperience";
 import { format } from "date-fns";
-import { UpdateWorkExperienceModal } from "./updateWorkExpModal";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { DeleteConfirmationModal } from "./deleteWorkExpConfirmModal";
+import { UpdateWorkExperienceModal } from "./updateWorkExpModal";
+import { DeleteConfirmationModal } from "../deleteWorkExpConfirmModal";
 
 interface AuthResponse {
   user: {
@@ -100,7 +100,7 @@ export default function WorkExperienceTable({
 
         <TableBody>
           {hasData &&
-            workExp.map((exp: IWorkExperince) => (
+            workExp?.map((exp: IWorkExperince) => (
               <TableRow key={exp.id || exp.companyName}>
                 <TableCell className="font-medium text-center">
                   {exp.companyName}
