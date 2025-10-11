@@ -16,7 +16,7 @@ interface IProps {
   onConfirm: () => void;
 }
 
-export function DeleteWorkExpConfirmationModal({
+export function DeleteConfirmationModal({
   children,
   onConfirm,
 }: IProps) {
@@ -27,7 +27,7 @@ export function DeleteWorkExpConfirmationModal({
   const body = {
     title: "Are you absolutely sure?",
     description:
-      "This action cannot be undone. This will permanently delete your account and remove your data from our servers.",
+      "This action cannot be undone. This will permanently delete your content and remove your data from servers.",
   };
 
   return (

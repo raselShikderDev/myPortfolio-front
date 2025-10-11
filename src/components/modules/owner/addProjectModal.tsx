@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { IUser } from "@/interfaces/user.interfaces";
 // import { ProjectCreateSchema } from "@/zodSchema/projects.schema";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -43,10 +44,29 @@ export function AddProjectModal({ token }: { token: string }) {
   });
 
   const onsubmit = async (data: any) => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: token,
+        },
+        next: {
+          tags: ["projects"],
+        },
+      }
+    );
+
+    const responseData = await response.json();
+    const user: IUser = responseData.data;
+    console.log(user);
+
     const processedTechStack = data.techStack
       .split(",")
       .map((tech: any) => tech.trim())
       .filter(Boolean);
+    data.userId = 1;
+    console.log("Data after putting userid");
 
     const finalProjectData = {
       ...data,
@@ -54,8 +74,6 @@ export function AddProjectModal({ token }: { token: string }) {
       image: image ? image.name : null,
     };
 
-    console.log("Project Form Data:", data);
-    console.log("Image File:", image);
     console.log("FINAL PROCESSED PROJECT DATA:", finalProjectData);
 
     const formData = new FormData();
@@ -73,7 +91,7 @@ export function AddProjectModal({ token }: { token: string }) {
           headers: {
             Authorization: token,
           },
-          body: formData, 
+          body: formData,
           credentials: "include",
           next: {
             tags: ["projects"],
@@ -88,9 +106,9 @@ export function AddProjectModal({ token }: { token: string }) {
         return;
       }
 
-      // const toastId = toast.loading("Adding project...");
       toast.success("Project added");
-
+      form.reset();
+      setImage(null);
       console.log("Login successful, response:", responseData);
     } catch (err) {
       console.error(err);
@@ -115,7 +133,6 @@ export function AddProjectModal({ token }: { token: string }) {
             id="add-project" // Changed from 'add-division'
             onSubmit={form.handleSubmit(onsubmit)}
           >
-            {/* --- Project Title Field (was 'name') --- */}
             <FormField
               control={form.control}
               name="title"
@@ -129,7 +146,6 @@ export function AddProjectModal({ token }: { token: string }) {
               )}
             />
 
-            {/* --- Project Description Field (unchanged name) --- */}
             <FormField
               control={form.control}
               name="description"
@@ -143,7 +159,6 @@ export function AddProjectModal({ token }: { token: string }) {
               )}
             />
 
-            {/* --- New Field: Tech Stack --- */}
             <FormField
               control={form.control}
               name="techStack"
@@ -160,7 +175,6 @@ export function AddProjectModal({ token }: { token: string }) {
               )}
             />
 
-            {/* --- New Field: Live URL --- */}
             <FormField
               control={form.control}
               name="liveUrl"

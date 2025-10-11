@@ -42,11 +42,12 @@ export const Navbar2 = ({
   const [isScroll, setIsScroll] = useState(false);
   const [tokens, setTokens] = useState<null | AuthResponse>(null);
   useEffect(() => {
-    fetch("/api/profile")
-      .then((res) => res.json())
-      .then((data) => setTokens(data))
-      .catch(console.error);
-  }, []);
+  fetch("/api/profile")
+    .then(async (res) => (res.ok ? res.json() : null))
+    .then((data) => setTokens(data))
+    .catch(console.error);
+}, []);
+
 
   useEffect(() => {
     const handleScroll = () => {

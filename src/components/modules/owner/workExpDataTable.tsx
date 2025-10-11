@@ -16,7 +16,7 @@ import { format } from "date-fns";
 import { UpdateWorkExperienceModal } from "./updateWorkExpModal";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { DeleteWorkExpConfirmationModal } from "./deleteWorkExpConfirmModal";
+import { DeleteConfirmationModal } from "./deleteWorkExpConfirmModal";
 
 interface AuthResponse {
   user: {
@@ -122,7 +122,7 @@ export default function WorkExperienceTable({
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <UpdateWorkExperienceModal workExp={exp} />
-                    <DeleteWorkExpConfirmationModal
+                    <DeleteConfirmationModal
                       onConfirm={() => handleDelete(exp.id)}
                     >
                       <Button
@@ -132,7 +132,7 @@ export default function WorkExperienceTable({
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
-                    </DeleteWorkExpConfirmationModal>
+                    </DeleteConfirmationModal>
                   </div>
                 </TableCell>
               </TableRow>

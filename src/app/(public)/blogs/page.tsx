@@ -1,22 +1,12 @@
+import { getAllBlogs } from "@/actions/getBlogs";
 import BlogCard from "@/components/modules/blogs/blogCard";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 
 // Make sure this is a default export
 const AllBlogsPage = async () => {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`, {
-     next: {
-      revalidate:60,
-     }
-    });
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
-    const result = await res.json();
-
-    const blogs: IBlog[] | [] = result.data ? result.data : [];
+    const blogs = await getAllBlogs();
+    console.log(blogs);
 
     return (
       <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">

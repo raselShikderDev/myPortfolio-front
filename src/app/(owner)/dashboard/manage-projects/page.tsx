@@ -1,30 +1,13 @@
+import { getAllProjects } from "@/actions/getProjects";
 import { AddProjectModal } from "@/components/modules/owner/addProjectModal";
 import ProjectsTable from "@/components/modules/owner/projectDatatable";
-import { IProject } from "@/interfaces/projects.interfaces";
 import { getUserSession } from "@/lib/getUserSession";
-
-export const dynamic = "force-dynamic";
 
 export default async function ProjectShowCasePage() {
   const token = await getUserSession();
 
-  let projects: IProject[] = [];
-
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
-      cache: "no-store", 
-      next: { tags: ["projects"] },
-    });
-
-    if (!res.ok) {
-      console.error("Failed to fetch projects:", await res.text());
-    } else {
-      const json = await res.json();
-      projects = json.data as IProject[];
-    }
-  } catch (error) {
-    console.error("Error fetching projects:", error);
-  }
+  const projects = await getAllProjects()
+  console.log(projects);
 
   return (
     <main className="min-h-screen bg-background px-4 sm:px-6 lg:px-10 py-10 space-y-10">

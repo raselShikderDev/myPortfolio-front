@@ -1,4 +1,5 @@
 // import { assets, workData } from "@/assets/assets";
+import { getAllProjects } from "@/actions/getProjects";
 import {
   MotionDiv,
   MotionH2,
@@ -76,14 +77,8 @@ const experiences = [
 ];
 
 const ProjectsPage = async () => {
-
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
-    next: {
-      revalidate: 60,
-    },
-  });
-
-  const { data: projectsData }: { data: IProject[] } = await res.json();
+  const projectsData = await getAllProjects();
+  console.log(projectsData);
 
   return (
     <div className="w-full px-[12%] py-10 md:mt-0 scroll-mt-20 mx-auto">
@@ -105,7 +100,7 @@ const ProjectsPage = async () => {
         responsive, full-stack functionality and cutting-edge web technologies.
       </MotionP>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 my-16 mt-10">
-        {projectsData.map((project, index) => (
+        {projectsData.map((project: IProject, index: number) => (
           <div key={index} className="flex">
             <ProjectCard
               title={project.title}

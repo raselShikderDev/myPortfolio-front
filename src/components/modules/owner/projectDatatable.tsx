@@ -10,17 +10,62 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit2, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { IProject } from "@/interfaces/projects.interfaces";
 import Link from "next/link";
+import { UpdateProjectModal } from "./updateProjectModal";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { DeleteConfirmationModal } from "./deleteWorkExpConfirmModal";
+
+interface AuthResponse {
+  user: {
+    id: number;
+    email: string;
+    role: "OWNER";
+    iat: number;
+    exp: number;
+  };
+  token: string;
+}
 
 export default function ProjectsTable({ projects }: { projects: IProject[] }) {
-  const handleEdit = (id: string) => {
-    console.log(`Editing project ${id}`);
-  };
+  const [tokens, setTokens] = useState<null | AuthResponse>(null);
+  useEffect(() => {
+    fetch("/api/profile")
+      .then((res) => res.json())
+      .then((data) => setTokens(data))
+      .catch(console.error);
+  }, []);
 
-  const handleDelete = (id: string) => {
-    console.log("Project deleted successfully", id);
+  const handleDelete = async (id: number) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: tokens?.token as string,
+          },
+          credentials: "include",
+          next: {
+            tags: ["projects"],
+          },
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok || !responseData.success) {
+        toast.error(responseData.message || "Deleting project failed");
+        return;
+      }
+
+      toast.success("Project deleted");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to delete project");
+    }
   };
 
   return (
@@ -38,7 +83,9 @@ export default function ProjectsTable({ projects }: { projects: IProject[] }) {
             <TableHead className="min-w-[150px] hidden md:table-cell text-center">
               GitHub URL
             </TableHead>
-            <TableHead className=" min-w-[100px] text-center">Actions</TableHead>
+            <TableHead className=" min-w-[100px] text-center">
+              Actions
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -74,24 +121,21 @@ export default function ProjectsTable({ projects }: { projects: IProject[] }) {
               </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleEdit(String(project.id))}
-                    className="flex items-center gap-1"
+                  <UpdateProjectModal
+                    project={project}
+                    token={tokens?.token as string}
+                  />
+                  <DeleteConfirmationModal
+                    onConfirm={() => handleDelete(Number(project.id))}
                   >
-                    <Edit2 className="w-4 h-4" />
-                    <span className="hidden sm:inline">Edit</span>
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(String(project.id))}
-                    className="flex items-center gap-1"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span className="hidden sm:inline">Delete</span>
-                  </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="flex items-center gap-1 cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </DeleteConfirmationModal>
                 </div>
               </TableCell>
             </TableRow>

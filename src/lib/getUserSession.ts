@@ -1,4 +1,3 @@
-// src/lib/getUserSession.ts
 import { cookies } from "next/headers";
 
 export async function getUserSession() {
