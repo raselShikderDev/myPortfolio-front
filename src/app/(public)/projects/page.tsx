@@ -1,5 +1,5 @@
 // import { assets, workData } from "@/assets/assets";
-import { getAllProjects } from "@/actions/getProjects";
+// import { getAllProjects } from "@/actions/getProjects";
 import {
   MotionDiv,
   MotionH2,
@@ -77,8 +77,13 @@ const experiences = [
 ];
 
 const ProjectsPage = async () => {
-  const projectsData = await getAllProjects();
-  console.log(projectsData);
+  // const projectsData = await getAllProjects();
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`);
+  const data = await res.json();
+  console.log(res);
+
+  const projectsData = data.data;
 
   return (
     <div className="w-full px-[12%] py-10 md:mt-0 scroll-mt-20 mx-auto">
