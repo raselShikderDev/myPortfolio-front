@@ -107,9 +107,9 @@ export async function AppSidebar({
   );
 
   console.log(response);
-  
 
   if (!response.ok) {
+    redirect("/login");
     return <SomeThingWrong />;
   }
 
