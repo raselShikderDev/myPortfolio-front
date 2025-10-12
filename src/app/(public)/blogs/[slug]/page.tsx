@@ -9,7 +9,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${slug}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${slug}`,{
+    next: { tags: ["blogs"] },
+  });
 
   if (!res.ok) {
     return {
