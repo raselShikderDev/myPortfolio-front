@@ -8,13 +8,9 @@ import { Input } from "@/components/ui/input";
 import PasswordToggler from "@/components/passwordToggler";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-// import { signIn } from "next-auth/react";
-// import Image from "next/image";
-// import { Separator } from "@/components/ui/separator";
 
-// Zod schema for validation
 const LoginFormSchema = z.object({
-  email: z.email("Invalid email"),
+  email: z.string().email("Invalid email"),
   password: z.string().min(1, "Password is required"),
 });
 
@@ -29,8 +25,9 @@ export default function LoginPage() {
   });
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
-// For manual
     try {
+      const toastId = "login-process";
+      toast.loading("Logging in...", { id: toastId });
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
         {
@@ -48,30 +45,18 @@ export default function LoginPage() {
       } = await response.json();
 
       if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Login failed");
+        toast.error(responseData.message || "Login failed", { id: toastId });
         return;
       }
 
-      const toastId = toast.loading("Logging in...");
-      toast.success("Successfully logged in", { id: toastId });
       router.push("/dashboard");
-
-      // // For next-auth
-//       const result = await signIn("credentials", {
-//   ...data,
-//   redirect: false,
-// });
-
-// if (result?.error) {
-//   toast.error(result.error);
-// } else {
-//   toast.success("Logged in!");
-//   router.push("/dashboard");
-// }
+      toast.success("Successfully logged in", { id: toastId });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message);
+      toast.error(err.message || "A network error occurred.", {
+        id: "login-process",
+      });
     }
   };
 
@@ -81,7 +66,6 @@ export default function LoginPage() {
         <h1 className="text-xl font-semibold mb-6">Login</h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email */}
           <div className="flex flex-col">
             <label htmlFor="email" className="mb-1">
               Email
@@ -94,7 +78,6 @@ export default function LoginPage() {
             )}
           </div>
 
-          {/* Password */}
           <div className="flex flex-col">
             <label htmlFor="password" className="mb-1">
               Password
@@ -109,34 +92,12 @@ export default function LoginPage() {
 
           <Button
             type="submit"
-            disabled={!formState.isValid}
+            disabled={!formState.isValid || formState.isSubmitting}
             className="w-full mt-4 cursor-pointer"
           >
             Submit
           </Button>
         </form>
-        {/* <div>
-          <Separator className="mt-5" />
-          <Button
-            variant="outline"
-            className="w-full cursor-pointer"
-            onClick={() =>
-              signIn("google", {
-                callbackUrl: "/dashboard",
-              })
-            }
-          >
-            
-            <Image
-              src="https://img.icons8.com/color/24/google-logo.png"
-              alt="Google"
-              className="w-5 h-5"
-              width={20}
-              height={20}
-            />
-            Login with Google
-          </Button>
-        </div> */}
       </div>
     </section>
   );
