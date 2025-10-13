@@ -142,6 +142,12 @@ npm install
 Create a `.env.local` file in the root directory and add:
 
 ```env
+GOOGLE_CLIENT_ID=<your_google_client-id>
+GOOGLE_CLIENT_SECRET=<your_client_secret>
+AUTH_SECRET=<your-auth_secret>
+JWT_ACCESS_SECRET=<your_jwt_secret>
+NEXT_PUBLIC_IMAGEBB_API_KEY=<your_imagebb_api>
+NEXT_PUBLIC_IMAGEBB_API_LINK=<your_imagebb_api_link>
 NEXT_PUBLIC_BASE_URL=<your_backend_api_url>
 NEXTAUTH_SECRET=<your_secret>
 ```
@@ -150,6 +156,7 @@ NEXTAUTH_SECRET=<your_secret>
 
 ```bash
 npm run dev
+bun run dev
 ```
 
 Then visit 👉 [http://localhost:3000](http://localhost:3000)
