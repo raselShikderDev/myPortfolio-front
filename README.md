@@ -54,7 +54,7 @@ This project showcases modern full-stack architecture and best practices for **d
 
 **Backend:**
 
-- [Express + TypeScript + MongoDB](https://rasel-shikder-backend.vercel.app)
+- [Express + TypeScript + PostgreSQL](https://rasel-shikder-backend.vercel.app)
 
 **Deployment:**
 
