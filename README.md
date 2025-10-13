@@ -1,36 +1,185 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧑‍💻 My Portfolio Frontend
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-15.5.4-black?logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19.1.0-61DAFB?logo=react)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?logo=tailwindcss)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)
 
-First, run the development server:
+---
+
+## 🌐 Live Demo
+
+👉 **Frontend:** [https://raselsdev.vercel.app](https://raselsdev.vercel.app)  
+⚙️ **Backend API:** [https://rasel-shikder-backend.vercel.app](https://rasel-shikder-backend.vercel.app)
+
+---
+
+## 🧩 Overview
+
+**MyPortfolio** is a fully dynamic personal portfolio website built with **Next.js 15**, **React 19**, and **TypeScript**.  
+It allows the **owner** to manage the entire portfolio — including **projects**, **blogs**, **experiences**, and **profile details** — directly from a secure **admin panel** without writing any code.
+
+This project showcases modern full-stack architecture and best practices for **dynamic portfolio management**.
+
+---
+
+## 🚀 Features
+
+- 🧠 **Dynamic Portfolio Management** – Add, edit, and delete projects, blogs, and experiences without coding.
+- 🔐 **Owner Admin Panel** – Secure login system with access control for the site owner only.
+- 🎨 **Modern UI/UX** – Built using TailwindCSS, Framer Motion, and Radix UI for accessibility and animations.
+- ⚡ **Server Integration** – Connects seamlessly with backend APIs for CRUD operations.
+- 🌙 **Theme Support** – Light/Dark mode support using `next-themes`.
+- ✅ **Form Validation** – Implemented with `react-hook-form` and `zod`.
+- 💬 **Notifications** – Real-time toast messages using `sonner`.
+
+---
+
+## 🏗️ Tech Stack
+
+**Frontend:**
+
+- Next.js 15 (Turbopack)
+- React 19
+- TypeScript
+- TailwindCSS 4
+- Radix UI
+- Framer Motion
+- React Hook Form + Zod
+- Next Themes
+- Lucide React Icons
+- Sonner Toasts
+
+**Backend:**
+
+- [Express + TypeScript + MongoDB](https://rasel-shikder-backend.vercel.app)
+
+**Deployment:**
+
+- Vercel (Frontend)
+- Render / Vercel (Backend)
+
+---
+
+## 🗂️ Project Structure
+
+```
+myPortfolio-front/
+
+├── src/
+---actions        # helper functions
+---app            # main app pages
+|   --- (authentications)    # auth pages
+|   |   \---login             # login page
+|   --- (owner)               # admin pages
+|   |   \---dashboard         # admin dashboard
+|   |       --- manage-blogs          # blog CRUD
+|   |       --- manage-experiences    # experience CRUD
+|   |       \--- manage-projects      # project CRUD
+|   --- (public)             # public pages
+|   |   --- about             # about page
+|   |   --- blogs             # blog list
+|   |   |   \--- [slug]       # blog details
+|   |   --- contact           # contact page
+|   |   \--- projects         # projects page
+|   \--- api                  # API routes
+|       --- auth              # auth endpoints
+|       |   \--- [...nextauth]   # NextAuth config
+|       --- blogs             # blog endpoints
+|       --- profile           # profile endpoints
+|       --- projects          # project endpoints
+|       \--- stats            # stats endpoints
+---assets          # static assets
+|   --- public        # publicly accessible files
+|   --- services      # service icons/images
+|   \--- works         # portfolio images
+---components      # React components
+|   --- modules       # feature-specific components
+|   |   --- about
+|   |   --- animations
+|   |   --- authentications
+|   |   --- blogs
+|   |   --- home
+|   |   --- layout
+|   |   --- owner
+|   |   |   --- blogs
+|   |   |   --- projects
+|   |   |   \--- workExperiences
+|   |   --- projects
+|   --- previewImage  # image preview components
+|   \--- ui           # general UI components
+---helpers         # helper functions
+---hooks           # custom React hooks
+---interfaces      # TypeScript interfaces
+---lib             # library functions
+---provider        # context providers
+---utils           # utility functions
+\---zodSchema      # validation schemas
+
+```
+
+---
+
+## ⚙️ Getting Started
+
+### 1️⃣ Clone the repository
+
+```bash
+git clone https://github.com/raselShikderDev/myPortfolio-front.git
+cd myPortfolio-front
+```
+
+### 2️⃣ Install dependencies
+
+```bash
+npm install
+```
+
+### 3️⃣ Set environment variables
+
+Create a `.env.local` file in the root directory and add:
+
+```env
+NEXT_PUBLIC_BASE_URL=<your_backend_api_url>
+NEXTAUTH_SECRET=<your_secret>
+```
+
+### 4️⃣ Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then visit 👉 [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🧠 Admin Panel Access
 
-## Learn More
+The admin panel is private and can be accessed only by the **portfolio owner**.  
+To request admin credentials for collaboration or demo purposes, please contact:
 
-To learn more about Next.js, take a look at the following resources:
+📩 **Email:** [rasel.sikder777.rk@gmail.com](mailto:rasel.sikder777.rk@gmail.com)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📜 License
 
-## Deploy on Vercel
+This project is licensed under the **MIT License** – you’re free to use and modify it with proper credit.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 👨‍💻 Author
+
+**Rasel Shikder**  
+💼 Developer | MERN Stack | TypeScript | Next.js  
+🌐 [GitHub Profile](https://github.com/raselShikderDev)  
+📧 [rasel.sikder777.rk@gmail.com](mailto:rasel.sikder777.rk@gmail.com)
+
+---
+
+## ⭐ Support
+
+If you like this project, consider giving it a **⭐ star** on [GitHub](https://github.com/raselShikderDev/myPortfolio-front) — it helps others find it too!
