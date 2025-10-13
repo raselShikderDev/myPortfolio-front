@@ -4,11 +4,7 @@ import jwt from "jsonwebtoken";
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const token =
-      cookieStore.get("accessToken")?.value ||
-      cookieStore.get("next-auth.session-token")?.value ||
-      cookieStore.get("__Secure-next-auth.session-token")?.value ||
-      "";
+    const token = cookieStore.get("token")?.value || "";
 
     if (!token) {
       return Response.json({ user: null, token: null }, { status: 401 });

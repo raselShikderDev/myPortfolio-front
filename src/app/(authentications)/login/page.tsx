@@ -1,18 +1,16 @@
 "use client";
 
-import { useForm, SubmitHandler } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordToggler from "@/components/passwordToggler";
+import { LoginFormSchema } from "@/zodSchema/authSchema";
 import { toast } from "sonner";
+import { login } from "../../../actions/auth";
 import { useRouter } from "next/navigation";
-
-const LoginFormSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
-});
+// import { cookies } from "next/headers";
 
 type LoginFormValues = z.infer<typeof LoginFormSchema>;
 
@@ -28,29 +26,17 @@ export default function LoginPage() {
     try {
       const toastId = "login-process";
       toast.loading("Logging in...", { id: toastId });
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-          credentials: "include",
-        }
-      );
+      const response = await login(data);
+      console.log(response);
 
-      const responseData: {
-        success: boolean;
-        token?: string;
-        message?: string;
-      } = await response.json();
-
-      if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Login failed", { id: toastId });
+      if (response.success) {
+        router.push("/");
+        toast.error(response.message || "Login failed", { id: toastId });
         return;
       }
+      console.log(response.data);
 
-      router.push("/dashboard");
-      toast.success("Successfully logged in", { id: toastId });
+      // toast.success("Successfully logged in", { id: toastId });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);

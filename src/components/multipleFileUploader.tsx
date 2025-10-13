@@ -72,6 +72,7 @@ export default function MulptipleImageUploader({
                 onClick={openFileDialog}
                 disabled={files.length >= maxFiles}
                 type="button"
+                className="cursor-pointer"
               >
                 <UploadIcon
                   className="-ms-0.5 size-3.5 opacity-60"
@@ -97,7 +98,7 @@ export default function MulptipleImageUploader({
                     onClick={() => removeFile(file.id)}
                     type="button"
                     size="icon"
-                    className="border-background focus-visible:border-background absolute -top-2 -right-2 size-6 rounded-full border-2 shadow-none"
+                    className="border-background focus-visible:border-background absolute -top-2 -right-2 size-6 rounded-full border-2 shadow-none cursor-pointer"
                     aria-label="Remove image"
                   >
                     <XIcon className="size-3.5" />
@@ -121,10 +122,10 @@ export default function MulptipleImageUploader({
             <Button
               variant="outline"
               type="button"
-              className="mt-4"
+              className="mt-4 cursor-pointer"
               onClick={openFileDialog}
             >
-              <UploadIcon className="-ms-1 opacity-60" aria-hidden="true" />
+              <UploadIcon className="-ms-1 opacity-60 cursor-pointer" aria-hidden="true" />
               Select images
             </Button>
           </div>

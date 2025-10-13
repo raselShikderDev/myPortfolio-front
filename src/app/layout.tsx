@@ -3,7 +3,6 @@ import { Outfit as OutfitFont, Ovo as OvoFont } from "next/font/google";
 import "@/app/globals.css";
 import ThemeProviderWrapper from "@/provider/themeProviderWrapper";
 import { Toaster } from "sonner";
-import NextAuthSessionProvider from "@/provider/authProvider";
 
 const Outfit = OutfitFont({
   subsets: ["latin"],
@@ -32,12 +31,10 @@ export default function RootLayout({
       <body
         className={`${Outfit.variable} ${Ovo.variable} antialiased leading-8 dark:bg-[#11001f] dark:text-white overflow-x-hidden`}
       >
-        <NextAuthSessionProvider>
-          <ThemeProviderWrapper>
-            <main>{children}</main>
-            <Toaster />
-          </ThemeProviderWrapper>
-        </NextAuthSessionProvider>
+        <ThemeProviderWrapper>
+          <main>{children}</main>
+          <Toaster />
+        </ThemeProviderWrapper>
       </body>
     </html>
   );

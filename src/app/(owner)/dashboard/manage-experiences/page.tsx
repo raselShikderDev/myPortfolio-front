@@ -5,6 +5,9 @@ import { getUserSession } from "@/lib/getUserSession";
 
 export default async function WorkExperiencePage() {
   const token = await getUserSession();
+  if (!token) {
+    console.error("token not found")
+  }
 
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/all`,
@@ -38,7 +41,7 @@ export default async function WorkExperiencePage() {
             </h2>
           </div>
           <div>
-            <AddWorkExperienceModal token={token} />
+            <AddWorkExperienceModal token={token as string} />
           </div>
         </div>
 
