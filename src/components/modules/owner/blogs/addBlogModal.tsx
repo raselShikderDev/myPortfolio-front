@@ -26,6 +26,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
+import { uploadToImageBB } from "@/utils/imageUploader";
 
 interface BlogFormValues {
   title: string;
@@ -47,7 +48,7 @@ export function AddBlogModal({ token }: { token: string }) {
   const [open, setOpen] = useState<boolean>(false);
 
   const form = useForm<BlogFormValues>({
-    mode:"onChange",
+    mode: "onChange",
     defaultValues: {
       title: "",
       content: "",
@@ -60,6 +61,34 @@ export function AddBlogModal({ token }: { token: string }) {
   });
 
   const onsubmit = async (data: any) => {
+    form.clearErrors();
+    let uploadedImageUrls: string[] = [];
+
+    // 1. Filter for actual File objects from the 'images' state
+    const filesToUpload = images.filter(isFile);
+
+    if (filesToUpload.length > 0) {
+      console.log(`Uploading ${filesToUpload?.length} image(s)...`);
+
+      try {
+        // 2. Map the array of files to an array of upload promises
+        const uploadPromises = filesToUpload.map((file) =>
+          uploadToImageBB(file)
+        );
+
+        // Wait for ALL image uploads to complete concurrently
+        uploadedImageUrls = await Promise.all(uploadPromises);
+
+        console.log("All images uploaded successfully to ImageBB!");
+      } catch (error: any) {
+        console.error("ImageBB Upload Error:", error);
+        console.log(
+          error.message || "Failed to upload one or more images to ImageBB"
+        );
+        return;
+      }
+    }
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
       {
@@ -80,30 +109,29 @@ export function AddBlogModal({ token }: { token: string }) {
     data.authorId = user.id;
     const processedTags = data.tags
       .split(",")
-      .map((tag:any) => tag.trim())
+      .map((tag: any) => tag.trim())
       .filter(Boolean);
 
     const finalBlogData = {
       ...data,
       tags: processedTags,
-      images: images.filter(isFile).map((file) => file.name),
+      images: uploadedImageUrls,
     };
-
-    console.log(" Blog Form Data:", finalBlogData);
-
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(finalBlogData));
-
-    // Append only actual File objects
-    images.filter(isFile).forEach((file) => formData.append("files", file));
+    const jsonData = JSON.stringify(finalBlogData);
+    console.log("FINAL PROCESSED PROJECT JSON DATA:", jsonData);
 
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/create`,
         {
           method: "POST",
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: jsonData,
           credentials: "include",
+          next: { tags: ["blogs"] },
         }
       );
 
@@ -238,7 +266,7 @@ export function AddBlogModal({ token }: { token: string }) {
             form="add-blog-form"
             disabled={form.formState.isSubmitting}
           >
-            Save Blog
+            Add Blog
           </Button>
         </DialogFooter>
       </DialogContent>
