@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import SingleFileImageUploader from "@/components/singelFileuploader";
@@ -23,10 +22,19 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IProject } from "@/interfaces/projects.interfaces";
 import { IUser } from "@/interfaces/user.interfaces";
+import { uploadToImageBB } from "@/utils/imageUploader";
 import { Edit2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+
+interface UpdateProjectFormValues {
+  title: string;
+  description: string;
+  techStack: string;
+  liveUrl: string;
+  githubUrl: string;
+}
 
 export function UpdateProjectModal({
   token,
@@ -38,7 +46,7 @@ export function UpdateProjectModal({
   const [image, setImage] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
 
-  const form = useForm({
+  const form = useForm<UpdateProjectFormValues>({
     defaultValues: {
       title: project.title || "",
       description: project.description || "",
@@ -48,58 +56,91 @@ export function UpdateProjectModal({
     },
   });
 
-  const onsubmit = async (data: any) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
-      {
-        method: "GET",
-        headers: { Authorization: token },
-        next: { revalidate: 60 },
-      }
-    );
-
-    const responseData = await response.json();
-    const user: IUser = responseData.data;
-
-    const processedTechStack = data.techStack
-      .split(",")
-      .map((tech: any) => tech.trim())
-      .filter(Boolean);
-
-    data.userId = user.id || 1;
-
-    const formData = new FormData();
-    formData.append(
-      "data",
-      JSON.stringify({ ...data, techStack: processedTechStack })
-    );
-    if (image) formData.append("file", image);
+  const onsubmit = async (data: UpdateProjectFormValues) => {
+    let imageUrl: string | null = null;
 
     try {
-      const response = await fetch(
+      const toastId = "update-project-process";
+
+      toast.loading("Updating Project...", { id: toastId });
+
+      if (image) {
+        try {
+          imageUrl = await uploadToImageBB(image);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any) {
+          console.error(error);
+          toast.error(error.message || "Failed to upload project image.", {
+            id: toastId,
+          });
+          return;
+        }
+      }
+
+      const userResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+        {
+          method: "GET",
+          headers: { Authorization: token },
+          next: { revalidate: 60 },
+        }
+      );
+
+      const userResponseData = await userResponse.json();
+
+      if (!userResponse.ok || !userResponseData.success) {
+        return;
+      }
+      const user: IUser = userResponseData.data;
+
+      const processedTechStack = data.techStack
+        .split(",")
+        .map((tech: string) => tech.trim())
+        .filter(Boolean);
+
+      const finalProjectData = {
+        ...data,
+        userId: user.id || 1,
+        techStack: processedTechStack,
+        image: imageUrl !== null ? imageUrl : project.image,
+      };
+
+      const jsonData = JSON.stringify(finalProjectData);
+
+      const apiResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/projects/edit/${project.id}`,
         {
           method: "PATCH",
-          headers: { Authorization: token },
-          body: formData,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token,
+          },
+          body: jsonData,
           credentials: "include",
           next: { tags: ["projects"] },
         }
       );
 
-      const responseData = await response.json();
+      const apiResponseData = await apiResponse.json();
+      if (apiResponse.ok) {
+        toast.success("Project updated successfully!", {
+          id: toastId,
+          duration: 10,
+        });
+      }
 
-      if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Project updating failed");
+      if (!apiResponse.ok || !apiResponseData.success) {
         return;
       }
 
-      toast.success("Project Updated");
-      form.reset();
-      setOpen(false); 
+      form.reset(data);
+      setImage(null);
+      setOpen(false);
     } catch (err) {
       console.error(err);
-      toast.error("Updating project failed");
+      toast.error("Project updating failed", {
+        id: "update-project-process",
+      });
     }
   };
 
@@ -192,7 +233,7 @@ export function UpdateProjectModal({
             />
           </form>
 
-          <SingleFileImageUploader onChange={setImage}/>
+          <SingleFileImageUploader onChange={setImage} />
         </Form>
 
         <DialogFooter>

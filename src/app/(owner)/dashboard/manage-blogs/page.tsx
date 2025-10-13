@@ -3,12 +3,13 @@ import BlogsTable from "@/components/modules/owner/blogs/blogsDataTable";
 import { getUserSession } from "@/lib/getUserSession";
 
 export default async function ManageBlogsPage() {
-    const token = await getUserSession();
-  
-  
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`);
-  
-console.log(res);
+  const token = await getUserSession();
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`, {
+    next: { tags: ["blogs"] },
+  });
+
+  console.log(res);
 
   if (!res.ok) {
     console.error("Failed to fetch blogs");

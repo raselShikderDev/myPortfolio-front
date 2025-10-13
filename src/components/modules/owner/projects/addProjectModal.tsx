@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IUser } from "@/interfaces/user.interfaces";
+import { uploadToImageBB } from "@/utils/imageUploader";
 // import { ProjectCreateSchema } from "@/zodSchema/projects.schema";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -53,79 +54,93 @@ export function AddProjectModal({ token }: { token: string }) {
   });
 
   const onsubmit = async (data: any) => {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: token,
-        },
-        next: {
-          tags: ["projects"],
-        },
-      }
-    );
-
-    const responseData = await response.json();
-    const user: IUser = responseData.data;
-    console.log(user);
-
-    const processedTechStack = data.techStack
-      .split(",")
-      .map((tech: any) => tech.trim())
-      .filter(Boolean);
-    data.userId = user.id;
-    console.log("Data after putting userid");
-
-    const finalProjectData = {
-      ...data,
-      techStack: processedTechStack,
-      image: image ? image.name : null,
-    };
-
-    console.log("FINAL PROCESSED PROJECT DATA:", finalProjectData);
-
-    const formData = new FormData();
-    formData.append(
-      "data",
-      JSON.stringify({ ...data, techStack: processedTechStack })
-    );
-        console.log("image procces: ", image);
-    if (image) formData.append("file", image);
+    form.clearErrors();
+    let imageUrl: string | null = null;
+    const toastId = "project-process";
 
     try {
-      const response = await fetch(
+      toast.loading("Adding Project...", { id: toastId });
+      if (image) {
+        try {
+          imageUrl = await uploadToImageBB(image);
+        } catch (error: any) {
+          toast.error(error.message || "Failed to upload project image.", {
+            id: toastId,
+          });
+          console.error("ImageBB Upload Error:", error);
+          return;
+        }
+      }
+
+      const userResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+        {
+          method: "GET",
+          headers: { Authorization: token },
+          next: { tags: ["projects"] },
+        }
+      );
+
+      const userData = await userResponse.json();
+
+      if (!userResponse.ok || !userData.success) {
+        toast.error(userData.message || "Failed to retrieve user data.", {
+          id: toastId,
+        });
+        return;
+      }
+      const user: IUser = userData.data;
+      const processedTechStack = data.techStack
+        .split(",")
+        .map((tech: any) => tech.trim())
+        .filter(Boolean);
+
+      const finalProjectData = {
+        ...data,
+        userId: user.id,
+        techStack: processedTechStack,
+        image: imageUrl ? imageUrl : null,
+      };
+
+      const jsonData = JSON.stringify(finalProjectData);
+      console.log("FINAL PROCESSED PROJECT JSON DATA:", jsonData);
+      
+      const apiResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/projects/create`,
         {
           method: "POST",
           headers: {
+            "Content-Type": "application/json",
             Authorization: token,
           },
-          body: formData,
+          body: jsonData,
           credentials: "include",
-          next: {
-            tags: ["projects"],
-          },
+          next: { tags: ["projects"] },
         }
       );
 
-      const responseData = await response.json();
+      const apiResponseData = await apiResponse.json();
 
-      if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Project adding failed");
+      if (!apiResponse.ok || !apiResponseData.success) {
+        toast.error(apiResponseData.message || "Project adding failed.", {
+          id: toastId,
+        });
         return;
       }
 
-      toast.success("Project added");
+      toast.success("Project added successfully!", { id: toastId });
+
       form.reset();
       setImage(null);
-      console.log("Login successful, response:", responseData);
+      setOpen(false);
     } catch (err) {
       console.error(err);
-      toast.error("Adding project is failed");
+      toast.error(
+        "Adding project failed: A network or server error occurred.",
+        { id: toastId }
+      );
     }
   };
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -224,7 +239,7 @@ export function AddProjectModal({ token }: { token: string }) {
           <Button
             className="cursor-pointer"
             type="submit"
-            form="add-project" // Changed from 'add-division'
+            form="add-project"
             disabled={form.formState.isSubmitting}
           >
             Save Project
