@@ -9,6 +9,9 @@ const Logout = ({ user, token }: { user: IUser; token: string }) => {
   const router = useRouter();
 
   const hanldeSignOut = async () => {
+    const toastId = "logout";
+    toast.loading("Logging out...", { id: toastId });
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`,
       {
@@ -26,11 +29,10 @@ const Logout = ({ user, token }: { user: IUser; token: string }) => {
     } = await response.json();
 
     if (!response.ok || !responseData.success) {
-      toast.error(responseData.message || "Logout failed");
+      toast.error(responseData.message || "Logout failed", { id: toastId });
       return;
     }
 
-    const toastId = toast.loading("Logging out...");
     toast.success("Successfully logged out", { id: toastId });
     router.push("/login");
   };

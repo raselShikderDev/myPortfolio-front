@@ -141,7 +141,7 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
                 </TableCell>
 
                 <TableCell className="hidden sm:table-cell truncate max-w-[200px] text-center">
-                  {blog.author?.name || "Unknown"}
+                  {blog.author?.name || "Rasel Shikder"}
                 </TableCell>
 
                 <TableCell className="hidden md:table-cell text-center">
