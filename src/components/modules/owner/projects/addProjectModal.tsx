@@ -76,7 +76,7 @@ export function AddProjectModal({ token }: { token: string }) {
         `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
         {
           method: "GET",
-          headers: { Authorization: token },
+          headers: { Authorization: token as string },
           next: { tags: ["projects"] },
         }
       );
@@ -104,14 +104,14 @@ export function AddProjectModal({ token }: { token: string }) {
 
       const jsonData = JSON.stringify(finalProjectData);
       console.log("FINAL PROCESSED PROJECT JSON DATA:", jsonData);
-      
+
       const apiResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/projects/create`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: token as string,
           },
           body: jsonData,
           credentials: "include",
@@ -242,7 +242,7 @@ export function AddProjectModal({ token }: { token: string }) {
             form="add-project"
             disabled={form.formState.isSubmitting}
           >
-            Save Project
+            Add Project
           </Button>
         </DialogFooter>
       </DialogContent>

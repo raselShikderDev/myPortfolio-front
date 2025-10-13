@@ -81,7 +81,7 @@ export function UpdateProjectModal({
         `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
         {
           method: "GET",
-          headers: { Authorization: token },
+          headers: { Authorization: token as string },
           next: { revalidate: 60 },
         }
       );
@@ -113,7 +113,7 @@ export function UpdateProjectModal({
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: token as string,
           },
           body: jsonData,
           credentials: "include",
@@ -249,7 +249,7 @@ export function UpdateProjectModal({
             className="cursor-pointer"
             disabled={form.formState.isSubmitting}
           >
-            Save Project
+            update Project
           </Button>
         </DialogFooter>
       </DialogContent>

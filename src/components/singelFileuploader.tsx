@@ -52,7 +52,7 @@ export default function SingleFileImageUploader({ onChange }: OnChangeProps) {
           onDragOver={handleDragOver}
           onDrop={handleDrop}
           data-dragging={isDragging || undefined}
-          className="border-input hover:bg-accent/50 data-[dragging=true]:bg-accent/50 relative flex min-h-52 flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors"
+          className="border-input hover:bg-accent/50 data-[dragging=true]:bg-accent/50 relative flex min-h-52 flex-col items-center justify-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors cursor-pointer"
         >
           <input {...getInputProps()} className="sr-only" />
           {previewUrl ? (
@@ -84,7 +84,7 @@ export default function SingleFileImageUploader({ onChange }: OnChangeProps) {
               type="button"
               onClick={() => removeFile(files[0]?.id)}
               aria-label="Remove image"
-              className="z-50 flex size-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+              className="z-50 flex size-8 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 cursor-pointer"
             >
               <XIcon className="size-4" />
             </button>

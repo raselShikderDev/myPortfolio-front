@@ -55,7 +55,7 @@ export function UpdateBlogModal({
   const [open, setOpen] = useState<boolean>(false);
 
   const form = useForm<BlogFormValues>({
-    mode:"onChange",
+    mode: "onChange",
     defaultValues: {
       title: blog.title,
       content: blog.content,
@@ -73,7 +73,7 @@ export function UpdateBlogModal({
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: token as string,
         },
         next: {
           tags: ["projects"],
@@ -88,7 +88,7 @@ export function UpdateBlogModal({
     data.authorId = user.id;
     const processedTags = data.tags
       .split(",")
-      .map((tag:any) => tag.trim())
+      .map((tag: any) => tag.trim())
       .filter(Boolean);
 
     const finalBlogData = {
@@ -136,7 +136,7 @@ export function UpdateBlogModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          <Edit2 className="w-4 h-4"/>
+          <Edit2 className="w-4 h-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
@@ -243,9 +243,10 @@ export function UpdateBlogModal({
           <Button
             type="submit"
             form="add-blog-form"
+            className="cursor-pointer"
             disabled={form.formState.isSubmitting}
           >
-            Save Blog
+            Update Blog
           </Button>
         </DialogFooter>
       </DialogContent>

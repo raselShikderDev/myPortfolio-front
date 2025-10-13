@@ -1,4 +1,4 @@
-import { getAllBlogs } from "@/actions/getBlogs";
+import { getAllBlogs } from "../../../actions/getBlogs";
 import BlogCard from "@/components/modules/blogs/blogCard";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 

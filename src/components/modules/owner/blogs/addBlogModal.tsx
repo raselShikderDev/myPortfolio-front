@@ -94,7 +94,7 @@ export function AddBlogModal({ token }: { token: string }) {
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: token as string,
         },
         next: {
           tags: ["projects"],
@@ -127,7 +127,7 @@ export function AddBlogModal({ token }: { token: string }) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: token as string,
           },
           body: jsonData,
           credentials: "include",
@@ -265,6 +265,7 @@ export function AddBlogModal({ token }: { token: string }) {
             type="submit"
             form="add-blog-form"
             disabled={form.formState.isSubmitting}
+            className="cursor-pointer"
           >
             Add Blog
           </Button>

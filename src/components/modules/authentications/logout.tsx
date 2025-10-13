@@ -1,4 +1,5 @@
 "use client";
+import { logout } from "../../../actions/logout";
 import { Button } from "@/components/ui/button";
 import { IUser } from "@/interfaces/user.interfaces";
 import { LogOut } from "lucide-react";
@@ -12,29 +13,15 @@ const Logout = ({ user, token }: { user: IUser; token: string }) => {
     const toastId = "logout";
     toast.loading("Logging out...", { id: toastId });
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: token,
-        },
-      }
-    );
+    const response = await logout(token);
 
-    const responseData: {
-      success: boolean;
-      token?: string;
-      message?: string;
-    } = await response.json();
+    if (response.success) {
+      toast.success("Successfully logged out", { id: toastId });
+      router.push("/login");
 
-    if (!response.ok || !responseData.success) {
-      toast.error(responseData.message || "Logout failed", { id: toastId });
       return;
     }
-
-    toast.success("Successfully logged out", { id: toastId });
-    router.push("/login");
+    toast.error("Logout failed", { id: toastId });
   };
 
   return (

@@ -16,11 +16,13 @@ interface BlogStatsResponse {
 
 export default async function Page() {
   const token = await getUserSession();
-
+ if (!token) {
+    console.error("token not found")
+  }
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/stats`, {
     method: "GET",
     headers: {
-      Authorization: token,
+      Authorization: token as string,
     },
     next: {
       revalidate: 60,

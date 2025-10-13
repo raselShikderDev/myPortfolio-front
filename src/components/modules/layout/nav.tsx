@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -15,8 +16,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { assets } from "@/assets/assets";
 
-interface NavbarProps {
-  menu?: { title: string; url: string }[];
+interface IMenuItem {
+  title: string;
+  url: string;
 }
 
 interface AuthResponse {
@@ -30,15 +32,7 @@ interface AuthResponse {
   token: string;
 }
 
-export const Navbar2 = ({
-  menu = [
-    { title: "Home", url: "/" },
-    { title: "About me", url: "/about" },
-    { title: "Blogs", url: "/blogs" },
-    { title: "Projects", url: "/projects" },
-    { title: "Contact", url: "/contact" },
-  ],
-}: NavbarProps) => {
+export const Navbar2 = () => {
   const [isScroll, setIsScroll] = useState(false);
   const [tokens, setTokens] = useState<null | AuthResponse>(null);
   useEffect(() => {
@@ -48,6 +42,19 @@ export const Navbar2 = ({
       .catch(console.error);
   }, []);
 
+  const menu: IMenuItem[] = [
+    { title: "Home", url: "/" },
+    { title: "About me", url: "/about" },
+    { title: "Blogs", url: "/blogs" },
+    { title: "Projects", url: "/projects" },
+    { title: "Contact", url: "/contact" },
+  ];
+
+  if (tokens?.user.email) {
+    menu.push({ title: "Dashboard", url: "/dashboard" });
+  } else {
+    menu.push({ title: "Login", url: "/login" });
+  }
   useEffect(() => {
     const handleScroll = () => {
       setIsScroll(window.scrollY > 30);
@@ -81,12 +88,12 @@ export const Navbar2 = ({
 
           {/* Desktop Menu */}
           <ul className="hidden md:flex items-center gap-6 text-sm md:text-base">
-            {menu.map((item) => (
+            {menu?.map((item, index: number) => (
               <li
-                key={item.title}
+                key={index}
                 className="font-ovo hover:text-red-600 transition"
               >
-                <Link href={item.url}>{item.title}</Link>
+                <Link href={item?.url}>{item?.title}</Link>
               </li>
             ))}
           </ul>
@@ -100,9 +107,7 @@ export const Navbar2 = ({
               className="hidden md:flex items-center gap-2 px-6 py-2 font-ovo border md:text-lg border-gray-600 rounded-full hover:bg-darktheme hover:text-white dark:hover:bg-white dark:hover:text-black transition"
             >
               {tokens?.user.email ? "Dashboard" : "Login"}
-              <span className="text-lg">
-                {tokens?.user.email ? "Dashboard" : "→"}
-              </span>
+              <span className="text-lg">{tokens?.user.email && "→"}</span>
             </Link>
 
             {/* Mobile Menu */}
@@ -126,17 +131,18 @@ export const Navbar2 = ({
                 </SheetHeader>
 
                 <div className="flex flex-col gap-4 mt-6">
-                  {menu.map((item) => (
+                  {menu?.map((item, index: number) => (
                     <Link
-                      key={item.title}
-                      href={item.url}
+                      key={index}
+                      href={item?.url}
                       className="text-md font-semibold p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
                     >
-                      {item.title}
+                      {item?.title}
                     </Link>
                   ))}
                 </div>
               </SheetContent>
+              <SheetFooter></SheetFooter>
             </Sheet>
           </div>
         </div>
