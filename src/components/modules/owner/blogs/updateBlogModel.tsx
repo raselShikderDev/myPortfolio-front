@@ -26,7 +26,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
-import { Edit2 } from "lucide-react";
+import { Edit2, Loader2 } from "lucide-react";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 
 interface BlogFormValues {
@@ -55,7 +55,7 @@ export function UpdateBlogModal({
   const [open, setOpen] = useState<boolean>(false);
 
   const form = useForm<BlogFormValues>({
-    mode:"onChange",
+    mode: "onChange",
     defaultValues: {
       title: blog.title,
       content: blog.content,
@@ -73,7 +73,7 @@ export function UpdateBlogModal({
       {
         method: "GET",
         headers: {
-          Authorization: token,
+          Authorization: token as string,
         },
         next: {
           tags: ["projects"],
@@ -83,12 +83,11 @@ export function UpdateBlogModal({
 
     const responseData = await response.json();
     const user: IUser = responseData.data;
-    console.log(user);
 
     data.authorId = user.id;
     const processedTags = data.tags
       .split(",")
-      .map((tag:any) => tag.trim())
+      .map((tag: any) => tag.trim())
       .filter(Boolean);
 
     const finalBlogData = {
@@ -97,7 +96,6 @@ export function UpdateBlogModal({
       images: images.filter(isFile).map((file) => file.name),
     };
 
-    console.log(" Blog Form Data:", finalBlogData);
 
     const formData = new FormData();
     formData.append("data", JSON.stringify(finalBlogData));
@@ -118,7 +116,7 @@ export function UpdateBlogModal({
       const responseData = await response.json();
 
       if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Blog adding failed");
+        toast.error("Blog adding failed");
         return;
       }
 
@@ -136,7 +134,7 @@ export function UpdateBlogModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          <Edit2 className="w-4 h-4"/>
+          <Edit2 className="w-4 h-4" />
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
@@ -238,14 +236,19 @@ export function UpdateBlogModal({
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button disabled={form.formState.isSubmitting} variant="outline">Cancel</Button>
           </DialogClose>
           <Button
             type="submit"
             form="add-blog-form"
+            className="cursor-pointer"
             disabled={form.formState.isSubmitting}
           >
-            Save Blog
+            {!form.formState.isSubmitting && `Update Blog`}
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
+            Update Blog
           </Button>
         </DialogFooter>
       </DialogContent>

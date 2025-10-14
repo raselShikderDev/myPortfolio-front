@@ -28,8 +28,6 @@ export default function SingleFileImageUploaderWithPreview({ onChange }: OnChang
     maxSize,
   });
 
-    console.log("inside file uploder", files);
-console.log(removeFile);
 
 
   useEffect(() => {

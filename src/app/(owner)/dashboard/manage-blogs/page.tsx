@@ -4,12 +4,13 @@ import { getUserSession } from "@/lib/getUserSession";
 
 export default async function ManageBlogsPage() {
   const token = await getUserSession();
-
+ if (!token) {
+    console.error("token not found")
+  }
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`, {
     next: { tags: ["blogs"] },
   });
 
-  console.log(res);
 
   if (!res.ok) {
     console.error("Failed to fetch blogs");
@@ -32,7 +33,7 @@ export default async function ManageBlogsPage() {
           <h2 className="text-lg sm:text-xl font-semibold text-foreground">
             All Blogs
           </h2>
-          <AddBlogModal token={token} />
+          <AddBlogModal token={token as string} />
         </div>
 
         <div className="overflow-x-auto rounded-lg border border-border">

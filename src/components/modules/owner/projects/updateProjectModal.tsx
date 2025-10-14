@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { IProject } from "@/interfaces/projects.interfaces";
 import { IUser } from "@/interfaces/user.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
-import { Edit2 } from "lucide-react";
+import { Edit2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -62,7 +62,6 @@ export function UpdateProjectModal({
     try {
       const toastId = "update-project-process";
 
-      toast.loading("Updating Project...", { id: toastId });
 
       if (image) {
         try {
@@ -81,7 +80,7 @@ export function UpdateProjectModal({
         `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
         {
           method: "GET",
-          headers: { Authorization: token },
+          headers: { Authorization: token as string },
           next: { revalidate: 60 },
         }
       );
@@ -113,7 +112,7 @@ export function UpdateProjectModal({
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: token as string,
           },
           body: jsonData,
           credentials: "include",
@@ -249,7 +248,10 @@ export function UpdateProjectModal({
             className="cursor-pointer"
             disabled={form.formState.isSubmitting}
           >
-            Save Project
+            {!form.formState.isSubmitting && `Update Project`}
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
