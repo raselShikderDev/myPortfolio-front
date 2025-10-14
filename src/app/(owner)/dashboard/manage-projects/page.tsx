@@ -5,13 +5,14 @@ import { getUserSession } from "@/lib/getUserSession";
 
 export default async function ProjectShowCasePage() {
   const token = await getUserSession();
-
+ if (!token) {
+    console.error("token not found")
+  }
   // const projects = await getAllProjects()
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
     next: { tags: ["projects"] },
   });
   const data = await res.json();
-  console.log(res);
 
   const projects = data.data;
 
@@ -33,7 +34,7 @@ export default async function ProjectShowCasePage() {
             </h2>
           </div>
           <div>
-            <AddProjectModal token={token} />
+            <AddProjectModal token={token as string} />
           </div>
         </div>
 

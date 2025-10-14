@@ -15,8 +15,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { assets } from "@/assets/assets";
 
-interface NavbarProps {
-  menu?: { title: string; url: string }[];
+interface IMenuItem {
+  title: string;
+  url: string;
 }
 
 interface AuthResponse {
@@ -30,17 +31,10 @@ interface AuthResponse {
   token: string;
 }
 
-export const Navbar2 = ({
-  menu = [
-    { title: "Home", url: "/" },
-    { title: "About me", url: "/about" },
-    { title: "Blogs", url: "/blogs" },
-    { title: "Projects", url: "/projects" },
-    { title: "Contact", url: "/contact" },
-  ],
-}: NavbarProps) => {
+export const Navbar2 = () => {
   const [isScroll, setIsScroll] = useState(false);
   const [tokens, setTokens] = useState<null | AuthResponse>(null);
+
   useEffect(() => {
     fetch("/api/profile")
       .then(async (res) => (res.ok ? res.json() : null))
@@ -49,12 +43,25 @@ export const Navbar2 = ({
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScroll(window.scrollY > 30);
-    };
+    const handleScroll = () => setIsScroll(window.scrollY > 30);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const menu: IMenuItem[] = [
+    { title: "Home", url: "/" },
+    { title: "About me", url: "/about" },
+    { title: "Blogs", url: "/blogs" },
+    { title: "Projects", url: "/projects" },
+    { title: "Contact", url: "/contact" },
+  ];
+
+  if (tokens?.user.email) {
+    menu.push({ title: "Dashboard", url: "/dashboard" });
+  } else {
+    menu.push({ title: "Login", url: "/login" });
+  }
+
   return (
     <>
       <div className="-z-50 fixed top-0 w-11/12 right-0 translate-y-[-80%] dark:hidden">
@@ -64,6 +71,7 @@ export const Navbar2 = ({
           src={assets.header_bg_color}
         />
       </div>
+
       <nav
         className={`sticky top-0 z-50 w-full transition-all duration-300 ${
           isScroll
@@ -71,66 +79,63 @@ export const Navbar2 = ({
             : "bg-transparent"
         }`}
       >
-        <div className="container mx-auto flex justify-between items-center py-4 px-5 lg:px-8">
-          {/* Logo */}
+        <div className="container mx-auto flex justify-between items-center py-3 px-4 sm:px-5 md:px-6 lg:px-8">
           <Link href={"/"} className="flex items-center gap-2">
-            <h1 className="text-xl dark:text-white/90 md:text-2xl lg:text-[28px] font-semibold">
+            <h1 className="text-lg md:text-xl lg:text-2xl font-semibold dark:text-white/90">
               Rasel Shikder<span className="text-red-600">.</span>
             </h1>
           </Link>
 
-          {/* Desktop Menu */}
-          <ul className="hidden md:flex items-center gap-6 text-sm md:text-base">
-            {menu.map((item) => (
+          <ul className="hidden lg:flex items-center gap-3 md:gap-4 lg:gap-6 text-xs sm:text-sm md:text-[14px] lg:text-base">
+            {menu.map((item, i) => (
               <li
-                key={item.title}
-                className="font-ovo hover:text-red-600 transition"
+                key={i}
+                className="font-ovo hover:text-red-600 transition whitespace-nowrap"
               >
                 <Link href={item.url}>{item.title}</Link>
               </li>
             ))}
           </ul>
 
-          {/* Right side (Mode toggle + Connect + Mobile Menu) */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             <ModeToggle />
 
             <Link
-              href={tokens?.user.email ? "/dashboard" : "/login"}
-              className="hidden md:flex items-center gap-2 px-6 py-2 font-ovo border md:text-lg border-gray-600 rounded-full hover:bg-darktheme hover:text-white dark:hover:bg-white dark:hover:text-black transition"
+              href="/contact"
+              className="hidden lg:flex items-center gap-1 md:gap-2 px-3 md:px-4 lg:px-6 py-1 md:py-2 text-xs sm:text-sm md:text-[14px] lg:text-base font-ovo border border-gray-600 rounded-full hover:bg-darktheme hover:text-white dark:hover:bg-white dark:hover:text-black transition"
             >
-              {tokens?.user.email ? "Dashboard" : "Login"}
-              <span className="text-lg">
-                {tokens?.user.email ? "Dashboard" : "→"}
-              </span>
+              Contact<span className="text-sm md:text-base lg:text-lg">→</span>
             </Link>
 
-            {/* Mobile Menu */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="icon" className="md:hidden">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="md:flex lg:hidden cursor-pointer"
+                  aria-label="Open menu"
+                >
                   <Menu className="w-5 h-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent
-                className={`overflow-y-auto bg-white/50 backdrop-blur-xl dark:bg-darktheme/50`}
-              >
+
+              <SheetContent className="overflow-y-auto bg-white/50 backdrop-blur-xl dark:bg-darktheme/50">
                 <SheetHeader>
                   <SheetTitle>
-                    <Link href={"/"} className="flex items-center gap-2">
-                      <h1 className="text-xl dark:text-white/90 md:text-2xl lg:text-[28px] font-semibold">
+                    <Link href="/" className="flex items-center gap-2">
+                      <h1 className="text-lg md:text-xl font-semibold dark:text-white/90">
                         Rasel Shikder<span className="text-red-600">.</span>
                       </h1>
                     </Link>
                   </SheetTitle>
                 </SheetHeader>
 
-                <div className="flex flex-col gap-4 mt-6">
-                  {menu.map((item) => (
+                <div className="flex flex-col gap-2 mt-4">
+                  {menu.map((item, i) => (
                     <Link
-                      key={item.title}
+                      key={i}
                       href={item.url}
-                      className="text-md font-semibold p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
+                      className="text-xs sm:text-sm md:text-[14px] font-semibold p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
                     >
                       {item.title}
                     </Link>
