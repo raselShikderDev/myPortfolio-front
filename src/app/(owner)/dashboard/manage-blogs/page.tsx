@@ -11,7 +11,6 @@ export default async function ManageBlogsPage() {
     next: { tags: ["blogs"] },
   });
 
-  console.log(res);
 
   if (!res.ok) {
     console.error("Failed to fetch blogs");

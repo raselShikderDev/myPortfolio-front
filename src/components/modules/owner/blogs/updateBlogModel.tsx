@@ -83,7 +83,6 @@ export function UpdateBlogModal({
 
     const responseData = await response.json();
     const user: IUser = responseData.data;
-    console.log(user);
 
     data.authorId = user.id;
     const processedTags = data.tags
@@ -97,7 +96,6 @@ export function UpdateBlogModal({
       images: images.filter(isFile).map((file) => file.name),
     };
 
-    console.log(" Blog Form Data:", finalBlogData);
 
     const formData = new FormData();
     formData.append("data", JSON.stringify(finalBlogData));

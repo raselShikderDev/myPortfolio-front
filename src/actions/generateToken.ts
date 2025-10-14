@@ -16,7 +16,6 @@ export const generateToken = async () => {
   }
   const result = await res.json();
   if (result?.success) {
-    // console.log('User login successful!', result);
     const cookiesStore = await cookies();
     cookiesStore.set("accessToken", result?.data?.accessToken, {
       httpOnly: true,
