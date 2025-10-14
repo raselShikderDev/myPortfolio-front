@@ -10,6 +10,8 @@ import {
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 // export const metadata = {
 //   title: "Contact | Rasel Shikder",
@@ -18,32 +20,52 @@ import { Textarea } from "@/components/ui/textarea";
 // };
 
 export default function ContactPage() {
-  const [result, setResult] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
   const { theme } = useTheme();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setResult("Sending...");
-
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     formData.append("access_key", "0e603e92-0127-45bf-941a-6fbc380b94f8");
 
     try {
+      setLoading(true);
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         body: formData,
       });
 
       const data = await response.json();
+      console.log(data);
 
       if (data.success) {
-        setResult("Form submitted successfully!");
-        event.currentTarget.reset();
+        toast.success("Form submitted successfully!", {
+          description: "I'll get back to you soon.",
+          duration: 5000,
+          className:
+            "bg-green-600 text-white font-medium border border-green-700 shadow-lg",
+        });
+
+        form.reset();
       } else {
-        setResult(data.message || "An error occurred.");
+        toast.error("Failed to send message!", {
+          description: "Please try again later.",
+          duration: 5000,
+          className:
+            "bg-red-600 text-white font-medium border border-red-700 shadow-lg",
+        });
       }
     } catch (error: any) {
-      setResult("Error: " + error.message);
+      console.error(error);
+      toast.error("Failed to send message!", {
+        description: "Please try again later.",
+        duration: 5000,
+        className:
+          "bg-red-600 text-white font-medium border border-red-700 shadow-lg",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -122,17 +144,19 @@ export default function ContactPage() {
           />
 
           <Button
+            disabled={loading}
             type="submit"
-            className="flex items-center gap-2 px-6 py-3 rounded-full bg-gray-900 text-white hover:bg-gray-700 dark:bg-white dark:text-black dark:hover:bg-gray-300 transition-transform transform hover:scale-105"
+            className="group relative flex cursor-pointer items-center gap-2 px-6 py-3 rounded-full bg-gray-900 text-white hover:bg-gray-700 dark:bg-white dark:text-black dark:hover:bg-gray-300 transition-transform transform hover:scale-105 overflow-hidden"
           >
-            Send now <IoIosSend />
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <span>Send now</span>
+                <IoIosSend className="relative transition-all duration-300 group-active:translate-x-4 group-active:-translate-y-4 animate-out" />
+              </>
+            )}
           </Button>
-
-          {result && (
-            <p className="mt-4 text-center text-gray-800 dark:text-gray-200">
-              {result}
-            </p>
-          )}
         </form>
       </div>
     </div>

@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IUser } from "@/interfaces/user.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
+import { Loader2 } from "lucide-react";
 // import { ProjectCreateSchema } from "@/zodSchema/projects.schema";
 // import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -59,7 +60,6 @@ export function AddProjectModal({ token }: { token: string }) {
     const toastId = "project-process";
 
     try {
-      toast.loading("Adding Project...", { id: toastId });
       if (image) {
         try {
           imageUrl = await uploadToImageBB(image);
@@ -232,7 +232,7 @@ export function AddProjectModal({ token }: { token: string }) {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button className="cursor-pointer" variant="outline">
+            <Button disabled={form.formState.isSubmitting} className="cursor-pointer" variant="outline">
               Cancel
             </Button>
           </DialogClose>
@@ -242,7 +242,10 @@ export function AddProjectModal({ token }: { token: string }) {
             form="add-project"
             disabled={form.formState.isSubmitting}
           >
-            Add Project
+            {!form.formState.isSubmitting && `Add Project`}
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
