@@ -10,6 +10,7 @@ import { LoginFormSchema } from "@/zodSchema/authSchema";
 import { toast } from "sonner";
 import { login } from "../../../actions/auth";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 // import { cookies } from "next/headers";
 
 type LoginFormValues = z.infer<typeof LoginFormSchema>;
@@ -25,7 +26,6 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     try {
       const toastId = "login-process";
-      toast.loading("Logging in...", { id: toastId });
       const response = await login(data);
       console.log(response);
 
@@ -81,7 +81,10 @@ export default function LoginPage() {
             disabled={!formState.isValid || formState.isSubmitting}
             className="w-full mt-4 cursor-pointer"
           >
-            Submit
+            {!formState.isSubmitting && `Login`}
+            {formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
           </Button>
         </form>
       </div>

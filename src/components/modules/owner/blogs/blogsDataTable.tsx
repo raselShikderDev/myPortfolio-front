@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Trash2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 import { useEffect, useState } from "react";
@@ -19,18 +19,13 @@ import { toast } from "sonner";
 import { DeleteConfirmationModal } from "../deleteWorkExpConfirmModal";
 
 interface AuthResponse {
-  user: {
-    id: number;
-    email: string;
-    role: "OWNER";
-    iat: number;
-    exp: number;
-  };
+  user: { id: number; email: string; role: "OWNER"; iat: number; exp: number };
   token: string;
 }
 
 export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
   const [tokens, setTokens] = useState<null | AuthResponse>(null);
+  const [publishingSlug, setPublishingSlug] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/profile")
@@ -38,6 +33,42 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
       .then((data) => setTokens(data))
       .catch(console.error);
   }, []);
+
+  const togglePublish = async (slug: string, currentStatus: boolean) => {
+    setPublishingSlug(slug);
+    const status = currentStatus ? "unpublish" : "publish";
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${status}/${slug}`,
+        {
+          method: "PATCH",
+          headers: { Authorization: tokens?.token as string },
+          credentials: "include",
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok || !responseData.success) {
+        toast.error(
+          responseData.message ||
+            `${currentStatus ? "Unpublishing" : "Publishing"} blog failed`
+        );
+        return;
+      }
+
+      toast.success(
+        responseData.message ||
+          `${currentStatus ? "Unpublished" : "Published"} blog`
+      );
+    } catch (err) {
+      console.error(err);
+      toast.error(`Failed to ${currentStatus ? "unpublish" : "publish"} blog`);
+    } finally {
+      setPublishingSlug(null);
+    }
+  };
 
   const handleDelete = async (slug: string) => {
     try {
@@ -59,46 +90,10 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
         toast.error(responseData.message || "Deleting blog failed");
         return;
       }
-
       toast.success("Blog deleted");
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete Blog");
-    }
-  };
-
-  const togglePublish = async (slug: string, currentStatus: boolean) => {
-    const status = currentStatus ? "unpublish" : "publish";
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${status}/${slug}`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: tokens?.token as string,
-          },
-          credentials: "include",
-          next: { tags: ["BLOGS"] },
-        }
-      );
-
-      const responseData = await response.json();
-
-      if (!response.ok || !responseData.success) {
-        toast.error(
-          responseData.message ||
-            `${currentStatus ? "Unpublishing" : "Publishing"} blog failed`
-        );
-        return;
-      }
-
-      toast.success(
-        responseData.message ||
-          `${currentStatus ? "Unpublished" : "Published"} blog`
-      );
-    } catch (err) {
-      console.error(err);
-      toast.error(`Failed to ${currentStatus ? "unpublish" : "publish"} blog`);
     }
   };
 
@@ -112,25 +107,22 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
 
           <TableHeader>
             <TableRow>
-              <TableHead className="min-w-[150px] text-center">Title</TableHead>
-              <TableHead className="min-w-[150px] hidden sm:table-cell text-center">
+              <TableHead className="text-center">Title</TableHead>
+              <TableHead className="hidden sm:table-cell text-center">
                 Author
               </TableHead>
-              <TableHead className="min-w-[150px] hidden md:table-cell text-center">
+              <TableHead className="hidden md:table-cell text-center">
                 Published Date
               </TableHead>
-              <TableHead className="min-w-[120px] text-center">
-                Status
-              </TableHead>
-              <TableHead className="min-w-[200px] text-center">
-                Actions
-              </TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {blogs?.map((blog) => (
               <TableRow key={blog.id}>
-                <TableCell className="font-medium text-center">
+                <TableCell className="text-center">
                   <Link
                     href={`/blogs/${blog.slug}`}
                     target="_blank"
@@ -140,7 +132,7 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
                   </Link>
                 </TableCell>
 
-                <TableCell className="hidden sm:table-cell truncate max-w-[200px] text-center">
+                <TableCell className="hidden sm:table-cell text-center">
                   {blog.author?.name || "Rasel Shikder"}
                 </TableCell>
 
@@ -152,7 +144,7 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
 
                 <TableCell className="text-center">
                   <span
-                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
                       blog.published
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
@@ -163,7 +155,7 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
                 </TableCell>
 
                 <TableCell className="text-center">
-                  <div className="flex flex-col sm:flex-row sm:justify-center sm:items-center gap-2 sm:gap-3 w-full">
+                  <div className="flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-3">
                     <UpdateBlogModal
                       blog={blog}
                       token={tokens?.token as string}
@@ -172,12 +164,18 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
                     <Button
                       variant={blog.published ? "destructive" : "secondary"}
                       size="sm"
+                      className="cursor-pointer"
                       onClick={() => togglePublish(blog.slug, blog.published)}
-                      className="flex items-center justify-center gap-1 cursor-pointer w-full sm:w-[100px]"
+                      disabled={publishingSlug === blog.slug}
                     >
-                      {blog.published ? "Unpublish" : "Publish"}
+                      {publishingSlug === blog.slug ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : blog.published ? (
+                        <EyeOff className="w-4 h-4" />
+                      ) : (
+                        <Eye className="w-4 h-4" />
+                      )}
                     </Button>
-
                     <DeleteConfirmationModal
                       onConfirm={() => handleDelete(blog.slug)}
                     >

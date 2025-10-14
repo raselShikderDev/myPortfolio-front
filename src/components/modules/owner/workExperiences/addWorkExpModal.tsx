@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IUser } from "@/interfaces/user.interfaces";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -49,14 +50,7 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
   const onsubmit = async (data: WorkExperienceFormValues) => {
     const toastId = "work-exp-process";
 
-    // 1. Start the loading toast immediately
-    toast.loading("Adding Work Experience...", {
-      id: toastId,
-      duration: Infinity,
-    });
-
     try {
-      // --- Fetch User Info Phase ---
       const userResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
         {
@@ -81,14 +75,12 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
       }
       const user: IUser = userData.data;
 
-      // --- Data Preparation ---
       const finalWorkExpData = {
         ...data,
         userId: user.id,
       };
       const jsonData = JSON.stringify(finalWorkExpData);
 
-      // --- API Call Phase ---
       const apiResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/create`,
         {
@@ -104,11 +96,10 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
           },
         }
       );
-
+  
       const apiResponseData = await apiResponse.json();
 
       if (!apiResponse.ok || !apiResponseData.success) {
-        // API failure replaces loading toast with error
         toast.error(
           apiResponseData.message || "Adding work experience failed.",
           { id: toastId }
@@ -116,14 +107,11 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
         return;
       }
 
-      // 2. Success replaces the loading toast
       toast.success("Work experience added successfully!", { id: toastId });
 
-      // 3. Cleanup and Close Modal
       form.reset();
       setOpen(false);
     } catch (err) {
-      // 4. Catch-all for network errors
       console.error(err);
       toast.error(
         "Failed to add work experience. A network or server error occurred.",
@@ -228,7 +216,7 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button className="cursor-pointer" variant="outline">
+            <Button disabled={form.formState.isSubmitting} className="cursor-pointer" variant="outline">
               Cancel
             </Button>
           </DialogClose>
@@ -238,7 +226,10 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
             form="add-work-exp"
             disabled={form.formState.isSubmitting}
           >
-            Save Experience
+            {!form.formState.isSubmitting && `Create Experience`}
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

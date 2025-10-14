@@ -26,7 +26,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
-import { Edit2 } from "lucide-react";
+import { Edit2, Loader2 } from "lucide-react";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 
 interface BlogFormValues {
@@ -118,7 +118,7 @@ export function UpdateBlogModal({
       const responseData = await response.json();
 
       if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Blog adding failed");
+        toast.error("Blog adding failed");
         return;
       }
 
@@ -238,7 +238,7 @@ export function UpdateBlogModal({
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button disabled={form.formState.isSubmitting} variant="outline">Cancel</Button>
           </DialogClose>
           <Button
             type="submit"
@@ -246,6 +246,10 @@ export function UpdateBlogModal({
             className="cursor-pointer"
             disabled={form.formState.isSubmitting}
           >
+            {!form.formState.isSubmitting && `Update Blog`}
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
             Update Blog
           </Button>
         </DialogFooter>

@@ -113,6 +113,48 @@ export const workData = [
   },
 ];
 
+export const projectsData = [
+  {
+    title: "MERN Library Manager",
+    description:
+      "A full-featured library system built with the MERN stack, featuring authentication, book borrowing, and admin controls.",
+    image: "/projects/library.png",
+    techStack: ["React", "Node.js", "Express", "MongoDB", "TypeScript"],
+    liveUrl: "https://libraryapp.vercel.app",
+    githubUrl: "https://github.com/raselshikder/library-system",
+  },
+  {
+    title: "AI Blog Generator",
+    description:
+      "An AI-powered content generation app that helps users create SEO-friendly blog posts using OpenAI APIs.",
+    image: "/projects/aiblog.png",
+    techStack: ["Next.js", "TypeScript", "OpenAI API", "TailwindCSS"],
+    liveUrl: "https://aiblog.vercel.app",
+    githubUrl: "https://github.com/raselshikder/aiblog",
+  },
+  // Add more projects dynamically...
+];
+
+export const experiencesData = [
+  {
+    companyName: "TechNova Labs",
+    role: "MERN Stack Developer",
+    description:
+      "Built and maintained scalable web applications using MongoDB, Express, React, and Node.js. Collaborated with cross-functional teams to deliver high-performance solutions.",
+    startDate: new Date("2022-03-01"),
+    endDate: new Date("2024-07-01"),
+  },
+  {
+    companyName: "Codeverse Solutions",
+    role: "Frontend Engineer",
+    description:
+      "Developed modern, responsive UIs using React, TailwindCSS, and TypeScript. Improved performance, accessibility, and overall user experience across devices.",
+    startDate: new Date("2021-01-01"),
+    endDate: new Date("2022-02-01"),
+  },
+];
+
+
 export const serviceData = [
   {
     icon: assets.react_icon,

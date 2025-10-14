@@ -27,6 +27,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
+import { Loader2 } from "lucide-react";
 
 interface BlogFormValues {
   title: string;
@@ -259,7 +260,9 @@ export function AddBlogModal({ token }: { token: string }) {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button disabled={form.formState.isSubmitting} variant="outline">
+              Cancel
+            </Button>
           </DialogClose>
           <Button
             type="submit"
@@ -267,7 +270,10 @@ export function AddBlogModal({ token }: { token: string }) {
             disabled={form.formState.isSubmitting}
             className="cursor-pointer"
           >
-            Add Blog
+            {!form.formState.isSubmitting && `Add Blog`}
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
