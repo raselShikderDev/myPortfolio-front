@@ -35,7 +35,6 @@ export default function MulptipleImageUploader({
   useEffect(() => {
     if (files.length > 0) {
       const imagelist = files.map((item) => item.file);
-      console.log(imagelist);
 
       onChange(imagelist);
     } else {

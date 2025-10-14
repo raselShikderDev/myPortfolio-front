@@ -1,4 +1,7 @@
-import { MotionH2, MotionP } from "@/components/modules/animations/motionElements";
+import {
+  MotionH2,
+  MotionP,
+} from "@/components/modules/animations/motionElements";
 import ProjectCard from "@/components/modules/projects/projectCard";
 import { ExperienceCard } from "@/components/modules/projects/workExperiencecard";
 import { IProject } from "@/interfaces/projects.interfaces";
@@ -32,8 +35,12 @@ const ProjectsPage = async () => {
 
   try {
     const [projectsRes, experiencesRes] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, { next: { tags: ["projects"] } }),
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/all`, { next: { tags: ["workExp"] } }),
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
+        next: { tags: ["projects"] },
+      }),
+      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/all`, {
+        next: { tags: ["workExp"] },
+      }),
     ]);
 
     if (projectsRes.ok) {
@@ -65,7 +72,8 @@ const ProjectsPage = async () => {
         transition={{ duration: 1, delay: 0.7 }}
         className="max-w-3xl sm:text-lg dark:text-gray-300 text-sm mx-auto mt-4 font-ovo ovo text-center"
       >
-        Explore my collection of MERN stack projects, where modern design meets responsive, full-stack functionality and cutting-edge web technologies.
+        Explore my collection of MERN stack projects, where modern design meets
+        responsive, full-stack functionality and cutting-edge web technologies.
       </MotionP>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 my-16 mt-10">
@@ -76,13 +84,17 @@ const ProjectsPage = async () => {
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-500 col-span-full">No projects available at the moment.</p>
+          <p className="text-center text-gray-500 col-span-full">
+            No projects available at the moment.
+          </p>
         )}
       </div>
 
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="max-w-5xl mx-auto space-y-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">Work Experience</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">
+            Work Experience
+          </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 items-stretch">
             {experiencesData.length > 0 ? (
               experiencesData.map((exp, index) => (
@@ -91,13 +103,15 @@ const ProjectsPage = async () => {
                     companyName={exp.companyName}
                     role={exp.role}
                     description={exp.descreption}
-                    startDate={exp.startDate || null}
-                    endDate={exp.endDate || null}
+                    startDate={new Date(exp.startDate) || null}
+                    endDate={new Date(exp.endDate) || null}
                   />
                 </div>
               ))
             ) : (
-              <p className="text-center text-gray-500 col-span-full">No work experience available.</p>
+              <p className="text-center text-gray-500 col-span-full">
+                No work experience available.
+              </p>
             )}
           </div>
         </div>

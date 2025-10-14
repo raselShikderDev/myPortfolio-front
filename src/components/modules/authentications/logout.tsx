@@ -35,7 +35,7 @@ const Logout = ({ user, token }: { user: IUser; token: string }) => {
           onClick={() => hanldeSignOut()}
         >
           <LogOut className="h-4 w-4 cursor-pointer" />
-          {!loading && `Add Blog`}
+          {!loading && `Logout`}
           {loading && <Loader2 className="h-4 w-4 animate-spin" />}
         </Button>
       )}

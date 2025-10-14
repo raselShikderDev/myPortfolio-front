@@ -69,7 +69,6 @@ export function AddBlogModal({ token }: { token: string }) {
     const filesToUpload = images.filter(isFile);
 
     if (filesToUpload.length > 0) {
-      console.log(`Uploading ${filesToUpload?.length} image(s)...`);
 
       try {
         // 2. Map the array of files to an array of upload promises
@@ -80,12 +79,8 @@ export function AddBlogModal({ token }: { token: string }) {
         // Wait for ALL image uploads to complete concurrently
         uploadedImageUrls = await Promise.all(uploadPromises);
 
-        console.log("All images uploaded successfully to ImageBB!");
       } catch (error: any) {
         console.error("ImageBB Upload Error:", error);
-        console.log(
-          error.message || "Failed to upload one or more images to ImageBB"
-        );
         return;
       }
     }
@@ -105,7 +100,6 @@ export function AddBlogModal({ token }: { token: string }) {
 
     const responseData = await response.json();
     const user: IUser = responseData.data;
-    console.log(user);
 
     data.authorId = user.id;
     const processedTags = data.tags
@@ -119,7 +113,6 @@ export function AddBlogModal({ token }: { token: string }) {
       images: uploadedImageUrls,
     };
     const jsonData = JSON.stringify(finalBlogData);
-    console.log("FINAL PROCESSED PROJECT JSON DATA:", jsonData);
 
     try {
       const response = await fetch(

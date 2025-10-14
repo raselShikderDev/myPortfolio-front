@@ -6,7 +6,6 @@ import { IBlog } from "@/interfaces/blogs.interfaces";
 const AllBlogsPage = async () => {
   try {
     const blogs = await getAllBlogs();
-    console.log(blogs);
 
     return (
       <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">

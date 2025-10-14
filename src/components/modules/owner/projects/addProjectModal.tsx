@@ -103,7 +103,6 @@ export function AddProjectModal({ token }: { token: string }) {
       };
 
       const jsonData = JSON.stringify(finalProjectData);
-      console.log("FINAL PROCESSED PROJECT JSON DATA:", jsonData);
 
       const apiResponse = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/projects/create`,

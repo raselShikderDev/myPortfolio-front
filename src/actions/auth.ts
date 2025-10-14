@@ -18,7 +18,6 @@ export const login = async (data: any) => {
   }
   const result = await res.json();
   if (result?.success) {
-    // console.log('User login successful!', result);
     const cookiesStore = await cookies();
     cookiesStore.set('token', result?.data?.accessToken, {
       httpOnly: true,

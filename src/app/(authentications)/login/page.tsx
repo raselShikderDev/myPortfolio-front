@@ -27,16 +27,15 @@ export default function LoginPage() {
     try {
       const toastId = "login-process";
       const response = await login(data);
-      console.log(response);
 
       if (response.success) {
         router.push("/");
-        toast.error(response.message || "Login failed", { id: toastId });
+        toast.success("Successfully logged in", { id: toastId });
         return;
       }
-      console.log(response.data);
 
-      // toast.success("Successfully logged in", { id: toastId });
+      toast.error("Login failed", { id: toastId });
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);

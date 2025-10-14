@@ -37,7 +37,6 @@ export default function ContactPage() {
       });
 
       const data = await response.json();
-      console.log(data);
 
       if (data.success) {
         toast.success("Form submitted successfully!", {

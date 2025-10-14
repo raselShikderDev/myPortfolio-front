@@ -22,6 +22,8 @@ export function ExperienceCard({
   startDate,
   endDate,
 }: ExperienceCardProps) {
+
+
   const formatDate = (date?: Date | null) => {
     if (!date) return "Present";
     if (!(date instanceof Date) || isNaN(date.getTime())) return "Invalid date";

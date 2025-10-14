@@ -13,7 +13,6 @@ export default async function ProjectShowCasePage() {
     next: { tags: ["projects"] },
   });
   const data = await res.json();
-  console.log(res);
 
   const projects = data.data;
 
