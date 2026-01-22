@@ -4,7 +4,7 @@
 import { revalidateTag } from "next/cache";
 
 export async function revalidateProjects() {
-  revalidateTag("projects");
-  revalidateTag("workExp");
-  revalidateTag("dashboard/manage-projects");
+  revalidateTag("projects", {});
+  revalidateTag("workExp", {});
+  revalidateTag("dashboard/manage-projects", {});
 }
