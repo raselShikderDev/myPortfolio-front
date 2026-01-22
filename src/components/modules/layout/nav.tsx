@@ -59,7 +59,7 @@ export const Navbar2 = () => {
   if (tokens?.user.email) {
     menu.push({ title: "Dashboard", url: "/dashboard" });
   } else {
-    menu.push({ title: "Login", url: "/login" });
+    menu.push({ title: "", url: "" });
   }
 
   return (

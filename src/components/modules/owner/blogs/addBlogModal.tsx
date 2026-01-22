@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
 import { Loader2 } from "lucide-react";
+import { revalidateBlogs } from "@/actions/revalidate/blogRevalidate";
 
 interface BlogFormValues {
   title: string;
@@ -69,16 +70,14 @@ export function AddBlogModal({ token }: { token: string }) {
     const filesToUpload = images.filter(isFile);
 
     if (filesToUpload.length > 0) {
-
       try {
         // 2. Map the array of files to an array of upload promises
         const uploadPromises = filesToUpload.map((file) =>
-          uploadToImageBB(file)
+          uploadToImageBB(file),
         );
 
         // Wait for ALL image uploads to complete concurrently
         uploadedImageUrls = await Promise.all(uploadPromises);
-
       } catch (error: any) {
         console.error("ImageBB Upload Error:", error);
         return;
@@ -95,7 +94,7 @@ export function AddBlogModal({ token }: { token: string }) {
         next: {
           tags: ["projects"],
         },
-      }
+      },
     );
 
     const responseData = await response.json();
@@ -126,7 +125,7 @@ export function AddBlogModal({ token }: { token: string }) {
           body: jsonData,
           credentials: "include",
           next: { tags: ["blogs"] },
-        }
+        },
       );
 
       const responseData = await response.json();
@@ -136,7 +135,8 @@ export function AddBlogModal({ token }: { token: string }) {
         return;
       }
 
-      toast.success("Blog added successfully!");
+      toast.success(responseData.message || "Blog added successfully!");
+      await revalidateBlogs();
       setOpen(false);
       form.reset();
       setImages([]);
