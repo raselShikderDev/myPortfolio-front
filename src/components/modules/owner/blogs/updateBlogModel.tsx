@@ -28,6 +28,7 @@ import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
 import { Edit2, Loader2 } from "lucide-react";
 import { IBlog } from "@/interfaces/blogs.interfaces";
+import { revalidateBlogs } from "@/actions/revalidate/blogRevalidate";
 
 interface BlogFormValues {
   title: string;
@@ -78,7 +79,7 @@ export function UpdateBlogModal({
         next: {
           tags: ["projects"],
         },
-      }
+      },
     );
 
     const responseData = await response.json();
@@ -96,7 +97,6 @@ export function UpdateBlogModal({
       images: images.filter(isFile).map((file) => file.name),
     };
 
-
     const formData = new FormData();
     formData.append("data", JSON.stringify(finalBlogData));
 
@@ -110,7 +110,7 @@ export function UpdateBlogModal({
           method: "POST",
           body: formData,
           credentials: "include",
-        }
+        },
       );
 
       const responseData = await response.json();
@@ -121,6 +121,8 @@ export function UpdateBlogModal({
       }
 
       toast.success("Blog added successfully!");
+      await revalidateBlogs();
+
       setOpen(false);
       form.reset();
       setImages([]);
@@ -236,7 +238,9 @@ export function UpdateBlogModal({
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button disabled={form.formState.isSubmitting} variant="outline">Cancel</Button>
+            <Button disabled={form.formState.isSubmitting} variant="outline">
+              Cancel
+            </Button>
           </DialogClose>
           <Button
             type="submit"
@@ -248,7 +252,6 @@ export function UpdateBlogModal({
             {form.formState.isSubmitting && (
               <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            Update Blog
           </Button>
         </DialogFooter>
       </DialogContent>

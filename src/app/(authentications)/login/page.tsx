@@ -30,11 +30,11 @@ export default function LoginPage() {
 
       if (response.success) {
         router.push("/");
-        toast.success("Successfully logged in", { id: toastId });
+        toast.success(response.message || "Successfully logged in", { id: toastId });
         return;
       }
 
-      toast.error("Login failed", { id: toastId });
+      toast.error(response.message || "Login failed", { id: toastId });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {

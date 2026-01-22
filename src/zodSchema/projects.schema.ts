@@ -21,5 +21,4 @@ export const ProjectCreateSchema = z.object({
   githubUrl: z
     .url('GitHub URL must be a valid link')
     .min(1, 'GitHub repository URL is required'),
-  userId: z.number().positive('User ID must be a positive number'),
 });

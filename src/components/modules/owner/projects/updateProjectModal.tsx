@@ -1,5 +1,6 @@
 "use client";
 
+import { revalidateProjects } from "@/actions/revalidate/projectRevalidate";
 import SingleFileImageUploader from "@/components/singelFileuploader";
 import { Button } from "@/components/ui/button";
 import {
@@ -62,7 +63,6 @@ export function UpdateProjectModal({
     try {
       const toastId = "update-project-process";
 
-
       if (image) {
         try {
           imageUrl = await uploadToImageBB(image);
@@ -82,7 +82,7 @@ export function UpdateProjectModal({
           method: "GET",
           headers: { Authorization: token as string },
           next: { revalidate: 60 },
-        }
+        },
       );
 
       const userResponseData = await userResponse.json();
@@ -117,15 +117,19 @@ export function UpdateProjectModal({
           body: jsonData,
           credentials: "include",
           next: { tags: ["projects"] },
-        }
+        },
       );
 
       const apiResponseData = await apiResponse.json();
       if (apiResponse.ok) {
-        toast.success("Project updated successfully!", {
-          id: toastId,
-          duration: 10,
-        });
+        toast.success(
+          apiResponseData.message || "Project updated successfully!",
+          {
+            id: toastId,
+            duration: 10,
+          },
+        );
+        await revalidateProjects();
       }
 
       if (!apiResponse.ok || !apiResponseData.success) {

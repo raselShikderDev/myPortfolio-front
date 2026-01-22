@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { UpdateBlogModal } from "./updateBlogModel";
 import { toast } from "sonner";
 import { DeleteConfirmationModal } from "../deleteWorkExpConfirmModal";
+import { revalidateBlogs } from "@/actions/revalidate/blogRevalidate";
 
 interface AuthResponse {
   user: { id: number; email: string; role: "OWNER"; iat: number; exp: number };
@@ -62,6 +63,8 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
         responseData.message ||
           `${currentStatus ? "Unpublished" : "Published"} blog`
       );
+            await revalidateBlogs();
+      
     } catch (err) {
       console.error(err);
       toast.error(`Failed to ${currentStatus ? "unpublish" : "publish"} blog`);
@@ -91,6 +94,8 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
         return;
       }
       toast.success("Blog deleted");
+            await revalidateBlogs();
+      
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete Blog");

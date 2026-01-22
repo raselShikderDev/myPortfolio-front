@@ -1,5 +1,6 @@
 "use client";
 
+import { revalidateWorkExp } from "@/actions/revalidate/experinceValidate";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -61,7 +62,7 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
           next: {
             revalidate: 60,
           },
-        }
+        },
       );
 
       const userData = await userResponse.json();
@@ -94,28 +95,28 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
           next: {
             tags: ["workExp"],
           },
-        }
+        },
       );
-  
+
       const apiResponseData = await apiResponse.json();
 
       if (!apiResponse.ok || !apiResponseData.success) {
         toast.error(
           apiResponseData.message || "Adding work experience failed.",
-          { id: toastId }
+          { id: toastId },
         );
         return;
       }
 
       toast.success("Work experience added successfully!", { id: toastId });
-
+      await revalidateWorkExp();
       form.reset();
       setOpen(false);
     } catch (err) {
       console.error(err);
       toast.error(
         "Failed to add work experience. A network or server error occurred.",
-        { id: toastId }
+        { id: toastId },
       );
     }
   };
@@ -216,7 +217,11 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button disabled={form.formState.isSubmitting} className="cursor-pointer" variant="outline">
+            <Button
+              disabled={form.formState.isSubmitting}
+              className="cursor-pointer"
+              variant="outline"
+            >
               Cancel
             </Button>
           </DialogClose>

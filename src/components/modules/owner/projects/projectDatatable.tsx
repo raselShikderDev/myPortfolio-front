@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { UpdateProjectModal } from "./updateProjectModal";
 import { DeleteConfirmationModal } from "../deleteWorkExpConfirmModal";
+import { revalidateProjects } from "@/actions/revalidate/projectRevalidate";
 
 interface AuthResponse {
   user: {
@@ -51,7 +52,7 @@ export default function ProjectsTable({ projects }: { projects: IProject[] }) {
           next: {
             tags: ["projects"],
           },
-        }
+        },
       );
 
       const responseData = await response.json();
@@ -61,7 +62,8 @@ export default function ProjectsTable({ projects }: { projects: IProject[] }) {
         return;
       }
 
-      toast.success("Project deleted");
+      toast.success(responseData.message || "Project deleted");
+      await revalidateProjects();
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete project");

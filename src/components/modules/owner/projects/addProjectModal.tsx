@@ -2,6 +2,7 @@
 // src/components/AddProjectModal.tsx (or wherever your component resides)
 "use client";
 
+import { revalidateProjects } from "@/actions/revalidate/projectRevalidate";
 import SingleFileImageUploader from "@/components/singelFileuploader";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,6 +25,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IUser } from "@/interfaces/user.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
+import { ProjectCreateSchema } from "@/zodSchema/projects.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 // import { ProjectCreateSchema } from "@/zodSchema/projects.schema";
 // import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,6 +47,7 @@ export function AddProjectModal({ token }: { token: string }) {
   const [image, setImage] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const form = useForm<IDefaultValue>({
+    resolver: zodResolver(ProjectCreateSchema),
     mode: "onChange",
     defaultValues: {
       title: "",
@@ -78,7 +82,7 @@ export function AddProjectModal({ token }: { token: string }) {
           method: "GET",
           headers: { Authorization: token as string },
           next: { tags: ["projects"] },
-        }
+        },
       );
 
       const userData = await userResponse.json();
@@ -115,7 +119,7 @@ export function AddProjectModal({ token }: { token: string }) {
           body: jsonData,
           credentials: "include",
           next: { tags: ["projects"] },
-        }
+        },
       );
 
       const apiResponseData = await apiResponse.json();
@@ -127,8 +131,10 @@ export function AddProjectModal({ token }: { token: string }) {
         return;
       }
 
-      toast.success("Project added successfully!", { id: toastId });
-
+      toast.success(apiResponseData.message || "Project added successfully!", {
+        id: toastId,
+      });
+      await revalidateProjects();
       form.reset();
       setImage(null);
       setOpen(false);
@@ -136,7 +142,7 @@ export function AddProjectModal({ token }: { token: string }) {
       console.error(err);
       toast.error(
         "Adding project failed: A network or server error occurred.",
-        { id: toastId }
+        { id: toastId },
       );
     }
   };
@@ -231,7 +237,11 @@ export function AddProjectModal({ token }: { token: string }) {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button disabled={form.formState.isSubmitting} className="cursor-pointer" variant="outline">
+            <Button
+              disabled={form.formState.isSubmitting}
+              className="cursor-pointer"
+              variant="outline"
+            >
               Cancel
             </Button>
           </DialogClose>

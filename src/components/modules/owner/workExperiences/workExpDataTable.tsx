@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { UpdateWorkExperienceModal } from "./updateWorkExpModal";
 import { DeleteConfirmationModal } from "../deleteWorkExpConfirmModal";
+import { revalidateWorkExp } from "@/actions/revalidate/experinceValidate";
 
 interface AuthResponse {
   user: {
@@ -66,6 +67,8 @@ export default function WorkExperienceTable({
       }
 
       toast.success("Work experience deleted");
+      await revalidateWorkExp()
+      
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete work experience");

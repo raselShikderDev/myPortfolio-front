@@ -12,11 +12,10 @@ export const login = async (data: any) => {
     body: JSON.stringify(data),
   });
 
-  if (!res?.ok) {
-    // console.error('User login failed!', await res.text());
-    await res.text();
-  }
+ 
   const result = await res.json();
+  console.log({result});
+  
   if (result?.success) {
     const cookiesStore = await cookies();
     cookiesStore.set('token', result?.data?.accessToken, {

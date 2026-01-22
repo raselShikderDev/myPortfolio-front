@@ -1,5 +1,6 @@
 "use client";
 
+import { revalidateWorkExp } from "@/actions/revalidate/experinceValidate";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -102,6 +103,8 @@ export function UpdateWorkExperienceModal({
       }
 
       toast.success("Work experience Updated successfully");
+      await revalidateWorkExp()
+      
       form.reset();
       setOpen(false);
     } catch (err) {
