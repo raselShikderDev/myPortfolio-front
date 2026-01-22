@@ -1,7 +1,7 @@
 import { IUser } from "./user.interfaces";
 
 export interface IProject {
-  id?: number;
+  id: number;
   title: string;
   description: string;
   image: string;

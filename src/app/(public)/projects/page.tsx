@@ -76,7 +76,7 @@ const ProjectsPage = async () => {
         responsive, full-stack functionality and cutting-edge web technologies.
       </MotionP>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-2 gap-6 my-16 mt-10">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 my-16 mt-10">
         {projectsData.length > 0 ? (
           projectsData.map((project, index) => (
             <div key={index} className="flex">
@@ -95,7 +95,7 @@ const ProjectsPage = async () => {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-6">
             Work Experience
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 items-stretch">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
             {experiencesData.length > 0 ? (
               experiencesData.map((exp, index) => (
                 <div key={index} className="flex">
