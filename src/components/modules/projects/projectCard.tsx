@@ -6,8 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
 import Image from "next/image";
 import { BsGithub } from "react-icons/bs";
+import Link from "next/link";
 
 interface ProjectCardProps {
+  id:string | number ,
   title: string;
   description: string;
   image: string;
@@ -17,6 +19,7 @@ interface ProjectCardProps {
 }
 
 export default function ProjectCard({
+  id,
   title,
   description,
   image,
@@ -79,6 +82,7 @@ export default function ProjectCard({
           <CardTitle className="text-lg font-semibold">{title}</CardTitle>
         </CardHeader>
 
+      <Link href={`/projects/${id}`}>
         <CardContent>
           <MotionP
             initial={{ opacity: 0 }}
@@ -117,6 +121,7 @@ export default function ProjectCard({
             ))}
           </MotionDiv>
         </CardContent>
+      </Link>
       </Card>
     </MotionDiv>
   );
