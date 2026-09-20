@@ -1,11 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // Define the expected shape of the form data
-interface ContactFormData {
-  name: string;
-  email: string;
-  message: string;
-}
+
 
 // Simple validation function
 function validateContactForm(data: FormData): { isValid: boolean; errors: string[] } {
@@ -81,7 +77,7 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error in contact API route:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
