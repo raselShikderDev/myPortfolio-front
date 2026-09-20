@@ -19,6 +19,18 @@ const Ovo = OvoFont({
 export const metadata: Metadata = {
   title: "Rasel Shikder",
   description: "Mern Stack Developer",
+  authors: [{ name: "Rasel Shikder" }],
+  creator: "Rasel Shikder",
+  openGraph: {
+    title: "Rasel Shikder",
+    description: "Mern Stack Developer",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Rasel Shikder",
+    description: "Mern Stack Developer",
+  },
 };
 
 export default function RootLayout({
