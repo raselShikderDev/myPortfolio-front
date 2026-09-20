@@ -7,6 +7,7 @@ import { ExperienceCard } from "@/components/modules/projects/workExperiencecard
 import { IProject } from "@/interfaces/projects.interfaces";
 import { IWorkExperince } from "@/interfaces/workExperience";
 import { Metadata } from "next";
+import { fallbackProjects, fallbackExperiences } from "@/assets/fallbackData";
 
 export const metadata: Metadata = {
   title: "Projects | Rasel Shikder",
@@ -54,6 +55,9 @@ const ProjectsPage = async () => {
     }
   } catch (error) {
     console.error("Error fetching data:", error);
+    // Use fallback data on API failure
+    projectsData = fallbackProjects;
+    experiencesData = fallbackExperiences;
   }
 
   return (
