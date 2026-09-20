@@ -50,15 +50,10 @@ const Services = () => {
           <p className="font-ovo dark:text-gray-300 text-gray-600 ovo sm:text-lg text-sm leading-5 flex-1">
             {description}
           </p>
-<span>
-<span
           <Link
             style={{ fontFamily: "Ovo, serif" }}
             className="mt-5 gap-2 flex items-center dark:text-gray-300 sm:text-lg text-sm text-gray-600"
-</span>
             href={"#"}
-Read More <MdArrowRightAlt />\n         </span>\n         </MotionDiv>
-</span>
           >
             Read More <MdArrowRightAlt />
           </Link>
