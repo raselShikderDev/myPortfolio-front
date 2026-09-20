@@ -27,11 +27,11 @@ export default function ContactPage() {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
-    formData.append("access_key", "0e603e92-0127-45bf-941a-6fbc380b94f8");
+    
 
     try {
       setLoading(true);
-      const response = await fetch("https://api.web3forms.com/submit", {
+      const response = await fetch("/api/contact", {
         method: "POST",
         body: formData,
       });
