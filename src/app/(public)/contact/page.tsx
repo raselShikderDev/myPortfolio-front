@@ -27,7 +27,6 @@ export default function ContactPage() {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
-    
 
     try {
       setLoading(true);
@@ -49,7 +48,7 @@ export default function ContactPage() {
         form.reset();
       } else {
         toast.error("Failed to send message!", {
-          description: "Please try again later.",
+          description: data.error || "Please try again later.",
           duration: 5000,
           className:
             "bg-red-600 text-white font-medium border border-red-700 shadow-lg",
