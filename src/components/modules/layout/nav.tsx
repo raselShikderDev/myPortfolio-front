@@ -14,6 +14,7 @@ import { ModeToggle } from "@/components/modeToggler";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { assets } from "@/assets/assets";
+import { usePathname } from "next/navigation";
 
 interface IMenuItem {
   title: string;
@@ -34,6 +35,7 @@ interface AuthResponse {
 export const Navbar2 = () => {
   const [isScroll, setIsScroll] = useState(false);
   const [tokens, setTokens] = useState<null | AuthResponse>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     fetch("/api/profile")
@@ -87,14 +89,21 @@ export const Navbar2 = () => {
           </Link>
 
           <ul className="hidden lg:flex items-center gap-3 md:gap-4 lg:gap-6 text-xs sm:text-sm md:text-[14px] lg:text-base">
-            {menu.map((item, i) => (
-              <li
-                key={i}
-                className="font-ovo hover:text-red-600 transition whitespace-nowrap"
-              >
-                <Link href={item.url}>{item.title}</Link>
-              </li>
-            ))}
+            {menu.map((item, i) => {
+              const isActive = pathname === item.url;
+              return (
+                <li
+                  key={i}
+                  className={`font-ovo transition whitespace-nowrap ${
+                    isActive
+                      ? "text-red-600 font-semibold"
+                      : "hover:text-red-600"
+                  }`}
+                >
+                  <Link href={item.url}>{item.title}</Link>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="flex items-center gap-2 sm:gap-3">
@@ -131,15 +140,22 @@ export const Navbar2 = () => {
                 </SheetHeader>
 
                 <div className="flex flex-col gap-2 mt-4">
-                  {menu.map((item, i) => (
-                    <Link
-                      key={i}
-                      href={item.url}
-                      className="text-xs sm:text-sm md:text-[14px] font-semibold p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-md"
-                    >
-                      {item.title}
-                    </Link>
-                  ))}
+                  {menu.map((item, i) => {
+                    const isActive = pathname === item.url;
+                    return (
+                      <Link
+                        key={i}
+                        href={item.url}
+                        className={`text-xs sm:text-sm md:text-[14px] font-semibold p-2 rounded-md transition ${
+                          isActive
+                            ? "text-red-600 bg-gray-100 dark:bg-gray-800"
+                            : "hover:bg-gray-200 dark:hover:bg-gray-800"
+                        }`}
+                      >
+                        {item.title}
+                      </Link>
+                    );
+                  })}
                 </div>
               </SheetContent>
             </Sheet>
