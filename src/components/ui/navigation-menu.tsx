@@ -45,6 +45,24 @@ function NavigationMenuList({
   )
 }
 
+
+import { usePathname } from 'next/navigation';
+
+function NavigationMenuItem({
+  className,
+  href,
+  ...props
+}: React.ComponentProps<typeof NavigationMenuPrimitive.Item> & { href: string }) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+  return (
+    <NavigationMenuPrimitive.Item
+      data-slot="navigation-menu-item"
+      className={cn("relative", className, isActive ? "active" : "")}
+      {...props}
+    />
+  );
+}
 function NavigationMenuItem({
   className,
   ...props

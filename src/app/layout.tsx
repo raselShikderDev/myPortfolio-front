@@ -26,7 +26,20 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+<style global>{`
+  .active {
+    font-weight: bold;
+    color: #0070f3;
+  }
+`}</style>
   return (
+
+<style global>{`
+  .active {
+    font-weight: bold;
+    color: #0070f3;
+  }
+`}</style>
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${Outfit.variable} ${Ovo.variable} antialiased leading-8 dark:bg-[#11001f] dark:text-white overflow-x-hidden`}
