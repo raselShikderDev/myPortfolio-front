@@ -56,7 +56,7 @@ export default function ProjectCard({
               size="sm"
               className="bg-white text-black hover:bg-white/90"
             >
-              <a href={liveUrl} target="_blank" rel="noopener noreferrer">
+              <a href={liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`View ${title} live project`}>
                 <Globe className="w-4 h-4 mr-1" /> Live
               </a>
             </Button>
@@ -67,7 +67,7 @@ export default function ProjectCard({
               variant="secondary"
               className="bg-gray-800 text-white hover:bg-gray-700"
             >
-              <a href={githubUrl} target="_blank" rel="noopener noreferrer">
+              <a href={githubUrl} target="_blank" rel="noopener noreferrer" aria-label={`View ${title} source code`}>
                 <BsGithub className="w-4 h-4 mr-1" /> Code
               </a>
             </Button>
