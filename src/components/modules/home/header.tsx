@@ -15,9 +15,12 @@ const Header = () => {
         transition={{ duration: 0.8 }}
       >
         <Image
-          alt="user"
+          alt="Profile image of Rasel Shikder"
           src={assets.profile_img}
-          className="w-32 rounded-full shadow-sm drop-shadow-lg"
+          width={128}
+          height={128}
+          priority
+          className="w-32 h-auto rounded-full shadow-sm drop-shadow-lg"
         />
       </MotionDiv>
 
@@ -28,7 +31,7 @@ const Header = () => {
         className="flex gap-2 items-center text-lg md:text-2xl ovo"
       >
         Hi! I am Rasel Shikder{" "}
-        <Image alt="hand" className="w-6" src={assets.hand_icon} />
+        <Image alt="Waving hand icon" width={24} height={24} className="w-6 h-auto" src={assets.hand_icon} />
       </MotionH2>
 
       <MotionH3
@@ -58,7 +61,7 @@ const Header = () => {
           transition={{ duration: 0.8, delay: 1.3 }}
         >
           <Link
-            href="#"
+            href="/contact"
             className="text-lg flex items-center justify-center gap-2 px-5 py-2 sm:px-8 sm:py-2.5 bg-darkhover text-white rounded-full font-ovo shadow-xl transition duration-500 hover:bg-black/15 hover:text-black hover:border hover:border-gray-500 dark:bg-black dark:border-gray-500 dark:hover:bg-darkhover dark:hover:text-white active:scale-105"
           >
             Connect with me <MdArrowRightAlt className="text-lg" />
