@@ -33,11 +33,6 @@ export default function ProjectCard({
       whileHover={{ scale: 1.03 }}
       className="h-full"
     >
-<Link href={liveUrl} passHref legacyBehavior>
-<Card className=
-    
-<Link href={liveUrl} passHref legacyBehavior>
-  <Card 
       <Card className="relative mt-0 pt-0 overflow-hidden border bg-white/90 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300">
         {/* Image Section */}
         <MotionDiv className="relative group w-full h-52 overflow-hidden">
@@ -118,12 +113,8 @@ export default function ProjectCard({
                 <Badge variant="secondary" className="text-xs">
                   {tech}
                 </Badge>
-</Card>
-  </Link>
               </MotionDiv>
             ))}
-</Card>
-</Link>
           </MotionDiv>
         </CardContent>
       </Card>
