@@ -1,6 +1,25 @@
 import { getAllBlogs } from "../../../actions/getBlogs";
 import BlogCard from "@/components/modules/blogs/blogCard";
 import { IBlog } from "@/interfaces/blogs.interfaces";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Blogs | Rasel Shikder",
+  description:
+    "Read the latest articles and insights on web development, MERN stack, and software engineering by Rasel Shikder.",
+  openGraph: {
+    title: "Blogs | Rasel Shikder",
+    description:
+      "Read the latest articles and insights on web development, MERN stack, and software engineering by Rasel Shikder.",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blogs | Rasel Shikder",
+    description:
+      "Read the latest articles and insights on web development, MERN stack, and software engineering by Rasel Shikder.",
+  },
+};
 
 // Make sure this is a default export
 const AllBlogsPage = async () => {
