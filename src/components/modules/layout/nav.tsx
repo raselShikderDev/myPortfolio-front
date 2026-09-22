@@ -45,9 +45,15 @@ export const Navbar2 = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => setIsScroll(window.scrollY > 30);
+    const handleScroll = () => {
+      setIsScroll(window.scrollY > 30);
+    };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const menu: IMenuItem[] = [
@@ -64,67 +70,94 @@ export const Navbar2 = () => {
     menu.push({ title: "Login", url: "/login" });
   }
 
+  const isMenuItemActive = (url: string) => {
+    if (url === "/") {
+      return pathname === "/";
+    }
+
+    return pathname === url || pathname.startsWith(`${url}/`);
+  };
+
   return (
     <>
-      <div className="-z-50 fixed top-0 w-11/12 right-0 translate-y-[-80%] dark:hidden">
+      {/* Skip to main content */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 z-50 rounded-md bg-red-600 px-4 py-2 text-white transition-all duration-300"
+      >
+        Skip to main content
+      </a>
+
+      {/* Header background decoration */}
+      <div className="-z-50 fixed right-0 top-0 w-11/12 translate-y-[-80%] dark:hidden">
         <Image
-          alt="Header bg"
-          className="w-full"
           src={assets.header_bg_color}
+          alt=""
+          className="w-full"
         />
       </div>
 
       <nav
-        className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-          isScroll
-            ? "bg-white/50 backdrop-blur-xl shadow-sm dark:bg-darktheme/50 dark:shadow-white/20"
+        className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScroll
+            ? "bg-white/50 shadow-sm backdrop-blur-xl dark:bg-darktheme/50 dark:shadow-white/20"
             : "bg-transparent"
-        }`}
+          }`}
       >
-        <div className="container mx-auto flex justify-between items-center py-3 px-4 sm:px-5 md:px-6 lg:px-8">
-          <Link href={"/"} className="flex items-center gap-2">
-            <h1 className="text-lg md:text-xl lg:text-2xl font-semibold dark:text-white/90">
+        <div className="container mx-auto flex items-center justify-between px-4 py-3 sm:px-5 md:px-6 lg:px-8">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold dark:text-white/90 md:text-xl lg:text-2xl">
               Rasel Shikder<span className="text-red-600">.</span>
             </h1>
           </Link>
 
-          <ul className="hidden lg:flex items-center gap-3 md:gap-4 lg:gap-6 text-xs sm:text-sm md:text-[14px] lg:text-base">
-            {menu.map((item, i) => {
-              const isActive = pathname === item.url;
+          {/* Desktop navigation */}
+          <ul className="hidden items-center gap-3 text-xs sm:text-sm md:gap-4 md:text-[14px] lg:flex lg:gap-6 lg:text-base">
+            {menu.map((item) => {
+              const isActive = isMenuItemActive(item.url);
+
               return (
                 <li
-                  key={i}
-                  className={`font-ovo transition whitespace-nowrap ${
-                    isActive
-                      ? "text-red-600 font-semibold"
+                  key={item.url}
+                  className={`font-ovo whitespace-nowrap transition ${isActive
+                      ? "font-semibold text-red-600"
                       : "hover:text-red-600"
-                  }`}
+                    }`}
                 >
-                  <Link href={item.url}>{item.title}</Link>
+                  <Link
+                    href={item.url}
+                    aria-current={isActive ? "page" : undefined}
+                  >
+                    {item.title}
+                  </Link>
                 </li>
               );
             })}
           </ul>
 
+          {/* Right side controls */}
           <div className="flex items-center gap-2 sm:gap-3">
             <ModeToggle />
 
+            {/* Desktop Contact CTA */}
             <Link
               href="/contact"
-              className="hidden lg:flex items-center gap-1 md:gap-2 px-3 md:px-4 lg:px-6 py-1 md:py-2 text-xs sm:text-sm md:text-[14px] lg:text-base font-ovo border border-gray-600 rounded-full hover:bg-darktheme hover:text-white dark:hover:bg-white dark:hover:text-black transition"
+              className="hidden items-center gap-1 rounded-full border border-gray-600 px-3 py-1 font-ovo text-xs transition hover:bg-darktheme hover:text-white dark:hover:bg-white dark:hover:text-black sm:text-sm md:px-4 md:py-2 md:text-[14px] lg:flex lg:px-6 lg:text-base"
             >
-              Contact<span className="text-sm md:text-base lg:text-lg">→</span>
+              Contact
+              <span className="text-sm md:text-base lg:text-lg">→</span>
             </Link>
 
+            {/* Mobile menu */}
             <Sheet>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
                   size="icon"
-                  className="md:flex lg:hidden cursor-pointer"
+                  className="cursor-pointer md:flex lg:hidden"
                   aria-label="Open menu"
                 >
-                  <Menu className="w-5 h-5" />
+                  <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
 
@@ -132,25 +165,26 @@ export const Navbar2 = () => {
                 <SheetHeader>
                   <SheetTitle>
                     <Link href="/" className="flex items-center gap-2">
-                      <h1 className="text-lg md:text-xl font-semibold dark:text-white/90">
+                      <h1 className="text-lg font-semibold dark:text-white/90 md:text-xl">
                         Rasel Shikder<span className="text-red-600">.</span>
                       </h1>
                     </Link>
                   </SheetTitle>
                 </SheetHeader>
 
-                <div className="flex flex-col gap-2 mt-4">
-                  {menu.map((item, i) => {
-                    const isActive = pathname === item.url;
+                <div className="mt-4 flex flex-col gap-2">
+                  {menu.map((item) => {
+                    const isActive = isMenuItemActive(item.url);
+
                     return (
                       <Link
-                        key={i}
+                        key={item.url}
                         href={item.url}
-                        className={`text-xs sm:text-sm md:text-[14px] font-semibold p-2 rounded-md transition ${
-                          isActive
-                            ? "text-red-600 bg-gray-100 dark:bg-gray-800"
+                        aria-current={isActive ? "page" : undefined}
+                        className={`rounded-md p-2 text-xs font-semibold transition sm:text-sm md:text-[14px] ${isActive
+                            ? "bg-gray-100 text-red-600 dark:bg-gray-800"
                             : "hover:bg-gray-200 dark:hover:bg-gray-800"
-                        }`}
+                          }`}
                       >
                         {item.title}
                       </Link>
