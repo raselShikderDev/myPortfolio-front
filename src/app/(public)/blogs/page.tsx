@@ -51,7 +51,6 @@ const AllBlogsPage = async () => {
         <h2 className="text-center text-4xl">All Blogs</h2>
         <div className="text-center text-red-500 py-8">
           <p>Error loading blogs. Please try again later.</p>
-          <p className="text-sm mt-2">Error: {(error as Error).message}</p>
         </div>
       </div>
     );

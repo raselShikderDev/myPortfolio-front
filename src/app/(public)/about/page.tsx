@@ -36,9 +36,9 @@ export const metadata: Metadata = {
     "Node.js",
     "MongoDB",
     "PostgresSQL",
-     "Prisma",
-     "MERN Stack",
-     "Mongoose"
+    "Prisma",
+    "MERN Stack",
+    "Mongoose"
   ],
 };
 
@@ -73,7 +73,7 @@ export default function About() {
           className="w-64 sm:w-80 self-center rounded-3xl"
         >
           <Image
-            alt="user"
+            alt="Rasel Shikder"
             src={assets.user_image}
             className="w-full rounded-3xl drop-shadow-lg"
           />
@@ -109,7 +109,7 @@ export default function About() {
                   <ThemedImage
                     icon={icon}
                     iconDark={iconDark}
-                    alt="My Icon"
+                    alt={title}
                     className="w-7 mt-3"
                     width={28}
                     height={28}

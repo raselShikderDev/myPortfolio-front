@@ -44,7 +44,9 @@ export default function RootLayout({
         className={`${Outfit.variable} ${Ovo.variable} antialiased leading-8 dark:bg-[#11001f] dark:text-white overflow-x-hidden`}
       >
         <ThemeProviderWrapper>
-          <main>{children}</main>
+          <main id="main-content" tabIndex={-1}>
+            {children}
+          </main>
           <Toaster />
         </ThemeProviderWrapper>
       </body>
