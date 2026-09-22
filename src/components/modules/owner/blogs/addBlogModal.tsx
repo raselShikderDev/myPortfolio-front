@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import MultipleImageUploader from "@/components/multipleFileUploader";
@@ -26,18 +25,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
+import { BlogFormValues } from "@/interfaces/blogs.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
 import { Loader2 } from "lucide-react";
-
-interface BlogFormValues {
-  title: string;
-  content: string;
-  images: string[];
-  published: boolean;
-  publishedDate: string;
-  slug: string;
-  tags: string;
-}
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -61,7 +51,7 @@ export function AddBlogModal({ token }: { token: string }) {
     },
   });
 
-  const onsubmit = async (data: any) => {
+  const onsubmit = async (data: BlogFormValues) => {
     form.clearErrors();
     let uploadedImageUrls: string[] = [];
 
@@ -79,7 +69,7 @@ export function AddBlogModal({ token }: { token: string }) {
         // Wait for ALL image uploads to complete concurrently
         uploadedImageUrls = await Promise.all(uploadPromises);
 
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("ImageBB Upload Error:", error);
         return;
       }
@@ -104,7 +94,7 @@ export function AddBlogModal({ token }: { token: string }) {
     data.authorId = user.id;
     const processedTags = data.tags
       .split(",")
-      .map((tag: any) => tag.trim())
+      .map((tag: string) => tag.trim())
       .filter(Boolean);
 
     const finalBlogData = {

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// src/components/AddProjectModal.tsx (or wherever your component resides)
 "use client";
 
 import SingleFileImageUploader from "@/components/singelFileuploader";
@@ -23,27 +21,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IUser } from "@/interfaces/user.interfaces";
+import { ProjectFormValues } from "@/interfaces/projects.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
 import { Loader2 } from "lucide-react";
-// import { ProjectCreateSchema } from "@/zodSchema/projects.schema";
-// import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-// import z from "zod";
-
-interface IDefaultValue {
-  title: string;
-  description: string;
-  techStack: string;
-  liveUrl: string;
-  githubUrl: string;
-}
 
 export function AddProjectModal({ token }: { token: string }) {
   const [image, setImage] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const form = useForm<IDefaultValue>({
+  const form = useForm<ProjectFormValues>({
     mode: "onChange",
     defaultValues: {
       title: "",
@@ -54,7 +42,7 @@ export function AddProjectModal({ token }: { token: string }) {
     },
   });
 
-  const onsubmit = async (data: any) => {
+  const onsubmit = async (data: ProjectFormValues) => {
     form.clearErrors();
     let imageUrl: string | null = null;
     const toastId = "project-process";
@@ -63,8 +51,8 @@ export function AddProjectModal({ token }: { token: string }) {
       if (image) {
         try {
           imageUrl = await uploadToImageBB(image);
-        } catch (error: any) {
-          toast.error(error.message || "Failed to upload project image.", {
+        } catch (error: unknown) {
+          toast.error(error instanceof Error ? error.message : "Failed to upload project image.", {
             id: toastId,
           });
           console.error("ImageBB Upload Error:", error);
@@ -92,7 +80,7 @@ export function AddProjectModal({ token }: { token: string }) {
       const user: IUser = userData.data;
       const processedTechStack = data.techStack
         .split(",")
-        .map((tech: any) => tech.trim())
+        .map((tech: string) => tech.trim())
         .filter(Boolean);
 
       const finalProjectData = {

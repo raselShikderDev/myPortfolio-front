@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import MultipleImageUploader from "@/components/multipleFileUploader";
@@ -27,17 +26,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
 import { Edit2, Loader2 } from "lucide-react";
-import { IBlog } from "@/interfaces/blogs.interfaces";
-
-interface BlogFormValues {
-  title: string;
-  content: string;
-  images: string[];
-  published: boolean;
-  publishedDate: string;
-  slug: string;
-  tags: string;
-}
+import { IBlog, BlogFormValues } from "@/interfaces/blogs.interfaces";
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -67,7 +56,7 @@ export function UpdateBlogModal({
     },
   });
 
-  const onsubmit = async (data: any) => {
+  const onsubmit = async (data: BlogFormValues) => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
       {
@@ -87,7 +76,7 @@ export function UpdateBlogModal({
     data.authorId = user.id;
     const processedTags = data.tags
       .split(",")
-      .map((tag: any) => tag.trim())
+      .map((tag: string) => tag.trim())
       .filter(Boolean);
 
     const finalBlogData = {

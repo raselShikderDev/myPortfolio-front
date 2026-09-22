@@ -1,8 +1,12 @@
 'use server';
 import { cookies } from 'next/headers';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const login = async (data: any) => {
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+export const login = async (data: LoginData) => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, {
     method: 'POST',
     credentials: 'include',
@@ -13,7 +17,6 @@ export const login = async (data: any) => {
   });
 
   if (!res?.ok) {
-    // console.error('User login failed!', await res.text());
     await res.text();
   }
   const result = await res.json();
