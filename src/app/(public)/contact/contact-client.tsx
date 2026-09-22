@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useState } from "react";
@@ -45,7 +44,7 @@ export default function ContactPage() {
             "bg-red-600 text-white font-medium border border-red-700 shadow-lg",
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
       toast.error("Failed to send message!", {
         description: "Please try again later.",

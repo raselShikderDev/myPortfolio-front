@@ -1,7 +1,6 @@
 import { serviceData } from "@/assets/assets";
 import Image from "next/image";
-import Link from "next/link";
-import { MdArrowRightAlt } from "react-icons/md";
+
 import { MotionDiv, MotionH2, MotionH3, MotionP } from "../animations/motionElements";
 
 const Services = () => {

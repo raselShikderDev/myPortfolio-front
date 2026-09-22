@@ -20,21 +20,13 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IProject } from "@/interfaces/projects.interfaces";
+import { IProject, ProjectFormValues } from "@/interfaces/projects.interfaces";
 import { IUser } from "@/interfaces/user.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
 import { Edit2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
-interface UpdateProjectFormValues {
-  title: string;
-  description: string;
-  techStack: string;
-  liveUrl: string;
-  githubUrl: string;
-}
 
 export function UpdateProjectModal({
   token,
@@ -46,7 +38,7 @@ export function UpdateProjectModal({
   const [image, setImage] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
 
-  const form = useForm<UpdateProjectFormValues>({
+  const form = useForm<ProjectFormValues>({
     defaultValues: {
       title: project.title || "",
       description: project.description || "",
@@ -56,7 +48,7 @@ export function UpdateProjectModal({
     },
   });
 
-  const onsubmit = async (data: UpdateProjectFormValues) => {
+  const onsubmit = async (data: ProjectFormValues) => {
     let imageUrl: string | null = null;
 
     try {
@@ -66,10 +58,9 @@ export function UpdateProjectModal({
       if (image) {
         try {
           imageUrl = await uploadToImageBB(image);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error(error);
-          toast.error(error.message || "Failed to upload project image.", {
+          toast.error(error instanceof Error ? error.message : "Failed to upload project image.", {
             id: toastId,
           });
           return;

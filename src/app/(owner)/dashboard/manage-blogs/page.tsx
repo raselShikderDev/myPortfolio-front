@@ -1,10 +1,11 @@
 import { AddBlogModal } from "@/components/modules/owner/blogs/addBlogModal";
 import BlogsTable from "@/components/modules/owner/blogs/blogsDataTable";
 import { getUserSession } from "@/lib/getUserSession";
+import { IBlog } from "@/interfaces/blogs.interfaces";
 
 export default async function ManageBlogsPage() {
   const token = await getUserSession();
- if (!token) {
+  if (!token) {
     console.error("token not found")
   }
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`, {
@@ -17,7 +18,7 @@ export default async function ManageBlogsPage() {
   }
 
   const data = await res.json();
-  const blogs = data.data;
+  const blogs: IBlog[] = data.data;
   return (
     <main className="min-h-screen bg-background px-4 sm:px-6 lg:px-10 py-10 space-y-10">
       <header className="text-center space-y-2">

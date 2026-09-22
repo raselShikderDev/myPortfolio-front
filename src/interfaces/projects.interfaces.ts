@@ -13,3 +13,11 @@ export interface IProject {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface ProjectFormValues {
+  title: string;
+  description: string;
+  techStack: string;
+  liveUrl: string;
+  githubUrl: string;
+}
