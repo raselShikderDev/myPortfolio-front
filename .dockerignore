@@ -1,0 +1,21 @@
+# Ignore Next.js and build artifacts
+.node_modules
+.next
+
+# Ignore environment files
+.env
+.env.local
+.env.production
+
+# Ignore Git and build tools
+.git
+.vercel
+.project-analysis
+
+# Ignore other unnecessary files
+out/
+build/
+*.pem
+
+# Ignore Bun-specific files
+bun.lockb
