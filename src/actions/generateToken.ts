@@ -20,14 +20,14 @@ export const generateToken = async () => {
     const cookiesStore = await cookies();
     cookiesStore.set("accessToken", result?.data?.accessToken, {
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === 'production',
       path: "/",
     });
     cookiesStore.set("refreshToken", result?.data?.refreshToken, {
       httpOnly: true,
-      sameSite: "none",
-      secure: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === 'production',
       path: "/",
     });
   }

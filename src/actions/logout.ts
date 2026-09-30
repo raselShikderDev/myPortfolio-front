@@ -19,6 +19,7 @@ export const logout = async (token: string) => {
   if (result?.success) {
     const cookiesStore = await cookies();
     cookiesStore.delete("token");
+    cookiesStore.delete("refreshToken");
   }
 
   return result;
