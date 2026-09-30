@@ -1,8 +1,7 @@
 // app/api/upload-image/route.js (App Router)
 
 import { NextResponse } from 'next/server';
-
-const IMAGEBB_UPLOAD_URL = "https://api.imgbb.com/1/upload";
+import { getImageBBApiKey, getImageBBApiLink } from '@/lib/apiConfig';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function POST(request: { formData: () => any; }) {
@@ -23,12 +22,12 @@ export async function POST(request: { formData: () => any; }) {
 
     // Create a new FormData object for the ImageBB API call
     const imageBBFormData = new FormData();
-    imageBBFormData.append('key', process.env.IMAGEBB_API_KEY as string);
+    imageBBFormData.append('key', getImageBBApiKey());
     imageBBFormData.append('image', base64Image); // ImageBB expects the base64 string under the 'image' key
     // You can optionally add 'name' or 'expiration' to imageBBFormData as well
 
     // Forward the request to ImageBB
-    const imageBBResponse = await fetch(IMAGEBB_UPLOAD_URL, {
+    const imageBBResponse = await fetch(getImageBBApiLink(), {
       method: 'POST',
       body: imageBBFormData,
     });

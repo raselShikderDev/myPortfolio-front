@@ -1,6 +1,7 @@
 import { AddBlogModal } from "@/components/modules/owner/blogs/addBlogModal";
 import BlogsTable from "@/components/modules/owner/blogs/blogsDataTable";
 import { getUserSession } from "@/lib/getUserSession";
+import { BASE_URL } from "@/lib/apiConfig";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 
 export default async function ManageBlogsPage() {
@@ -8,7 +9,7 @@ export default async function ManageBlogsPage() {
   if (!token) {
     console.error("token not found")
   }
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`, {
+  const res = await fetch(`${BASE_URL}/blogs/all`, {
     next: { tags: ["blogs"] },
   });
 

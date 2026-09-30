@@ -1,6 +1,7 @@
 import BlogDetailsCard from "@/components/modules/blogs/blogDetails";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 import { Metadata } from "next";
+import { BASE_URL } from "@/lib/apiConfig";
 
 export async function generateMetadata({
   params,
@@ -9,7 +10,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${slug}`,{
+  const res = await fetch(`${BASE_URL}/blogs/${slug}`,{
     next: { tags: ["blogs"] },
   });
 
@@ -34,7 +35,7 @@ export async function generateMetadata({
 const BlogDetailsPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = await params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${slug}`, {
+  const res = await fetch(`${BASE_URL}/blogs/${slug}`, {
     cache: "no-store",
   });
 

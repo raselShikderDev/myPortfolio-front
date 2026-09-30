@@ -1,9 +1,10 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { getBaseUrl } from "@/lib/apiConfig";
 
 export const logout = async (token: string) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/logout`, {
+  const res = await fetch(`${getBaseUrl()}/auth/logout`, {
     method: "POST",
     headers: {
       Authorization: token as string,

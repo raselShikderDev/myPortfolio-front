@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { IUser } from "@/interfaces/user.interfaces";
 import { ProjectFormValues } from "@/interfaces/projects.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
+import { BASE_URL } from "@/lib/apiConfig";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -61,7 +62,7 @@ export function AddProjectModal({ token }: { token: string }) {
       }
 
       const userResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+        `${BASE_URL}/users/getme`,
         {
           method: "GET",
           headers: { Authorization: token as string },
@@ -93,7 +94,7 @@ export function AddProjectModal({ token }: { token: string }) {
       const jsonData = JSON.stringify(finalProjectData);
 
       const apiResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/create`,
+        `${BASE_URL}/projects/create`,
         {
           method: "POST",
           headers: {

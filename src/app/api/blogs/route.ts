@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
+import { BASE_URL } from "@/lib/apiConfig";
 
 export async function GET() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`, {
+    const res = await fetch(`${BASE_URL}/blogs/all`, {
       next: { tags: ["blogs"] },
     });
 

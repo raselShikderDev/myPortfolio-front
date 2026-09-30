@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { UpdateProjectModal } from "./updateProjectModal";
 import { DeleteConfirmationModal } from "../deleteWorkExpConfirmModal";
+import { BASE_URL } from "@/lib/apiConfig";
 
 interface AuthResponse {
   user: {
@@ -41,7 +42,7 @@ export default function ProjectsTable({ projects }: { projects: IProject[] }) {
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/${id}`,
+        `${BASE_URL}/projects/${id}`,
         {
           method: "DELETE",
           headers: {

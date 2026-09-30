@@ -27,6 +27,7 @@ import { Edit2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { BASE_URL } from "@/lib/apiConfig";
 
 export function UpdateProjectModal({
   token,
@@ -68,7 +69,7 @@ export function UpdateProjectModal({
       }
 
       const userResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+        `${BASE_URL}/users/getme`,
         {
           method: "GET",
           headers: { Authorization: token as string },
@@ -98,7 +99,7 @@ export function UpdateProjectModal({
       const jsonData = JSON.stringify(finalProjectData);
 
       const apiResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/edit/${project.id}`,
+        `${BASE_URL}/projects/edit/${project.id}`,
         {
           method: "PATCH",
           headers: {

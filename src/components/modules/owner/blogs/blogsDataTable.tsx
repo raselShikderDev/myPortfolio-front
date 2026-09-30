@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { UpdateBlogModal } from "./updateBlogModel";
 import { toast } from "sonner";
 import { DeleteConfirmationModal } from "../deleteWorkExpConfirmModal";
+import { BASE_URL } from "@/lib/apiConfig";
 
 interface AuthResponse {
   user: { id: number; email: string; role: "OWNER"; iat: number; exp: number };
@@ -40,7 +41,7 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${status}/${slug}`,
+        `${BASE_URL}/blogs/${status}/${slug}`,
         {
           method: "PATCH",
           headers: { Authorization: tokens?.token as string },
@@ -73,7 +74,7 @@ export default function BlogsTable({ blogs }: { blogs: IBlog[] }) {
   const handleDelete = async (slug: string) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${slug}`,
+        `${BASE_URL}/blogs/${slug}`,
         {
           method: "DELETE",
           headers: {

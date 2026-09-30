@@ -9,6 +9,7 @@ import { IWorkExperince } from "@/interfaces/workExperience";
 import { Metadata } from "next";
 import { fallbackProjects, fallbackExperiences } from "@/assets/fallbackData";
 
+import { BASE_URL } from "@/lib/apiConfig";
 export const metadata: Metadata = {
   title: "Projects | Rasel Shikder",
   description:
@@ -36,10 +37,10 @@ const ProjectsPage = async () => {
 
   try {
     const [projectsRes, experiencesRes] = await Promise.all([
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
+      fetch(`${BASE_URL}/projects/all`, {
         next: { tags: ["projects"] },
       }),
-      fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/all`, {
+      fetch(`${BASE_URL}/work-experience/all`, {
         next: { tags: ["workExp"] },
       }),
     ]);

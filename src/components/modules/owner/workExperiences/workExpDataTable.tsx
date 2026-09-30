@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { UpdateWorkExperienceModal } from "./updateWorkExpModal";
 import { DeleteConfirmationModal } from "../deleteWorkExpConfirmModal";
+import { BASE_URL } from "@/lib/apiConfig";
 
 interface AuthResponse {
   user: {
@@ -45,7 +46,7 @@ export default function WorkExperienceTable({
   const handleDelete = async (id: number) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/${id}`,
+        `${BASE_URL}/work-experience/${id}`,
         {
           method: "DELETE",
           headers: {

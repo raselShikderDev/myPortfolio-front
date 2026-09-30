@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import Logout from "./modules/authentications/logout";
 import { getUserSession } from "@/lib/getUserSession";
+import { getBaseUrl } from "@/lib/apiConfig";
 import { IUser } from "@/interfaces/user.interfaces";
 import { redirect } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -89,7 +90,7 @@ export async function AppSidebar({
 
   }
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+    `${getBaseUrl()}/users/getme`,
     {
       method: "GET",
       headers: {

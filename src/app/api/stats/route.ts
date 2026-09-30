@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { BASE_URL } from "@/lib/apiConfig";
 
 export async function GET(req: NextRequest) {
   try {
@@ -10,7 +11,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Call backend API with Bearer token
-    const res = await fetch("http://localhost:5000/api/v1/blogs/stats", {
+    const res = await fetch(`${BASE_URL}/blogs/stats`, {
       headers: {
         Authorization: `Bearer ${cookie}`,
       },

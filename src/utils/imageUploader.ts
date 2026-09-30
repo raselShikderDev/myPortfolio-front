@@ -12,21 +12,21 @@ const fileToBase64 = (file: File): Promise<string> => {
 };
 
 //Uplaoding image
-export async function uploadToImageBB(imageFile: File): Promise<string> {
-  const apiKey = process.env.NEXT_PUBLIC_IMAGEBB_API_KEY as string;
+import { getImageBBApiKey, getImageBBApiLink } from '@/lib/apiConfig';
 
-  if (!apiKey) {
-    throw new Error("ImageBB API Key is not set in environment variables.");
+export async function uploadToImageBB(imageFile: File): Promise<string> {
+  if (!getImageBBApiKey() || !getImageBBApiLink()) {
+    throw new Error("ImageBB configuration is missing. Please check environment variables.");
   }
 
   const base64Image = await fileToBase64(imageFile);
 
   const imageBBFormData = new FormData();
   imageBBFormData.append("image", base64Image);
-  imageBBFormData.append("key", apiKey);
+  imageBBFormData.append("key", getImageBBApiKey());
 
   const imageBBResponse = await fetch(
-    process.env.NEXT_PUBLIC_IMAGEBB_API_LINK as string,
+    getImageBBApiLink(),
     {
       method: "POST",
       body: imageBBFormData,

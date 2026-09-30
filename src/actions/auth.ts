@@ -1,5 +1,6 @@
 'use server';
 import { cookies } from 'next/headers';
+import { getBaseUrl } from '@/lib/apiConfig';
 
 interface LoginData {
   email: string;
@@ -7,7 +8,7 @@ interface LoginData {
 }
 
 export const login = async (data: LoginData) => {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, {
+  const res = await fetch(`${getBaseUrl()}/auth/login`, {
     method: 'POST',
     credentials: 'include',
     headers: {
