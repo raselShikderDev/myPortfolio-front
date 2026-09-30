@@ -1,9 +1,10 @@
 "use server";
 
 import { IBlog } from "@/interfaces/blogs.interfaces";
+import { getBaseUrl } from "@/lib/apiConfig";
 
 export async function getAllBlogs(): Promise<IBlog[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/all`);
+  const res = await fetch(`${getBaseUrl()}/blogs/all`);
   const data = await res.json();
 
   const blogs = data.data;

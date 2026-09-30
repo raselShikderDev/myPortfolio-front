@@ -28,6 +28,7 @@ import { IUser } from "@/interfaces/user.interfaces";
 import { BlogFormValues } from "@/interfaces/blogs.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
 import { Loader2 } from "lucide-react";
+import { BASE_URL } from "@/lib/apiConfig";
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -76,7 +77,7 @@ export function AddBlogModal({ token }: { token: string }) {
     }
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+      `${BASE_URL}/users/getme`,
       {
         method: "GET",
         headers: {
@@ -106,7 +107,7 @@ export function AddBlogModal({ token }: { token: string }) {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/create`,
+        `${BASE_URL}/blogs/create`,
         {
           method: "POST",
           headers: {

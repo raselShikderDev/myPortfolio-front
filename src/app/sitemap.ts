@@ -1,28 +1,28 @@
 import type { MetadataRoute } from "next";
 import { IBlog } from "@/interfaces/blogs.interfaces";
-
-const baseUrl = "https://raselsdev.vercel.app";
+import { getBaseUrl } from "@/lib/apiConfig";
+import { getFrontendBaseUrl } from "@/lib/apiConfig";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [
     {
-      url: baseUrl,
+      url: getFrontendBaseUrl(),
     },
     {
-      url: `${baseUrl}/about`,
+      url: `${getFrontendBaseUrl()}/about`,
     },
     {
-      url: `${baseUrl}/projects`,
+      url: `${getFrontendBaseUrl()}/projects`,
     },
     {
-      url: `${baseUrl}/blogs`,
+      url: `${getFrontendBaseUrl()}/blogs`,
     },
     {
-      url: `${baseUrl}/contact`,
+      url: `${getFrontendBaseUrl()}/contact`,
     },
   ];
 
-  const apiBaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const apiBaseUrl = getBaseUrl();
 
   if (!apiBaseUrl) {
     return routes;
@@ -40,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const blogRoutes: MetadataRoute.Sitemap = blogs
         .filter((blog) => blog?.slug)
         .map((blog) => ({
-          url: `${baseUrl}/blogs/${blog.slug}`,
+          url: `${getFrontendBaseUrl()}/blogs/${blog.slug}`,
           lastModified: blog.updatedAt
             ? new Date(blog.updatedAt)
             : blog.createdAt

@@ -24,6 +24,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { BASE_URL } from "@/lib/apiConfig";
 
 interface WorkExperienceFormValues {
   companyName: string;
@@ -52,7 +53,7 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
 
     try {
       const userResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+        `${BASE_URL}/users/getme`,
         {
           method: "GET",
           headers: {
@@ -82,7 +83,7 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
       const jsonData = JSON.stringify(finalWorkExpData);
 
       const apiResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/create`,
+        `${BASE_URL}/work-experience/create`,
         {
           method: "POST",
           headers: {

@@ -3,6 +3,7 @@ import { AddProjectModal } from "@/components/modules/owner/projects/addProjectM
 import ProjectsTable from "@/components/modules/owner/projects/projectDatatable";
 import { getUserSession } from "@/lib/getUserSession";
 import { IProject } from "@/interfaces/projects.interfaces";
+import { BASE_URL } from "@/lib/apiConfig";
 
 export default async function ProjectShowCasePage() {
   const token = await getUserSession();
@@ -10,7 +11,7 @@ export default async function ProjectShowCasePage() {
     console.error("token not found")
   }
   // const projects = await getAllProjects()
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
+  const res = await fetch(`${BASE_URL}/projects/all`, {
     next: { tags: ["projects"] },
   });
   const data = await res.json();

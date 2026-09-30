@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { getUserSession } from "@/lib/getUserSession";
+import { BASE_URL } from "@/lib/apiConfig";
 
 interface BlogStatsResponse {
   stats: {
@@ -19,7 +20,7 @@ export default async function Page() {
  if (!token) {
     console.error("token not found")
   }
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/stats`, {
+  const res = await fetch(`${BASE_URL}/blogs/stats`, {
     method: "GET",
     headers: {
       Authorization: token as string,

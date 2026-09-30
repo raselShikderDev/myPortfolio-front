@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { FRONTEND_BASE_URL } from "@/lib/apiConfig";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/login", "/dashboard", "/api"],
     },
-    sitemap: "https://raselsdev.vercel.app/sitemap.xml",
+    sitemap: `${FRONTEND_BASE_URL}/sitemap.xml`,
   };
 }

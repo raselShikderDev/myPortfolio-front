@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
 import { Edit2, Loader2 } from "lucide-react";
 import { IBlog, BlogFormValues } from "@/interfaces/blogs.interfaces";
+import { BASE_URL } from "@/lib/apiConfig";
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -58,7 +59,7 @@ export function UpdateBlogModal({
 
   const onsubmit = async (data: BlogFormValues) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+      `${BASE_URL}/users/getme`,
       {
         method: "GET",
         headers: {
@@ -94,7 +95,7 @@ export function UpdateBlogModal({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/create`,
+        `${BASE_URL}/blogs/create`,
         {
           method: "POST",
           body: formData,
