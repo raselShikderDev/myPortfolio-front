@@ -20,7 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { TiptapEditor } from "@/components/ui/tiptap-editor";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -159,7 +159,11 @@ export function UpdateBlogModal({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Textarea placeholder="Blog Content" {...field} />
+                    <TiptapEditor
+                      value={field.value}
+                      onChange={field.onChange}
+
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
