@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BlogFormSchema } from "@/zodSchema/blogs.schema";
@@ -46,7 +46,8 @@ export function UpdateBlogModal({
   const [images, setImages] = useState<(File | FileMetadata)[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
-  const form = useForm<BlogFormValues>({ resolver: zodResolver(BlogFormSchema),
+  const form = useForm<BlogFormValues>({
+    resolver: zodResolver(BlogFormSchema),
     mode: "onChange",
     defaultValues: {
       title: blog.title,
@@ -58,6 +59,19 @@ export function UpdateBlogModal({
       tags: blog.tags.join(", "),
     },
   });
+  // Sync form state when blog prop changes
+  useEffect(() => {
+    form.reset({
+      title: blog.title,
+      content: blog.content,
+      published: blog.published,
+      publishedDate: new Date(blog.publishedDate).toISOString().slice(0, 16),
+      slug: blog.slug,
+      tags: blog.tags.join(", "),
+      images: [],
+    });
+  }, [blog, form]);
+
 
   const onsubmit = async (data: BlogFormValues) => {
     const response = await fetch(
