@@ -23,6 +23,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { BlogFormSchema } from "@/zodSchema/blogs.schema";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
 import { Edit2, Loader2 } from "lucide-react";
@@ -44,7 +46,7 @@ export function UpdateBlogModal({
   const [images, setImages] = useState<(File | FileMetadata)[]>([]);
   const [open, setOpen] = useState<boolean>(false);
 
-  const form = useForm<BlogFormValues>({
+  const form = useForm<BlogFormValues>({ resolver: zodResolver(BlogFormSchema),
     mode: "onChange",
     defaultValues: {
       title: blog.title,
