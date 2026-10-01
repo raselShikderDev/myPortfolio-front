@@ -27,12 +27,14 @@ import { BASE_URL } from "@/lib/apiConfig";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ProjectFormSchema } from "@/zodSchema/projects.schema";
 import { toast } from "sonner";
 
 export function AddProjectModal({ token }: { token: string }) {
   const [image, setImage] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const form = useForm<ProjectFormValues>({
+  const form = useForm<ProjectFormValues>({ resolver: zodResolver(ProjectFormSchema),
     mode: "onChange",
     defaultValues: {
       title: "",

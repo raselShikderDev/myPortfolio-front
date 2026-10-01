@@ -23,6 +23,8 @@ import { IUser } from "@/interfaces/user.interfaces";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { WorkExperienceFormSchema } from "@/zodSchema/workExperience.schema";
 import { toast } from "sonner";
 import { BASE_URL } from "@/lib/apiConfig";
 
@@ -37,7 +39,7 @@ interface WorkExperienceFormValues {
 export function AddWorkExperienceModal({ token }: { token: string }) {
   const [open, setOpen] = useState<boolean>(false);
 
-  const form = useForm<WorkExperienceFormValues>({
+  const form = useForm<WorkExperienceFormValues>({ resolver: zodResolver(WorkExperienceFormSchema),
     mode: "onChange",
     defaultValues: {
       companyName: "",
