@@ -3,6 +3,7 @@ import { IBlog } from "@/interfaces/blogs.interfaces";
 import Image from "next/image";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { sanitizeBlogContent } from "@/lib/utils/sanitizeBlogContent";
 
 const BlogDetailsCard = ({ blog }: { blog: IBlog }) => {
   const authorName =
@@ -65,9 +66,10 @@ const BlogDetailsCard = ({ blog }: { blog: IBlog }) => {
           </div>
 
           {/* Content */}
-          <p className="text-gray-700 dark:text-gray-300 text-base sm:text-lg leading-relaxed whitespace-pre-wrap">
-            {blog.content}
-          </p>
+          <div
+            className="prose prose-sm sm:prose-base max-w-none text-gray-700 dark:text-gray-300"
+            dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(String(blog.content || "")) }}
+          />
         </CardContent>
       </Card>
     </div>
