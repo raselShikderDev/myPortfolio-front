@@ -2,6 +2,7 @@ import BlogDetailsCard from "@/components/modules/blogs/blogDetails";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 import { Metadata } from "next";
 import { BASE_URL } from "@/lib/apiConfig";
+import { generateSeoDescription } from "@/lib/utils/sanitizeBlogContent";
 
 export async function generateMetadata({
   params,
@@ -27,7 +28,7 @@ export async function generateMetadata({
   return {
     title: blog.title || "Default Blog Title",
     description:
-      blog.content?.substring(0, 150) + "..." || "Read the full story here.",
+      generateSeoDescription(blog.content || "") || "Read the full story here.",
     keywords: blog.tags?.join(", ") || "blog, article, technology",
   };
 }
