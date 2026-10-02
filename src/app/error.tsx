@@ -8,12 +8,27 @@ export default function ErrorPage({
   error,
   reset,
 }: {
-  error: Error & { digest?: string };
+  error: Error & { digest?: string; type?: string };
   reset: () => void;
 }) {
   useEffect(() => {
     console.error(error);
   }, [error]);
+
+  const getErrorMessage = (error: Error & { type?: string }) => {
+    switch (error.type) {
+      case 'network':
+        return 'Network error. Please check your connection.';
+      case 'auth':
+        return 'Authentication failed. Please log in again.';
+      case 'server':
+        return 'Server error. Please try again later.';
+      case 'validation':
+        return 'Validation error. Please check your input.';
+      default:
+        return error.message || 'An unexpected error occurred.';
+    }
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 dark:from-gray-900 dark:to-gray-950 px-4">
@@ -25,7 +40,7 @@ export default function ErrorPage({
         </h2>
 
         <p className="mt-2 text-gray-300 sm:text-base text-sm">
-          {error.message || "An unexpected error occurred."}
+          {getErrorMessage(error)}
         </p>
 
         {error.digest && (

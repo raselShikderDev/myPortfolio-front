@@ -1,13 +1,19 @@
 "use server";
 
 import { IProject } from "@/interfaces/projects.interfaces";
-import { getBaseUrl } from "@/lib/apiConfig";
+import { buildApiUrl } from "@/lib/apiConfig";
+
+
 
 export async function getAllProjects(): Promise<IProject[]> {
-  const res = await fetch(`${getBaseUrl()}/projects/all`);
-  const data = await res.json();
+  const res = await fetch(buildApiUrl("/projects/all"));
 
-  const projects = data.data;
-  return projects;
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: 'Network error' }));
+    throw new Error(errorData.message || 'Failed to fetch projects');
+  }
+
+  const data = await res.json();
+  return data.data;
 }
 

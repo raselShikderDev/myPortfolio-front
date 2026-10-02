@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { IBlog } from "@/interfaces/blogs.interfaces";
-import { getBaseUrl } from "@/lib/apiConfig";
-import { getFrontendBaseUrl } from "@/lib/apiConfig";
+import { getBaseUrl, getFrontendBaseUrl } from "@/lib/apiConfig";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes: MetadataRoute.Sitemap = [
