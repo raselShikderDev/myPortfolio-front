@@ -16,18 +16,18 @@
  */
 export const getBaseUrl = (): string => {
   const url = process.env.NEXT_PUBLIC_BASE_URL as string;
+
   if (!url) {
     throw new Error(
-      'NEXT_PUBLIC_BASE_URL is not defined in environment variables. ' +
-      'Please add it to your .env.local file.'
+      "NEXT_PUBLIC_BASE_URL is not defined in environment variables. " +
+      "Please add it to your .env.local file."
     );
   }
+
   return url;
 };
 
-// We continue to export these as constants for backward compatibility,
-// but they now hold the function directly. Consumers must call them.
-export const BASE_URL = getBaseUrl;
+export const BASE_URL = getBaseUrl();
 
 /**
  * Frontend Base URL
@@ -40,99 +40,108 @@ export const BASE_URL = getBaseUrl;
  */
 export const getFrontendBaseUrl = (): string => {
   const url = process.env.NEXT_PUBLIC_FRONTEND_BASE_URL as string;
+
   if (!url) {
     throw new Error(
-      'NEXT_PUBLIC_FRONTEND_BASE_URL is not defined in environment variables. ' +
-      'Please add it to your .env.local file.'
+      "NEXT_PUBLIC_FRONTEND_BASE_URL is not defined in environment variables. " +
+      "Please add it to your .env.local file."
     );
   }
+
   return url;
 };
 
-export const FRONTEND_BASE_URL = getFrontendBaseUrl;
+export const FRONTEND_BASE_URL = getFrontendBaseUrl();
 
 /**
  * ImageBB API Key
- * Used for client-side image uploads through ImageBB service
+ * Used for client-side image uploads through ImageBB service.
  * Must be defined in .env as NEXT_PUBLIC_IMAGEBB_API_KEY
  */
 export const getImageBBApiKey = (): string => {
   const key = process.env.NEXT_PUBLIC_IMAGEBB_API_KEY as string;
+
   if (!key) {
     throw new Error(
-      'NEXT_PUBLIC_IMAGEBB_API_KEY is not defined in environment variables. ' +
-      'Please add it to your .env.local file.'
+      "NEXT_PUBLIC_IMAGEBB_API_KEY is not defined in environment variables. " +
+      "Please add it to your .env.local file."
     );
   }
+
   return key;
 };
 
-export const IMAGEBB_API_KEY = getImageBBApiKey;
+export const IMAGEBB_API_KEY = getImageBBApiKey();
 
 /**
  * ImageBB API Link
- * ImageBB service endpoint URL
+ * ImageBB service endpoint URL.
  * Must be defined in .env as NEXT_PUBLIC_IMAGEBB_API_LINK
  */
 export const getImageBBApiLink = (): string => {
   const link = process.env.NEXT_PUBLIC_IMAGEBB_API_LINK as string;
+
   if (!link) {
     throw new Error(
-      'NEXT_PUBLIC_IMAGEBB_API_LINK is not defined in environment variables. ' +
-      'Please add it to your .env.local file.'
+      "NEXT_PUBLIC_IMAGEBB_API_LINK is not defined in environment variables. " +
+      "Please add it to your .env.local file."
     );
   }
+
   return link;
 };
 
-export const IMAGEBB_API_LINK = getImageBBApiLink;
+export const IMAGEBB_API_LINK = getImageBBApiLink();
 
 /**
  * Utilities for constructing API paths
  */
 export const API_PATHS = {
   auth: {
-    login: '/auth/login',
-    logout: '/auth/logout',
-    generateToken: '/auth/generate-token',
+    login: "/auth/login",
+    logout: "/auth/logout",
+    generateToken: "/auth/generate-token",
   },
+
   blogs: {
-    getAll: '/blogs/all',
+    getAll: "/blogs/all",
     getOne: (slug: string) => `/blogs/${slug}`,
-    create: '/blogs/create',
+    create: "/blogs/create",
     update: (slug: string) => `/blogs/${slug}`,
     delete: (slug: string) => `/blogs/${slug}`,
-    toggleStatus: (status: string, slug: string) => `/blogs/${status}/${slug}`,
-    stats: '/blogs/stats',
+    toggleStatus: (status: string, slug: string) =>
+      `/blogs/${status}/${slug}`,
+    stats: "/blogs/stats",
   },
+
   projects: {
-    getAll: '/projects/all',
+    getAll: "/projects/all",
     getOne: (id: string) => `/projects/${id}`,
-    create: '/projects/create',
+    create: "/projects/create",
     update: (id: string) => `/projects/edit/${id}`,
     delete: (id: string) => `/projects/${id}`,
   },
+
   workExperience: {
-    getAll: '/work-experience/all',
-    create: '/work-experience/create',
+    getAll: "/work-experience/all",
+    create: "/work-experience/create",
     update: (id: string) => `/work-experience/edit/${id}`,
     delete: (id: string) => `/work-experience/${id}`,
   },
+
   users: {
-    getMe: '/users/getme',
+    getMe: "/users/getme",
   },
-  contact: '/contact',
+
+  contact: "/contact",
 } as const;
 
 /**
- * Helper function to build a full API URL from a path
+ * Helper function to build a full API URL from a path.
  */
 export const buildApiUrl = (path: string): string => {
-  // Remove leading slash if present
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+  const baseUrl = getBaseUrl().replace(/\/$/, "");
 
-  // Remove trailing slash from base URL
-  const baseUrl = getBaseUrl().replace(/\/$/, '');
-
-  return `${baseUrl}/${cleanPath}`.replace(/\/+/g, '/');
+  return `${baseUrl}/${cleanPath}`;
 };
