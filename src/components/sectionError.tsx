@@ -10,6 +10,21 @@ interface SectionErrorProps {
 }
 
 export default function SectionError({ error, reset, className }: SectionErrorProps) {
+  const getErrorMessage = (error: Error & { type?: string }) => {
+    switch (error.type) {
+      case 'network':
+        return 'Network error. Please check your connection.';
+      case 'auth':
+        return 'Authentication failed. Please log in again.';
+      case 'server':
+        return 'Server error. Please try again later.';
+      case 'validation':
+        return 'Validation error. Please check your input.';
+      default:
+        return error.message || 'Failed to load data';
+    }
+  };
+
   return (
     <div
       className={`w-full flex flex-col items-center justify-center p-6 border border-red-400 bg-red-50 rounded-xl text-center ${className || ""}`}
@@ -17,7 +32,7 @@ export default function SectionError({ error, reset, className }: SectionErrorPr
       <FiAlertCircle className="text-red-500 text-4xl mb-2 animate-bounce" />
 
       <h3 className="text-xl font-semibold text-red-600">
-        {error.message || "Failed to load data"}
+        {getErrorMessage(error)}
       </h3>
 
       {error.digest && (

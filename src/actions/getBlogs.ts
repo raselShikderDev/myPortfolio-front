@@ -1,12 +1,16 @@
 "use server";
 
 import { IBlog } from "@/interfaces/blogs.interfaces";
-import { getBaseUrl } from "@/lib/apiConfig";
+import { buildApiUrl } from "@/lib/apiConfig";
 
 export async function getAllBlogs(): Promise<IBlog[]> {
-  const res = await fetch(`${getBaseUrl()}/blogs/all`);
-  const data = await res.json();
+  const res = await fetch(buildApiUrl("/blogs/all"));
 
-  const blogs = data.data;
-  return blogs;
+  if (!res.ok) {
+    const errorData = await res.json().catch(() => ({ message: "Network error" }));
+    throw new Error(errorData.message || "Failed to fetch blogs");
+  }
+
+  const data = await res.json();
+  return data.data;
 }
