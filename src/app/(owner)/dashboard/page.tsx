@@ -17,21 +17,32 @@ interface BlogStatsResponse {
 
 export default async function Page() {
   const token = await getUserSession();
- if (!token) {
-    console.error("token not found")
-  }
-  const res = await fetch(`${BASE_URL}/blogs/stats`, {
-    method: "GET",
-    headers: {
-      Authorization: token as string,
-    },
-    next: {
-      revalidate: 60,
-    },
-  });
 
-  const result = await res.json();
-  const data: BlogStatsResponse = result.data;
+  let data: BlogStatsResponse | null = null;
+  let fetchError: string | null = null;
+
+  if (token) {
+    try {
+      const res = await fetch(`${BASE_URL}/blogs/stats`, {
+        method: "GET",
+        headers: {
+          Authorization: token as string,
+        },
+        next: {
+          revalidate: 60,
+        },
+      });
+
+      if (!res.ok) {
+        fetchError = "Failed to load dashboard stats.";
+      } else {
+        const result = await res.json();
+        data = result as BlogStatsResponse;
+      }
+    } catch {
+      fetchError = "Failed to load dashboard stats.";
+    }
+  }
 
   // Compact card component
   const CompactCard = ({
@@ -65,19 +76,25 @@ export default async function Page() {
         </p>
       </header>
 
-      <section className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-        <CompactCard title="Total Blogs" value={data.stats.totalViews} />
-        <CompactCard title="Featured Blogs" value={data.featuredCount} />
-        <CompactCard title="Total Views" value={data.stats.totalViews} />
-        <CompactCard
-          title="Average Views"
-          value={data.stats.avgViews?.toFixed(0)}
-        />
-        <CompactCard title="Experiences" value={data.stats.totalExperience} />
-        <CompactCard title="Projects" value={data.stats.totalProject} />
-        <CompactCard title="Posts Last Week" value={data.lastWeekPostCount} />
-        <CompactCard title="Posts Last Month" value={data.lastMonthPostCount} />
-      </section>
+      {fetchError ? (
+        <section className="text-center py-8">
+          <p className="text-red-500">{fetchError}</p>
+        </section>
+      ) : data ? (
+        <section className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+          <CompactCard title="Total Blogs" value={data.stats.totalBlog} />
+          <CompactCard title="Featured Blogs" value={data.featuredCount} />
+          <CompactCard title="Total Views" value={data.stats.totalViews} />
+          <CompactCard
+            title="Average Views"
+            value={data.stats.avgViews?.toFixed(0)}
+          />
+          <CompactCard title="Experiences" value={data.stats.totalExperience} />
+          <CompactCard title="Projects" value={data.stats.totalProject} />
+          <CompactCard title="Posts Last Week" value={data.lastWeekPostCount} />
+          <CompactCard title="Posts Last Month" value={data.lastMonthPostCount} />
+        </section>
+      ) : null}
     </main>
   );
 }
