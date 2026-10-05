@@ -1,5 +1,5 @@
 # Ignore Next.js and build artifacts
-.node_modules
+node_modules
 .next
 
 # Ignore environment files
