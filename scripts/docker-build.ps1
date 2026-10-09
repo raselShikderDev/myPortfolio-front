@@ -11,8 +11,8 @@
 .NOTES
     The four variables are NEXT_PUBLIC_* values and are intentionally exposed
     to the browser by Next.js. They are NOT server secrets.
-    Server-only secrets (JWT_ACCESS_SECRET, WEB3FORMS_ACCESS_KEY) are NOT
-    passed here; they must be supplied at runtime.
+    Server-only secrets or environment configs (e.g., INTERNAL_API_BASE_URL)
+    are NOT passed at build time; they can be supplied at container runtime (`docker run -e`).
 #>
 
 $ErrorActionPreference = "Stop"
@@ -78,7 +78,7 @@ if ($missing.Count -gt 0) {
 }
 
 # ---------------------------------------------------------------------------
-# 4. Build the docker command with --build-arg for each required variable
+# 4. Build the docker command with --build-arg for each variable
 # ---------------------------------------------------------------------------
 $buildArgs = @()
 foreach ($var in $requiredVars) {

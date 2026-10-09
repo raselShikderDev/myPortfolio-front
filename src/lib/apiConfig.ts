@@ -8,13 +8,24 @@
 
 /**
  * Backend API Base URL
- * Must be defined in .env as NEXT_PUBLIC_BASE_URL
+ *
+ * On the server, uses INTERNAL_API_BASE_URL if available (for Docker
+ * networking where the backend is on a separate container). Falls back
+ * to NEXT_PUBLIC_BASE_URL otherwise.
+ *
+ * On the client, always uses NEXT_PUBLIC_BASE_URL (inlined at build time).
  *
  * Examples:
  * - Development: http://localhost:5000/api/v1
  * - Production: https://rasel-shikder-backend.vercel.app/api/v1
+ * - Docker internal: http://backend:5000/api/v1
  */
 export const getBaseUrl = (): string => {
+  // On the server, prefer the internal URL for Docker container networking
+  if (typeof window === "undefined" && process.env.INTERNAL_API_BASE_URL) {
+    return process.env.INTERNAL_API_BASE_URL;
+  }
+
   const url = process.env.NEXT_PUBLIC_BASE_URL as string;
 
   if (!url) {

@@ -2,23 +2,29 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getUserSession } from "@/lib/getUserSession";
 import { BASE_URL } from "@/lib/apiConfig";
 
-interface BlogStatsResponse {
-  stats: {
-    totalBlog: number;
-    totalViews: number;
-    avgViews: number;
-    totalExperience: number;
-    totalProject: number;
-  };
+interface BlogStats {
+  totalBlog: number;
+  totalViews: number;
+  avgViews: number;
+  totalExperience: number;
+  totalProject: number;
+}
+
+interface BlogStatsData {
+  stats: BlogStats;
   featuredCount: number;
   lastWeekPostCount: number;
   lastMonthPostCount: number;
 }
 
+interface BlogStatsResponse {
+  data: BlogStatsData;
+}
+
 export default async function Page() {
   const token = await getUserSession();
 
-  let data: BlogStatsResponse | null = null;
+  let data: BlogStatsData | null = null;
   let fetchError: string | null = null;
 
   if (token) {
@@ -36,8 +42,8 @@ export default async function Page() {
       if (!res.ok) {
         fetchError = "Failed to load dashboard stats.";
       } else {
-        const result = await res.json();
-        data = result as BlogStatsResponse;
+        const result: BlogStatsResponse = await res.json();
+        data = result.data;
       }
     } catch {
       fetchError = "Failed to load dashboard stats.";
@@ -64,6 +70,7 @@ export default async function Page() {
       </CardContent>
     </Card>
   );
+  console.log({ data });
 
   return (
     <main className="min-h-screen bg-background p-4 sm:p-8 space-y-6">
@@ -89,10 +96,10 @@ export default async function Page() {
             title="Average Views"
             value={data.stats.avgViews?.toFixed(0)}
           />
-          <CompactCard title="Experiences" value={data.stats.totalExperience} />
-          <CompactCard title="Projects" value={data.stats.totalProject} />
-          <CompactCard title="Posts Last Week" value={data.lastWeekPostCount} />
-          <CompactCard title="Posts Last Month" value={data.lastMonthPostCount} />
+          <CompactCard title="Experiences" value={data.stats.totalExperience ?? 0} />
+          <CompactCard title="Projects" value={data.stats.totalProject ?? 0} />
+          <CompactCard title="Posts Last Week" value={data.lastWeekPostCount ?? 0} />
+          <CompactCard title="Posts Last Month" value={data.lastMonthPostCount ?? 0} />
         </section>
       ) : null}
     </main>
