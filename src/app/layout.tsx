@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit as OutfitFont, Ovo as OvoFont } from "next/font/google";
-import "@/app/globals.css";
+import "./globals.css";
 import ThemeProviderWrapper from "@/provider/themeProviderWrapper";
 import { Toaster } from "sonner";
 
