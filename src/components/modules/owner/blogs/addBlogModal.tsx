@@ -144,7 +144,7 @@ export function AddBlogModal({ token }: { token: string }) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add Blog</DialogTitle>
         </DialogHeader>
@@ -159,9 +159,9 @@ export function AddBlogModal({ token }: { token: string }) {
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormControl>
-                    <Input placeholder="Blog Title" {...field} />
+                    <Input placeholder="Blog Title" {...field} className="grow" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -193,9 +193,9 @@ export function AddBlogModal({ token }: { token: string }) {
               control={form.control}
               name="tags"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormControl>
-                    <Input placeholder="Tags (comma separated)" {...field} />
+                    <Input placeholder="Tags (comma separated)" {...field} className="grow" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
