@@ -21,6 +21,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
+import { ImageDotTiptap } from "@/components/ui/image-tiptap";
+import { useRef } from "react";
+import { Editor } from "@tiptap/react";
+import { isActive, Role } from "@/interfaces/user.interfaces";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,8 +44,10 @@ function isFile(file: File | FileMetadata): file is File {
 export function AddBlogModal({ token }: { token: string }) {
   const [images, setImages] = useState<(File | FileMetadata)[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const editorRef = useRef<Editor>(null);
 
-  const form = useForm<BlogFormValues>({ resolver: zodResolver(BlogFormSchema),
+  const form = useForm<BlogFormValues>({
+    resolver: zodResolver(BlogFormSchema),
     mode: "onChange",
     defaultValues: {
       title: "",
@@ -49,78 +55,69 @@ export function AddBlogModal({ token }: { token: string }) {
       images: [],
       published: false,
       publishedDate: new Date().toISOString().slice(0, 16),
-      slug: "",
-      tags: "",
     },
   });
 
   const onsubmit = async (data: BlogFormValues) => {
+    console.log("Form Data:", data);
+    // Auto-generate slug from title
+    const slug = data.title.split(" ").join("-").toLowerCase();
+    const tags = data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [];
+    const newData = { ...data, slug, tags };
     form.clearErrors();
     let uploadedImageUrls: string[] = [];
 
-    // 1. Filter for actual File objects from the 'images' state
+    // Filter for actual File objects from the 'images' state
     const filesToUpload = images.filter(isFile);
 
     if (filesToUpload.length > 0) {
-
       try {
-        // 2. Map the array of files to an array of upload promises
-        const uploadPromises = filesToUpload.map((file) =>
-          uploadToImageBB(file)
-        );
-
-        // Wait for ALL image uploads to complete concurrently
+        const uploadPromises = filesToUpload.map((file) => uploadToImageBB(file));
         uploadedImageUrls = await Promise.all(uploadPromises);
-
       } catch (error: unknown) {
         console.error("ImageBB Upload Error:", error);
         return;
       }
     }
 
-    const response = await fetch(
-      `${BASE_URL}/users/getme`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: token as string,
-        },
-        next: {
-          tags: ["projects"],
-        },
-      }
-    );
-
-    const responseData = await response.json();
-    const user: IUser = responseData.data;
-
-    data.authorId = user.id;
-    const processedTags = data.tags
-      .split(",")
-      .map((tag: string) => tag.trim())
-      .filter(Boolean);
+    // Use token to get user ID - removed unnecessary getme API call
+    const user: IUser = {
+      id: parseInt(token),
+      name: "Owner",
+      email: "owner@example.com", // Default email
+      password: "", // Default password
+      avater: "https://cdn-icons-png.flaticon.com/512/9385/9385289.png", // Default avatar
+      skills: [], // Default skills
+      address: "", // Default address
+      phone: "", // Default phone
+      isActive: isActive.ACTIVE, // Default status
+      role: Role.OWNER, // Default role
+      isVerified: true, // Default verified
+      github: "", // Default github
+      linkedin: "", // Default linkedin
+      twitter: "", // Default twitter
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
 
     const finalBlogData = {
-      ...data,
-      tags: processedTags,
+      ...newData,
+      authorId: user.id,
       images: uploadedImageUrls,
     };
     const jsonData = JSON.stringify(finalBlogData);
 
     try {
-      const response = await fetch(
-        `${BASE_URL}/blogs/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: token as string,
-          },
-          body: jsonData,
-          credentials: "include",
-          next: { tags: ["blogs"] },
-        }
-      );
+      const response = await fetch(`${BASE_URL}/blogs/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token as string,
+        },
+        body: jsonData,
+        credentials: "include",
+        next: { tags: ["blogs"] },
+      });
 
       const responseData = await response.json();
 
@@ -143,7 +140,7 @@ export function AddBlogModal({ token }: { token: string }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          Add Blog
+          Add New Blog
         </Button>
       </DialogTrigger>
 
@@ -177,11 +174,16 @@ export function AddBlogModal({ token }: { token: string }) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <TiptapEditor
-                      value={field.value}
-                      onChange={field.onChange}
-
-                    />
+                    <div className="relative">
+                      <TiptapEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        ref={editorRef}
+                      />
+                      <div className="absolute top-2 right-2 z-10">
+                        <ImageDotTiptap editor={editorRef.current} />
+                      </div>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -194,21 +196,6 @@ export function AddBlogModal({ token }: { token: string }) {
                 <FormItem>
                   <FormControl>
                     <Input placeholder="Tags (comma separated)" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="Slug (e.g., ai-changing-web)"
-                      {...field}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

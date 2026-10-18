@@ -1,7 +1,7 @@
 "use client";
 
-import MultipleImageUploader from "@/components/multipleFileUploader";
-import { Button } from "@/components/ui/button";
+import { useEffect, useRef } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogClose,
@@ -11,25 +11,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FileMetadata } from "@/hooks/use-file-uploader";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
-import { useEffect, useState } from "react";
+import { ImageDotTiptap } from "@/components/ui/image-tiptap";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { BlogFormSchema } from "@/zodSchema/blogs.schema";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
 import { Edit2, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { IBlog, BlogFormValues } from "@/interfaces/blogs.interfaces";
 import { BASE_URL } from "@/lib/apiConfig";
+import { Editor } from "@tiptap/react";
+import { isActive, Role } from "@/interfaces/user.interfaces";
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -45,20 +41,22 @@ export function UpdateBlogModal({
 }) {
   const [images, setImages] = useState<(File | FileMetadata)[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const editorRef = useRef<Editor>(null);
 
   const form = useForm<BlogFormValues>({
     resolver: zodResolver(BlogFormSchema),
     mode: "onChange",
     defaultValues: {
       title: blog.title,
-      content: blog.content,
+      content: blog.content || "",
       images: [],
       published: blog.published,
-      publishedDate: new Date().toISOString().slice(0, 16),
+      publishedDate: new Date(blog.publishedDate).toISOString().slice(0, 16),
       slug: blog.slug,
       tags: blog.tags.join(", "),
     },
   });
+
   // Sync form state when blog prop changes
   useEffect(() => {
     form.reset({
@@ -72,67 +70,67 @@ export function UpdateBlogModal({
     });
   }, [blog, form]);
 
-
   const onsubmit = async (data: BlogFormValues) => {
-    const response = await fetch(
-      `${BASE_URL}/users/getme`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: token as string,
-        },
-        next: {
-          tags: ["projects"],
-        },
-      }
-    );
-
-    const responseData = await response.json();
-    const user: IUser = responseData.data;
-
-    data.authorId = user.id;
-    const processedTags = data.tags
-      .split(",")
-      .map((tag: string) => tag.trim())
-      .filter(Boolean);
-
+    // Auto-generate slug from title if not provided
+    const slug = data.slug || data.title.split(" ").join("-").toLowerCase();
+    const processedTags = data.tags ? data.tags.split(",").map((tag) => tag.trim()).filter(Boolean) : [];
     const finalBlogData = {
       ...data,
       tags: processedTags,
       images: images.filter(isFile).map((file) => file.name),
     };
 
+    // Use token to get user ID - removed unnecessary getme API call
+    const user: IUser = {
+      id: parseInt(token),
+      name: blog.author?.name || "Owner",
+      email: "owner@example.com",
+      password: "",
+      avater: blog.author?.avater || "https://cdn-icons-png.flaticon.com/512/9385/9385289.png",
+      skills: [],
+      address: "",
+      phone: "",
+      isActive: isActive.ACTIVE,
+      role: Role.OWNER,
+      isVerified: true,
+      github: "",
+      linkedin: "",
+      twitter: "",
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
 
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(finalBlogData));
-
-    // Append only actual File objects
-    images.filter(isFile).forEach((file) => formData.append("files", file));
+    data.authorId = user.id;
 
     try {
       const response = await fetch(
-        `${BASE_URL}/blogs/create`,
+        `${BASE_URL}/blogs/${blog.slug}`,
         {
-          method: "POST",
-          body: formData,
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token as string,
+          },
+          body: JSON.stringify(finalBlogData),
           credentials: "include",
+          next: { tags: ["blogs"] },
         }
       );
 
       const responseData = await response.json();
 
       if (!response.ok || !responseData.success) {
-        toast.error("Blog adding failed");
+        toast.error(responseData.message || "Blog update failed");
         return;
       }
 
-      toast.success("Blog added successfully!");
+      toast.success("Blog updated successfully!");
       setOpen(false);
       form.reset();
       setImages([]);
     } catch (err) {
       console.error(err);
-      toast.error("Adding blog failed");
+      toast.error("Updating blog failed");
     }
   };
 
@@ -140,7 +138,7 @@ export function UpdateBlogModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          <Edit2 className="w-4 h-4" />
+          Edit Blog
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
@@ -173,11 +171,16 @@ export function UpdateBlogModal({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <TiptapEditor
-                      value={field.value}
-                      onChange={field.onChange}
-
-                    />
+                    <div className="relative">
+                      <TiptapEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                        ref={editorRef}
+                      />
+                      <div className="absolute top-2 right-2 z-10">
+                        <ImageDotTiptap editor={editorRef.current} />
+                      </div>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -190,21 +193,6 @@ export function UpdateBlogModal({
                 <FormItem>
                   <FormControl>
                     <Input placeholder="Tags (comma separated)" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="Slug (e.g., ai-changing-web)"
-                      {...field}
-                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -251,14 +239,13 @@ export function UpdateBlogModal({
           <Button
             type="submit"
             form="add-blog-form"
-            className="cursor-pointer"
             disabled={form.formState.isSubmitting}
+            className="cursor-pointer"
           >
-            {!form.formState.isSubmitting && `Update Blog`}
+            {!form.formState.isSubmitting && `Save Changes`}
             {form.formState.isSubmitting && (
               <Loader2 className="h-4 w-4 animate-spin" />
             )}
-            Update Blog
           </Button>
         </DialogFooter>
       </DialogContent>

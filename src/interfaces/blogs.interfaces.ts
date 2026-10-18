@@ -22,7 +22,6 @@ export interface BlogFormValues {
   images: string[];
   published: boolean;
   publishedDate: string;
-  slug: string;
-  tags: string;
+  tags?: string;
   authorId?: number;
 }
