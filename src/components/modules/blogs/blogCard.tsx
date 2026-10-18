@@ -1,13 +1,20 @@
+"use client";
 
 import Link from "next/link";
 import Image from "next/image";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 import { Badge } from "@/components/ui/badge";
 import { MotionDiv } from "../animations/motionElements";
+import { useEffect, useState } from "react";
 
 export default function BlogCard({ post }: { post: IBlog }) {
-  const authorImage = post.author?.avater as string ? post.author?.avater as string : "https://cdn-icons-png.flaticon.com/512/9385/9385289.png";
-  const authorName = post.author?.name || "Owner";
+  const [authorImage, setAuthorImage] = useState<string>("");
+  const [authorName, setAuthorName] = useState<string>("Owner");
+
+  useEffect(() => {
+    setAuthorImage(post.author?.avater || "https://cdn-icons-png.flaticon.com/512/9385/9385289.png");
+    setAuthorName(post.author?.name || "Owner");
+  }, [post.author]);
 
   return (
     <MotionDiv
@@ -16,11 +23,11 @@ export default function BlogCard({ post }: { post: IBlog }) {
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.3 }}
-      className="w-full"
+      className="w-full max-w-md mx-auto"
     >
       <Link
         href={`/blogs/${post.slug}`}
-        className="block group rounded-2xl overflow-hidden bg-white dark:bg-gray-900 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800"
+        className="block group rounded-2xl overflow-hidden bg-white dark:bg-gray-900 shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-800 w-full max-w-md mx-auto relative"
       >
         {post.images && post.images.length > 0 ? (
           <div className="relative w-full h-48 sm:h-56 md:h-60 lg:h-64 overflow-hidden">
@@ -38,7 +45,7 @@ export default function BlogCard({ post }: { post: IBlog }) {
         )}
 
         {/* Content */}
-        <div className="p-4 sm:p-5 md:p-6 flex flex-col justify-between h-full">
+        <div className="p-4 sm:p-5 md:p-6 flex flex-col justify-between h-full overflow-hidden transition-all duration-300 hover:scale-[1.01] relative">
           {/* Title */}
           <h3 className="text-lg sm:text-xl font-bold mb-2 group-hover:text-blue-600 transition-colors">
             {post.title}
@@ -47,7 +54,7 @@ export default function BlogCard({ post }: { post: IBlog }) {
           {/* Description */}
           {post.content && (
             <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm sm:text-base line-clamp-3">
-              {post.content}
+              {typeof post.content === 'string' ? post.content : 'Content formatted as JSON'}
             </p>
           )}
 

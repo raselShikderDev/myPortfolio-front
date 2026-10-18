@@ -1,6 +1,5 @@
 "use client";
-
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, useRef } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Editor } from "@tiptap/react";
 import Link from "@tiptap/extension-link";
@@ -21,17 +20,16 @@ import {
   Redo,
   Link as LinkIcon,
 } from "lucide-react";
+import { ImageDotTiptap } from "@/components/ui/image-tiptap";
+import { forwardRef } from "react";
 
 interface TiptapEditorProps {
   value: string;
   onChange: (value: string) => void;
-
+  ref?: React.Ref<Editor>;
 }
 
-export function TiptapEditor({
-  value,
-  onChange,
-}: TiptapEditorProps) {
+export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref<Editor> | null) => {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: false }),
@@ -42,7 +40,7 @@ export function TiptapEditor({
         },
       }),
     ],
-    content: value,
+    content: props.value,
     editorProps: {
       attributes: {
         class:
@@ -53,21 +51,28 @@ export function TiptapEditor({
       const html = editor.getHTML();
       const text = editor.getText();
       if (!text.trim() || html === "<p></p>") {
-        onChange("");
+        props.onChange("");
       } else {
-        onChange(html);
+        props.onChange(html);
       }
     },
   });
 
+  // Pass editor instance to ref for parent components
   useEffect(() => {
-    if (editor && value !== undefined) {
+    if (ref && editor) {
+      ref.current = editor;
+    }
+  }, [editor, ref]);
+
+  useEffect(() => {
+    if (editor && props.value !== undefined) {
       const currentHtml = editor.getHTML();
-      if (value !== currentHtml && !(value === "" && currentHtml === "<p></p>")) {
-        editor.commands.setContent(value);
+      if (props.value !== currentHtml && !(props.value === "" && currentHtml === "<p></p>")) {
+        editor.commands.setContent(props.value);
       }
     }
-  }, [value, editor]);
+  }, [props.value, editor]);
 
   if (!editor) {
     return null;
@@ -75,8 +80,10 @@ export function TiptapEditor({
 
   return (
     <div className="flex flex-col gap-2">
-
-      <div className="flex flex-wrap items-center gap-1 rounded-md border border-input bg-muted/50 p-1">
+      <div className="flex flex-wrap items-center gap-1 rounded-md border border-input bg-muted/50 p-1 relative">
+        <div className="absolute top-2 right-2 z-10">
+          <ImageDotTiptap editor={editor} />
+        </div>
         <Button
           type="button"
           variant="ghost"
@@ -107,7 +114,6 @@ export function TiptapEditor({
         >
           <Strikethrough className="h-4 w-4" />
         </Button>
-        <div className="h-4 w-[1px] bg-border mx-1" />
         <Button
           type="button"
           variant="ghost"
@@ -179,16 +185,6 @@ export function TiptapEditor({
         >
           <Code className="h-4 w-4" />
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setLink(editor)}
-          className={editor.isActive("link") ? "bg-accent text-accent-foreground" : ""}
-          title="Add Link"
-        >
-          <LinkIcon className="h-4 w-4" />
-        </Button>
         <div className="h-4 w-[1px] bg-border mx-1" />
         <Button
           type="button"
@@ -214,20 +210,3 @@ export function TiptapEditor({
       <EditorContent editor={editor} />
     </div>
   );
-}
-
-  const setLink = (editor: Editor) => {
-    const previousUrl = editor.getAttributes("link").href;
-    const url = window.prompt("URL", previousUrl);
-
-    if (url === null) {
-      return;
-    }
-
-    if (url === "") {
-      editor.chain().focus().extendMarkRange("link").unsetLink().run();
-      return;
-    }
-
-    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
-  };
