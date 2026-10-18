@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { uploadToImageBB } from "@/utils/imageUploader";
 
 import { Editor } from "@tiptap/react";
+import { Image } from "@tiptap/extension-image";
 
 interface ImageDotTiptapProps {
   editor: Editor | null; // Tiptap editor instance
@@ -62,7 +63,7 @@ export function ImageDotTiptap({ editor }: ImageDotTiptapProps) {
             editor.chain().focus().setImage({ src: url, alt: "Uploaded image" }).run();
           }
         }}
-        className={editor.isActive("image") ? "bg-accent text-accent-foreground" : ""}
+        className={editor?.isActive("image") ? "bg-accent text-accent-foreground" : ""}
         title="Insert Image"
       >
         <Upload className="h-4 w-4" />

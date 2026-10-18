@@ -5,7 +5,7 @@ import { useEffect, type Dispatch } from "react";
 import Image from "next/image";
 import { FileMetadata, useFileUpload } from "@/hooks/use-file-uploader";
 
-export default function MulptipleImageUploader({
+export default function MultipleImageUploader({
   onChange,
 }: {
   onChange: Dispatch<React.SetStateAction<[] | (File | FileMetadata)[]>>;

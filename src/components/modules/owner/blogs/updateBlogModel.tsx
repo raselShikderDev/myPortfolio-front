@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { FileMetadata } from "@/hooks/use-file-uploader";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -26,6 +27,7 @@ import { IBlog, BlogFormValues } from "@/interfaces/blogs.interfaces";
 import { BASE_URL } from "@/lib/apiConfig";
 import { Editor } from "@tiptap/react";
 import { isActive, Role } from "@/interfaces/user.interfaces";
+import MultipleImageUploader from "@/components/MultipleImageUploader";
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -52,7 +54,6 @@ export function UpdateBlogModal({
       images: [],
       published: blog.published,
       publishedDate: new Date(blog.publishedDate).toISOString().slice(0, 16),
-      slug: blog.slug,
       tags: blog.tags.join(", "),
     },
   });
@@ -64,7 +65,6 @@ export function UpdateBlogModal({
       content: blog.content,
       published: blog.published,
       publishedDate: new Date(blog.publishedDate).toISOString().slice(0, 16),
-      slug: blog.slug,
       tags: blog.tags.join(", "),
       images: [],
     });
@@ -72,10 +72,11 @@ export function UpdateBlogModal({
 
   const onsubmit = async (data: BlogFormValues) => {
     // Auto-generate slug from title if not provided
-    const slug = data.slug || data.title.split(" ").join("-").toLowerCase();
+    const slug = data.title.split(" ").join("-").toLowerCase();
     const processedTags = data.tags ? data.tags.split(",").map((tag) => tag.trim()).filter(Boolean) : [];
     const finalBlogData = {
       ...data,
+      slug,
       tags: processedTags,
       images: images.filter(isFile).map((file) => file.name),
     };
@@ -100,7 +101,10 @@ export function UpdateBlogModal({
       updatedAt: new Date()
     };
 
-    data.authorId = user.id;
+    const finalBlogDataWithAuthor = {
+      ...finalBlogData,
+      authorId: user.id,
+    };
 
     try {
       const response = await fetch(
@@ -111,7 +115,7 @@ export function UpdateBlogModal({
             "Content-Type": "application/json",
             Authorization: token as string,
           },
-          body: JSON.stringify(finalBlogData),
+          body: JSON.stringify(finalBlogDataWithAuthor),
           credentials: "include",
           next: { tags: ["blogs"] },
         }
