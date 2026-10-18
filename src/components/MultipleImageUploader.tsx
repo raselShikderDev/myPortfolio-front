@@ -7,8 +7,10 @@ import { FileMetadata, useFileUpload } from "@/hooks/use-file-uploader";
 
 export default function MultipleImageUploader({
   onChange,
+  className = "",
 }: {
-  onChange: Dispatch<React.SetStateAction<[] | (File | FileMetadata)[]>>;
+  onChange: Dispatch<React.SetStateAction<(File | FileMetadata)[]>>;
+  className?: string;
 }) {
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
