@@ -1,6 +1,6 @@
 "use client";
 
-import MultipleImageUploader from "@/components/multipleFileUploader";
+import MultipleImageUploader from "@/components/MultipleImageUploader";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

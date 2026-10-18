@@ -1,9 +1,9 @@
 "use client";
-import { useEditor, EditorContent, useRef } from "@tiptap/react";
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Editor } from "@tiptap/react";
 import Link from "@tiptap/extension-link";
-import { useEffect } from "react";
+import { useEffect, useImperativeHandle } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Bold,
@@ -58,12 +58,12 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
     },
   });
 
-  // Pass editor instance to ref for parent components
-  useEffect(() => {
-    if (ref && editor) {
-      ref.current = editor;
-    }
-  }, [editor, ref]);
+  // Expose the editor instance to parent components via ref
+  useImperativeHandle(
+    ref,
+    () => editor,
+    [editor]
+  );
 
   useEffect(() => {
     if (editor && props.value !== undefined) {
@@ -81,9 +81,6 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-1 rounded-md border border-input bg-muted/50 p-1 relative">
-        <div className="absolute top-2 right-2 z-10">
-          <ImageDotTiptap editor={editor} />
-        </div>
         <Button
           type="button"
           variant="ghost"
@@ -210,3 +207,4 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
       <EditorContent editor={editor} />
     </div>
   );
+});
