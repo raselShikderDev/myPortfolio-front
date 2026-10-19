@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
-import { ImageDotTiptap } from "@/components/ui/image-tiptap";
 import { useRef } from "react";
 import { Editor } from "@tiptap/react";
 import { isActive, Role } from "@/interfaces/user.interfaces";
@@ -33,7 +32,7 @@ import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
 import { BlogFormValues } from "@/interfaces/blogs.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
-import { Loader2 } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 import { BASE_URL } from "@/lib/apiConfig";
 
 // Type guard to narrow File | FileMetadata -> File
@@ -44,7 +43,7 @@ function isFile(file: File | FileMetadata): file is File {
 export function AddBlogModal({ token }: { token: string }) {
   const [images, setImages] = useState<(File | FileMetadata)[]>([]);
   const [open, setOpen] = useState<boolean>(false);
-  const editorRef = useRef<Editor>(null);
+  const editorRef = useRef<Editor | null>(null);
 
   const form = useForm<BlogFormValues>({
     resolver: zodResolver(BlogFormSchema),
@@ -80,25 +79,21 @@ export function AddBlogModal({ token }: { token: string }) {
       }
     }
 
-    // Use token to get user ID - removed unnecessary getme API call
-    const user: IUser = {
-      id: parseInt(token),
-      name: "Owner",
-      email: "owner@example.com", // Default email
-      password: "", // Default password
-      avater: "https://cdn-icons-png.flaticon.com/512/9385/9385289.png", // Default avatar
-      skills: [], // Default skills
-      address: "", // Default address
-      phone: "", // Default phone
-      isActive: isActive.ACTIVE, // Default status
-      role: Role.OWNER, // Default role
-      isVerified: true, // Default verified
-      github: "", // Default github
-      linkedin: "", // Default linkedin
-      twitter: "", // Default twitter
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: token as string,
+        },
+        next: {
+          tags: ["projects"],
+        },
+      }
+    );
+
+    const responseData = await response.json();
+    const user: IUser = responseData.data;
 
     const finalBlogData = {
       ...newData,
@@ -144,9 +139,9 @@ export function AddBlogModal({ token }: { token: string }) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto p-4">
         <DialogHeader>
-          <DialogTitle>Add Blog</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Add Blog</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -174,15 +169,12 @@ export function AddBlogModal({ token }: { token: string }) {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <div className="relative">
+                    <div className="relative min-h-[200px] rounded-md border border-input bg-background">
                       <TiptapEditor
                         value={field.value}
                         onChange={field.onChange}
                         ref={editorRef}
                       />
-                      <div className="absolute top-2 right-2 z-10">
-                        <ImageDotTiptap editor={editorRef.current} />
-                      </div>
                     </div>
                   </FormControl>
                   <FormMessage />
@@ -214,7 +206,7 @@ export function AddBlogModal({ token }: { token: string }) {
                       className="w-4 h-4"
                     />
                   </FormControl>
-                  <label>Published</label>
+                  <label className="text-sm">Published</label>
                 </FormItem>
               )}
             />
@@ -232,6 +224,9 @@ export function AddBlogModal({ token }: { token: string }) {
             />
 
             <MultipleImageUploader onChange={setImages} />
+            <div className="mt-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">Paste images directly from websites or drag and drop them here</p>
+            </div>
           </form>
         </Form>
 
