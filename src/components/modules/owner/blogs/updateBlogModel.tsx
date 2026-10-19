@@ -15,13 +15,12 @@ import {
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
-import { ImageDotTiptap } from "@/components/ui/image-tiptap";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BlogFormSchema } from "@/zodSchema/blogs.schema";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
-import { Edit2, Loader2 } from "lucide-react";
+import { Edit2, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IBlog, BlogFormValues } from "@/interfaces/blogs.interfaces";
 import { BASE_URL } from "@/lib/apiConfig";
@@ -182,7 +181,30 @@ export function UpdateBlogModal({
                         ref={editorRef}
                       />
                       <div className="absolute top-2 right-2 z-10">
-                        <ImageDotTiptap editor={editorRef.current} />
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          id="image-upload"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file && editorRef.current) {
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                const base64 = reader.result as string;
+                                editorRef.current?.chain().focus().setImage({ src: base64 }).run();
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                        <label
+                          htmlFor="image-upload"
+                          className="cursor-pointer p-2 rounded-md hover:bg-muted transition-colors"
+                          title="Upload Image"
+                        >
+                          <Upload className="h-4 w-4" />
+                        </label>
                       </div>
                     </div>
                   </FormControl>

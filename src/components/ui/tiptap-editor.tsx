@@ -3,6 +3,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Editor } from "@tiptap/react";
 import Link from "@tiptap/extension-link";
+import Image from "@tiptap/extension-image";
 import { useEffect, useImperativeHandle } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,9 +19,7 @@ import {
   Code,
   Undo,
   Redo,
-  Link as LinkIcon,
 } from "lucide-react";
-import { ImageDotTiptap } from "@/components/ui/image-tiptap";
 import { forwardRef } from "react";
 
 interface TiptapEditorProps {
@@ -39,7 +38,8 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           class: "text-primary underline underline-offset-4 cursor-pointer",
         },
       }),
-    ],
+      Image.configure({}),
+      ],
     content: props.value,
     editorProps: {
       attributes: {
@@ -73,6 +73,47 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
       }
     }
   }, [props.value, editor]);
+
+  // Handle pasting from other websites (text + images)
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      e.preventDefault();
+      const clipboardData = e.clipboardData;
+      if (!clipboardData || !editor) return;
+
+      // If there are image files in the clipboard, read them as base64 and insert
+      if (clipboardData.files && clipboardData.files.length > 0) {
+        const file = clipboardData.files[0];
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64 = reader.result as string;
+            // Insert image using base64 src
+            editor.chain().focus().setImage({ src: base64 }).run();
+          };
+          reader.readAsDataURL(file);
+          return;
+        }
+      }
+
+      // Try to get HTML first (preserves images from websites)
+      const html = clipboardData.getData('text/html');
+      if (html) {
+        editor.chain().focus().insertContent(html).run();
+        return;
+      }
+
+      // Fall back to plain text
+      const text = clipboardData.getData('text/plain');
+      if (text) {
+        editor.chain().focus().insertContent(text).run();
+      }
+    };
+    document.addEventListener('paste', handlePaste);
+    return () => {
+      document.removeEventListener('paste', handlePaste);
+    };
+  }, [editor]);
 
   if (!editor) {
     return null;
