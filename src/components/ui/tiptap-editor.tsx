@@ -21,6 +21,8 @@ import {
   Redo,
 } from "lucide-react";
 import { forwardRef } from "react";
+import { toast } from "sonner";
+import { uploadToImageBB } from "../../utils/imageUploader";
 
 interface TiptapEditorProps {
   value: string;
@@ -29,6 +31,7 @@ interface TiptapEditorProps {
 }
 
 export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref<Editor> | null) => {
+  TiptapEditor.displayName = 'TiptapEditor';
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ link: false }),
@@ -39,7 +42,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
         },
       }),
       Image.configure({}),
-      ],
+    ],
     content: props.value,
     editorProps: {
       attributes: {
@@ -76,27 +79,29 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
 
   // Handle pasting from other websites (text + images)
   useEffect(() => {
-    const handlePaste = (e: ClipboardEvent) => {
+    const handlePaste = async (e: ClipboardEvent) => {
       e.preventDefault();
       const clipboardData = e.clipboardData;
       if (!clipboardData || !editor) return;
 
-      // If there are image files in the clipboard, read them as base64 and insert
+      // Handle image files in clipboard
       if (clipboardData.files && clipboardData.files.length > 0) {
         const file = clipboardData.files[0];
         if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = () => {
-            const base64 = reader.result as string;
-            // Insert image using base64 src
-            editor.chain().focus().setImage({ src: base64 }).run();
-          };
-          reader.readAsDataURL(file);
-          return;
+          try {
+            const loadingToast = toast.loading('Uploading pasted image...');
+            const imageUrl = await uploadToImageBB(file);
+            editor.chain().focus().setImage({ src: imageUrl, alt: file.name }).run();
+            toast.success('Pasted image uploaded successfully', { id: loadingToast });
+            return;
+          } catch (error) {
+            console.error('Pasted image upload failed:', error);
+            toast.error('Failed to upload pasted image');
+          }
         }
       }
 
-      // Try to get HTML first (preserves images from websites)
+      // Handle HTML content
       const html = clipboardData.getData('text/html');
       if (html) {
         editor.chain().focus().insertContent(html).run();
@@ -109,6 +114,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
         editor.chain().focus().insertContent(text).run();
       }
     };
+
     document.addEventListener('paste', handlePaste);
     return () => {
       document.removeEventListener('paste', handlePaste);
@@ -127,7 +133,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive("bold") ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('bold') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Bold"
         >
           <Bold className="h-4 w-4" />
@@ -137,7 +143,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive("italic") ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('italic') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Italic"
         >
           <Italic className="h-4 w-4" />
@@ -147,7 +153,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleStrike().run()}
-          className={editor.isActive("strike") ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('strike') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Strike"
         >
           <Strikethrough className="h-4 w-4" />
@@ -157,7 +163,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          className={editor.isActive("heading", { level: 1 }) ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('heading', { level: 1 }) ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Heading 1"
         >
           <Heading1 className="h-4 w-4" />
@@ -167,7 +173,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={editor.isActive("heading", { level: 2 }) ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('heading', { level: 2 }) ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Heading 2"
         >
           <Heading2 className="h-4 w-4" />
@@ -177,7 +183,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          className={editor.isActive("heading", { level: 3 }) ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('heading', { level: 3 }) ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Heading 3"
         >
           <Heading3 className="h-4 w-4" />
@@ -188,7 +194,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive("bulletList") ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('bulletList') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Bullet List"
         >
           <List className="h-4 w-4" />
@@ -198,7 +204,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive("orderedList") ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('orderedList') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Ordered List"
         >
           <ListOrdered className="h-4 w-4" />
@@ -208,7 +214,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={editor.isActive("blockquote") ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('blockquote') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Blockquote"
         >
           <Quote className="h-4 w-4" />
@@ -218,7 +224,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-          className={editor.isActive("codeBlock") ? "bg-accent text-accent-foreground" : ""}
+          className={editor.isActive('codeBlock') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Code Block"
         >
           <Code className="h-4 w-4" />
@@ -230,6 +236,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           size="sm"
           onClick={() => editor.chain().focus().undo().run()}
           disabled={!editor.can().undo()}
+          className={editor.can().undo() ? 'hover:bg-accent/20' : 'opacity-50'}
           title="Undo"
         >
           <Undo className="h-4 w-4" />
@@ -240,6 +247,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           size="sm"
           onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
+          className={editor.can().redo() ? 'hover:bg-accent/20' : 'opacity-50'}
           title="Redo"
         >
           <Redo className="h-4 w-4" />

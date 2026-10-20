@@ -19,7 +19,7 @@ export interface IBlog {
 export interface BlogFormValues {
   title: string;
   content: string;
-  images: string[];
+  images?: string[];
   published: boolean;
   publishedDate: string;
   tags?: string;

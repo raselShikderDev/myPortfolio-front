@@ -7,7 +7,7 @@ import z from "zod";
 export const BlogFormSchema = z.object({
   title: z.string().min(1, "Blog title is required"),
   content: z.string().min(1, "Blog content is required"),
-  images: z.array(z.string()),
+  images: z.array(z.string()).optional(),
   published: z.boolean(),
   publishedDate: z.string().min(1, "Published date is required"),
   tags: z.string().min(1, "At least one tag is required").optional(),

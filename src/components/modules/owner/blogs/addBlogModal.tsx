@@ -21,9 +21,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
+import { ImageDotTiptap } from "@/components/ui/image-tiptap";
 import { useRef } from "react";
 import { Editor } from "@tiptap/react";
-import { isActive, Role } from "@/interfaces/user.interfaces";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,8 +32,8 @@ import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
 import { BlogFormValues } from "@/interfaces/blogs.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
-import { Loader2, Upload } from "lucide-react";
 import { BASE_URL } from "@/lib/apiConfig";
+import { Loader2 } from "lucide-react";
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -170,11 +170,16 @@ export function AddBlogModal({ token }: { token: string }) {
                 <FormItem>
                   <FormControl>
                     <div className="relative min-h-[200px] rounded-md border border-input bg-background">
-                      <TiptapEditor
-                        value={field.value}
-                        onChange={field.onChange}
-                        ref={editorRef}
-                      />
+                      <div className="relative">
+                        <TiptapEditor
+                          value={field.value}
+                          onChange={field.onChange}
+                          ref={editorRef}
+                        />
+                        <div className="absolute top-2 right-2 z-10">
+                          <ImageDotTiptap editor={editorRef.current} />
+                        </div>
+                      </div>
                     </div>
                   </FormControl>
                   <FormMessage />
