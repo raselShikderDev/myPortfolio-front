@@ -3,17 +3,17 @@ import DOMPurify from 'isomorphic-dompurify';
 // Allowed HTML elements and attributes for Tiptap content
 const allowedTags = [
   'p', 'strong', 'em', 's', 'h1', 'h2', 'h3',
-  'ul', 'ol', 'li', 'blockquote', 'code', 'a'
+  'ul', 'ol', 'li', 'blockquote', 'code', 'a', 'img'
 ];
 
 // Configure DOMPurify with our allowed tags and attributes
 export const sanitizeBlogContent = (html: string): string => {
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: allowedTags,
-    ALLOWED_ATTR: ['href'],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'target', 'rel'],
     FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed'],
     FORBID_ATTR: ['onclick', 'onerror', 'onload'],
-    ALLOWED_URI_REGEXP: /^https?:\/\//,
+    ALLOWED_URI_REGEXP: /^(https?:\/\/|data:image\/)/,
   });
 };
 

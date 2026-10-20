@@ -15,6 +15,7 @@ import {
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
+import { ImageDotTiptap } from "@/components/ui/image-tiptap";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BlogFormSchema } from "@/zodSchema/blogs.schema";
@@ -175,36 +176,18 @@ export function UpdateBlogModal({
                 <FormItem>
                   <FormControl>
                     <div className="relative">
-                      <TiptapEditor
-                        value={field.value}
-                        onChange={field.onChange}
-                        ref={editorRef}
-                      />
-                      <div className="absolute top-2 right-2 z-10">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          id="image-upload"
-                          onChange={(e) => {
-                            const file = e.target.files?.[0];
-                            if (file && editorRef.current) {
-                              const reader = new FileReader();
-                              reader.onload = () => {
-                                const base64 = reader.result as string;
-                                editorRef.current?.chain().focus().setImage({ src: base64 }).run();
-                              };
-                              reader.readAsDataURL(file);
-                            }
-                          }}
+                      <div className="relative">
+                        <TiptapEditor
+                          value={field.value}
+                          onChange={field.onChange}
+                          ref={editorRef}
                         />
-                        <label
-                          htmlFor="image-upload"
-                          className="cursor-pointer p-2 rounded-md hover:bg-muted transition-colors"
-                          title="Upload Image"
-                        >
-                          <Upload className="h-4 w-4" />
-                        </label>
+                        <div className="absolute top-2 right-2 z-10">
+                          <ImageDotTiptap editor={editorRef.current} />
+                        </div>
+                      </div>
+                      <div className="absolute top-2 right-2 z-10">
+                        <ImageDotTiptap editor={editorRef.current} />
                       </div>
                     </div>
                   </FormControl>
