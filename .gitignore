@@ -49,3 +49,5 @@ next-env.d.ts
 .env.example
 .env.local
 .env.production
+# Playwright CLI output (may contain credentials)
+.playwright-cli/

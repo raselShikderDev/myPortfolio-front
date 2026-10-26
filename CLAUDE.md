@@ -39,3 +39,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **API Contracts:** Preserve existing API contracts, endpoint paths, and payload formats.
 - **Type Safety:** Maintain strict TypeScript types. Avoid using `any`, `@ts-ignore`, or `@ts-expect-error`.
 - **Security:** Never hardcode secrets, API keys, or credentials. Protect cookie-based and token authentication workflows.
+
+## Mandatory Safety & Security Guardrails
+
+### 1. Files & Directories
+- **Never delete, remove, truncate, or destructively overwrite** any file or directory without explicit user approval.
+- **Preserve uncommitted changes, untracked files, configuration, backups, and user data.**
+- Before asking for approval to remove or overwrite anything, provide the exact target paths and describe precisely what would be lost.
+- Avoid bulk deletion scripts, wildcard removals, or recursive purge operations.
+
+### 2. Databases & Persistent Data
+- **Never drop, reset, truncate, or run destructive migrations/scripts** on any database, schema, table, or collection without explicit user approval.
+- Only safe, read-only inspections or non-destructive migrations explicitly requested by the user are permitted.
+- Treat every database as production or containing non-recoverable state.
+
+### 3. Git & Remote Operations
+- **Never execute `git push`** (normal, force, or tags) to any remote without explicit user approval.
+- Before requesting approval to push, state the remote name, target branch, commit hashes, and a summary of commits to be published.
+- **Never discard uncommitted work, hard reset history (`git reset --hard`), or perform destructive rebases** without explicit approval.
+- Always inspect `git status` and `git diff` safely before proposing commits or changes.
+
+### 4. Elevated & Destructive Actions
+- Always require user approval before installing untrusted packages/binaries, altering security configurations/permissions, or triggering infrastructure deployment actions.

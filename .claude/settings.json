@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git push*)",
+      "Bash(git push)",
+      "PowerShell(git push*)",
+      "PowerShell(git push)",
+      "Bash(rm -rf *)",
+      "Bash(rm -r *)",
+      "Bash(rm -f *)",
+      "Bash(rm *)",
+      "Bash(del *)",
+      "Bash(del /q *)",
+      "PowerShell(Remove-Item -Recurse *)",
+      "PowerShell(Remove-Item -Force *)",
+      "PowerShell(Remove-Item *)"
+    ]
+  }
+}
