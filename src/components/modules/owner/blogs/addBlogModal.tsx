@@ -75,6 +75,7 @@ export function AddBlogModal({ token }: { token: string }) {
         uploadedImageUrls = await Promise.all(uploadPromises);
       } catch (error: unknown) {
         console.error("ImageBB Upload Error:", error);
+        toast.error("Failed to upload some images");
         return;
       }
     }
@@ -139,24 +140,32 @@ export function AddBlogModal({ token }: { token: string }) {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto p-4">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] flex flex-col p-4">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">Add Blog</DialogTitle>
         </DialogHeader>
 
-        <Form {...form}>
-          <form
-            className="space-y-5"
-            id="add-blog-form"
-            onSubmit={form.handleSubmit(onsubmit)}
-          >
+        <div className="flex-1 overflow-y-auto pr-1">
+          <Form {...form}>
+            <form
+              className="space-y-5"
+              id="add-blog-form"
+              onSubmit={form.handleSubmit(onsubmit)}
+            >
             <FormField
               control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormControl>
-                    <Input placeholder="Blog Title" {...field} className="grow" />
+                    <Input
+                      placeholder="Blog Title"
+                      {...field}
+                      className="grow"
+                      onPaste={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -167,9 +176,9 @@ export function AddBlogModal({ token }: { token: string }) {
               control={form.control}
               name="content"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col flex-1 min-h-0">
                   <FormControl>
-                    <div className="relative min-h-[200px] rounded-md border border-input bg-background">
+                    <div className="flex-1 min-h-[200px] rounded-md border border-input bg-background">
                       <div className="relative">
                         <TiptapEditor
                           value={field.value}
@@ -192,7 +201,14 @@ export function AddBlogModal({ token }: { token: string }) {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormControl>
-                    <Input placeholder="Tags (comma separated)" {...field} className="grow" />
+                    <Input
+                      placeholder="Tags (comma separated)"
+                      {...field}
+                      className="grow"
+                      onPaste={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -234,25 +250,28 @@ export function AddBlogModal({ token }: { token: string }) {
             </div>
           </form>
         </Form>
+        </div>
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button disabled={form.formState.isSubmitting} variant="outline">
-              Cancel
+        <div className="pt-4 mt-auto border-t border-border">
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button disabled={form.formState.isSubmitting} variant="outline">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              type="submit"
+              form="add-blog-form"
+              disabled={form.formState.isSubmitting}
+              className="cursor-pointer"
+            >
+              {!form.formState.isSubmitting && `Add Blog`}
+              {form.formState.isSubmitting && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
             </Button>
-          </DialogClose>
-          <Button
-            type="submit"
-            form="add-blog-form"
-            disabled={form.formState.isSubmitting}
-            className="cursor-pointer"
-          >
-            {!form.formState.isSubmitting && `Add Blog`}
-            {form.formState.isSubmitting && (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            )}
-          </Button>
-        </DialogFooter>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
