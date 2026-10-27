@@ -21,13 +21,14 @@ import { useForm } from "react-hook-form";
 import { BlogFormSchema } from "@/zodSchema/blogs.schema";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
-import { Edit2, Loader2, Upload } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IBlog, BlogFormValues } from "@/interfaces/blogs.interfaces";
 import { BASE_URL } from "@/lib/apiConfig";
 import { Editor } from "@tiptap/react";
 import { isActive, Role } from "@/interfaces/user.interfaces";
 import MultipleImageUploader from "@/components/MultipleImageUploader";
+import { uploadToImageBB } from "@/utils/imageUploader";
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -74,11 +75,27 @@ export function UpdateBlogModal({
     // Auto-generate slug from title if not provided
     const slug = data.title.split(" ").join("-").toLowerCase();
     const processedTags = data.tags ? data.tags.split(",").map((tag) => tag.trim()).filter(Boolean) : [];
+
+    // Filter for actual File objects from the 'images' state
+    const filesToUpload = images.filter(isFile);
+    let uploadedImageUrls: string[] = [];
+
+    if (filesToUpload.length > 0) {
+      try {
+        const uploadPromises = filesToUpload.map((file) => uploadToImageBB(file));
+        uploadedImageUrls = await Promise.all(uploadPromises);
+      } catch (error: unknown) {
+        console.error("ImageBB Upload Error:", error);
+        toast.error("Failed to upload some images");
+        return;
+      }
+    }
+
     const finalBlogData = {
       ...data,
       slug,
       tags: processedTags,
-      images: images.filter(isFile).map((file) => file.name),
+      images: uploadedImageUrls,
     };
 
     // Use token to get user ID - removed unnecessary getme API call
@@ -145,14 +162,14 @@ export function UpdateBlogModal({
           Edit Blog
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[700px] flex flex-col p-4">
         <DialogHeader>
           <DialogTitle>Update Blog</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
           <form
-            className="space-y-5"
+            className="flex flex-col flex-1 overflow-hidden space-y-5"
             id="add-blog-form"
             onSubmit={form.handleSubmit(onsubmit)}
           >
@@ -160,9 +177,16 @@ export function UpdateBlogModal({
               control={form.control}
               name="title"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormControl>
-                    <Input placeholder="Blog Title" {...field} />
+                    <Input
+                      placeholder="Blog Title"
+                      {...field}
+                      className="grow"
+                      onPaste={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -173,9 +197,9 @@ export function UpdateBlogModal({
               control={form.control}
               name="content"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col flex-1 min-h-0">
                   <FormControl>
-                    <div className="relative">
+                    <div className="flex-1 min-h-[200px] rounded-md border border-input bg-background">
                       <div className="relative">
                         <TiptapEditor
                           value={field.value}
@@ -185,9 +209,6 @@ export function UpdateBlogModal({
                         <div className="absolute top-2 right-2 z-10">
                           <ImageDotTiptap editor={editorRef.current} />
                         </div>
-                      </div>
-                      <div className="absolute top-2 right-2 z-10">
-                        <ImageDotTiptap editor={editorRef.current} />
                       </div>
                     </div>
                   </FormControl>
@@ -199,9 +220,16 @@ export function UpdateBlogModal({
               control={form.control}
               name="tags"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormControl>
-                    <Input placeholder="Tags (comma separated)" {...field} />
+                    <Input
+                      placeholder="Tags (comma separated)"
+                      {...field}
+                      className="grow"
+                      onPaste={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

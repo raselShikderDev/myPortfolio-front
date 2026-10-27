@@ -4,7 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Editor } from "@tiptap/react";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
-import { useEffect, useImperativeHandle } from "react";
+import { useEffect, useImperativeHandle, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Bold,
@@ -104,6 +104,23 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
       // Handle HTML content
       const html = clipboardData.getData('text/html');
       if (html) {
+        // Sanitize HTML by checking for allowed tags
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        // Check for potentially dangerous elements
+        const dangerousElements = tempDiv.querySelectorAll('script, iframe, object, embed');
+        if (dangerousElements.length > 0) {
+          console.warn('Blocked pasting potentially dangerous HTML content');
+          // Fall back to text content
+          const text = clipboardData.getData('text/plain');
+          if (text) {
+            editor.chain().focus().insertContent(text).run();
+          }
+          return;
+        }
+
+        // Only insert safe HTML
         editor.chain().focus().insertContent(html).run();
         return;
       }
@@ -158,6 +175,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
         >
           <Strikethrough className="h-4 w-4" />
         </Button>
+        <div className="h-4 w-[1px] bg-border mx-1" />
         <Button
           type="button"
           variant="ghost"
@@ -228,6 +246,39 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           title="Code Block"
         >
           <Code className="h-4 w-4" />
+        </Button>
+        <div className="h-4 w-[1px] bg-border mx-1" />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            const url = window.prompt('Enter URL for link');
+            if (url) {
+              editor.chain().focus().setLink({ href: url }).run();
+            }
+          }}
+          className={editor.isActive('link') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
+          title="Link"
+        >
+          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path>
+          </svg>
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => editor.chain().focus().setImage({ src: '' }).run()}
+          className={editor.isActive('image') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
+          title="Image"
+        >
+          <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
         </Button>
         <div className="h-4 w-[1px] bg-border mx-1" />
         <Button
