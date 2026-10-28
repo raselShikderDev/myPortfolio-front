@@ -4,7 +4,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Editor } from "@tiptap/react";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
-import { useEffect, useImperativeHandle, useState } from "react";
+import { useEffect, useImperativeHandle } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Bold,
@@ -49,6 +49,52 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
         class:
           "min-h-[150px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 overflow-y-auto prose dark:prose-invert max-w-none",
       },
+      handlePaste(view, event) {
+        const clipboardData = event.clipboardData;
+        if (!clipboardData) return false;
+
+        // Handle image files in clipboard
+        if (clipboardData.files && clipboardData.files.length > 0) {
+          const file = clipboardData.files[0];
+          if (file.type.startsWith('image/')) {
+            event.preventDefault();
+            const uploadImage = async () => {
+              try {
+                const loadingToast = toast.loading('Uploading pasted image...');
+                const imageUrl = await uploadToImageBB(file);
+                editor?.chain().focus().setImage({ src: imageUrl, alt: file.name }).run();
+                toast.success('Pasted image uploaded successfully', { id: loadingToast });
+              } catch (error) {
+                console.error('Pasted image upload failed:', error);
+                toast.error('Failed to upload pasted image');
+              }
+            };
+            uploadImage();
+            return true;
+          }
+        }
+
+        // Handle HTML content
+        const html = clipboardData.getData('text/html');
+        if (html) {
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = html;
+
+          const dangerousElements = tempDiv.querySelectorAll('script, iframe, object, embed');
+          if (dangerousElements.length > 0) {
+            event.preventDefault();
+            console.warn('Blocked pasting potentially dangerous HTML content');
+            const text = clipboardData.getData('text/plain');
+            if (text) {
+              editor?.chain().focus().insertContent(text).run();
+            }
+            return true;
+          }
+          return false; // Let Tiptap handle safe HTML
+        }
+
+        return false; // Let Tiptap handle plain text
+      },
     },
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
@@ -76,67 +122,6 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
       }
     }
   }, [props.value, editor]);
-
-  // Handle pasting from other websites (text + images)
-  useEffect(() => {
-    const handlePaste = async (e: ClipboardEvent) => {
-      e.preventDefault();
-      const clipboardData = e.clipboardData;
-      if (!clipboardData || !editor) return;
-
-      // Handle image files in clipboard
-      if (clipboardData.files && clipboardData.files.length > 0) {
-        const file = clipboardData.files[0];
-        if (file.type.startsWith('image/')) {
-          try {
-            const loadingToast = toast.loading('Uploading pasted image...');
-            const imageUrl = await uploadToImageBB(file);
-            editor.chain().focus().setImage({ src: imageUrl, alt: file.name }).run();
-            toast.success('Pasted image uploaded successfully', { id: loadingToast });
-            return;
-          } catch (error) {
-            console.error('Pasted image upload failed:', error);
-            toast.error('Failed to upload pasted image');
-          }
-        }
-      }
-
-      // Handle HTML content
-      const html = clipboardData.getData('text/html');
-      if (html) {
-        // Sanitize HTML by checking for allowed tags
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-
-        // Check for potentially dangerous elements
-        const dangerousElements = tempDiv.querySelectorAll('script, iframe, object, embed');
-        if (dangerousElements.length > 0) {
-          console.warn('Blocked pasting potentially dangerous HTML content');
-          // Fall back to text content
-          const text = clipboardData.getData('text/plain');
-          if (text) {
-            editor.chain().focus().insertContent(text).run();
-          }
-          return;
-        }
-
-        // Only insert safe HTML
-        editor.chain().focus().insertContent(html).run();
-        return;
-      }
-
-      // Fall back to plain text
-      const text = clipboardData.getData('text/plain');
-      if (text) {
-        editor.chain().focus().insertContent(text).run();
-      }
-    };
-
-    document.addEventListener('paste', handlePaste);
-    return () => {
-      document.removeEventListener('paste', handlePaste);
-    };
-  }, [editor]);
 
   if (!editor) {
     return null;

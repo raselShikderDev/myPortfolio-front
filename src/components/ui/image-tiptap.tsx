@@ -1,12 +1,9 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Upload } from "lucide-react";
 import { toast } from "sonner";
 import { uploadToImageBB } from "@/utils/imageUploader";
 
 import { Editor } from "@tiptap/react";
-import { Image } from "@tiptap/extension-image";
 
 interface ImageDotTiptapProps {
   editor: Editor | null; // Tiptap editor instance
