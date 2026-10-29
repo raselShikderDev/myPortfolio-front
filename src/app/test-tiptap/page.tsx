@@ -38,7 +38,7 @@ export default function TestTiptapPage() {
     };
   }, []);
 
-  const toggleFormat = (command: string, args?: any) => {
+  const toggleFormat = (command: string, args?: Record<string, unknown>) => {
     if (!editor) return;
 
     switch (command) {
