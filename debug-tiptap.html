@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiptap Debug</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/react@3.31.4/dist/tiptap-react.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/starter-kit@3.31.4/dist/starter-kit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-link@3.31.4/dist/extension-link.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tiptap/extension-image@3.32.0/dist/extension-image.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+    }
+    .editor-toolbar {
+      display: flex;
+      gap: 5px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      background: white;
+    }
+    .editor-content {
+      min-height: 200px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      background: white;
+    }
+    button {
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      background: #f8f9fa;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    button.active {
+      background: #007bff;
+      color: white;
+    }
+    #output {
+      margin-top: 20px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 5px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>Tiptap Debug - Test All Formatting Options</h1>
+
+  <div class="editor-toolbar">
+    <button onclick="toggleBold()" id="bold-btn">Bold</button>
+    <button onclick="toggleItalic()" id="italic-btn">Italic</button>
+    <button onclick="toggleStrike()" id="strike-btn">Strike</button>
+    <button onclick="toggleHeading1()" id="h1-btn">H1</button>
+    <button onclick="toggleHeading2()" id="h2-btn">H2</button>
+    <button onclick="toggleHeading3()" id="h3-btn">H3</button>
+    <button onclick="toggleBulletList()" id="bullet-btn">Bullet List</button>
+    <button onclick="toggleOrderedList()" id="ordered-btn">Ordered List</button>
+    <button onclick="toggleBlockquote()" id="quote-btn">Quote</button>
+    <button onclick="toggleCodeBlock()" id="code-btn">Code Block</button>
+  </div>
+
+  <div class="editor-content" id="editor"></div>
+
+  <div id="output">Editor output will appear here...</div>
+
+  <script>
+    console.log('Starting Tiptap debug...');
+
+    // Initialize Tiptap Editor
+    const { useEditor, EditorContent } = TiptapReact;
+    const StarterKit = TiptapStarterKit;
+    const Link = TiptapLink;
+    const Image = TiptapImage;
+
+    const editor = useEditor({
+      extensions: [
+        StarterKit.configure({ link: false }),
+        Link.configure({
+          openOnClick: false,
+          HTMLAttributes: {
+            class: "text-primary underline underline-offset-4 cursor-pointer",
+          },
+        }),
+        Image.configure({}),
+      ],
+      content: '',
+      onUpdate: ({ editor }) => {
+        const html = editor.getHTML();
+        const text = editor.getText();
+        document.getElementById('output').textContent = `HTML: ${html}\n\nText: ${text}`;
+        updateButtonStates();
+      },
+    });
+
+    function getEditor() {
+      return editor;
+    }
+
+    function updateButtonStates() {
+      if (!editor) return;
+
+      document.getElementById('bold-btn').classList.toggle('active', editor.isActive('bold'));
+      document.getElementById('italic-btn').classList.toggle('active', editor.isActive('italic'));
+      document.getElementById('strike-btn').classList.toggle('active', editor.isActive('strike'));
+      document.getElementById('h1-btn').classList.toggle('active', editor.isActive('heading', { level: 1 }));
+      document.getElementById('h2-btn').classList.toggle('active', editor.isActive('heading', { level: 2 }));
+      document.getElementById('h3-btn').classList.toggle('active', editor.isActive('heading', { level: 3 }));
+      document.getElementById('bullet-btn').classList.toggle('active', editor.isActive('bulletList'));
+      document.getElementById('ordered-btn').classList.toggle('active', editor.isActive('orderedList'));
+      document.getElementById('quote-btn').classList.toggle('active', editor.isActive('blockquote'));
+      document.getElementById('code-btn').classList.toggle('active', editor.isActive('codeBlock'));
+    }
+
+    function toggleBold() {
+      if (editor) {
+        console.log('Toggle bold called');
+        editor.chain().focus().toggleBold().run();
+        updateButtonStates();
+      }
+    }
+
+    function toggleItalic() {
+      if (editor) {
+        console.log('Toggle italic called');
+        editor.chain().focus().toggleItalic().run();
+        updateButtonStates();
+      }
+    }
+
+    function toggleStrike() {
+      if (editor) {
+        console.log('Toggle strike called');
+        editor.chain().focus().toggleStrike().run();
+        updateButtonStates();
+      }
+    }
+
+    function toggleHeading1() {
+      if (editor) {
+        console.log('Toggle H1 called');
+        editor.chain().focus().toggleHeading({ level: 1 }).run();
+        updateButtonStates();
+      }
+    }
+
+    function toggleHeading2() {
+      if (editor) {
+        console.log('Toggle H2 called');
+        editor.chain().focus().toggleHeading({ level: 2 }).run();
+        updateButtonStates();
+      }
+    }
+
+    function toggleHeading3() {
+      if (editor) {
+        console.log('Toggle H3 called');
+        editor.chain().focus().toggleHeading({ level: 3 }).run();
+        updateButtonStates();
+      }
+    }
+
+    function toggleBulletList() {
+      if (editor) {
+        console.log('Toggle bullet list called');
+        editor.chain().focus().toggleBulletList().run();
+        updateButtonStates();
+      }
+    }
+
+    function toggleOrderedList() {
+      if (editor) {
+        console.log('Toggle ordered list called');
+        editor.chain().focus().toggleOrderedList().run();
+        updateButtonStates();
+      }
+    }
+
+    function toggleBlockquote() {
+      if (editor) {
+        console.log('Toggle blockquote called');
+        editor.chain().focus().toggleBlockquote().run();
+        updateButtonStates();
+      }
+    }
+
+    function toggleCodeBlock() {
+      if (editor) {
+        console.log('Toggle code block called');
+        editor.chain().focus().toggleCodeBlock().run();
+        updateButtonStates();
+      }
+    }
+
+    // Test each function
+    setTimeout(() => {
+      console.log('Testing each formatting option...');
+
+      // Test bold
+      toggleBold();
+      setTimeout(() => {
+        toggleBold();
+        setTimeout(() => {
+          // Test italic
+          toggleItalic();
+          setTimeout(() => {
+            toggleItalic();
+            setTimeout(() => {
+              // Test strike
+              toggleStrike();
+              setTimeout(() => {
+                toggleStrike();
+                setTimeout(() => {
+                  // Test H1
+                  toggleHeading1();
+                  setTimeout(() => {
+                    toggleHeading1();
+                    setTimeout(() => {
+                      // Test H2
+                      toggleHeading2();
+                      setTimeout(() => {
+                        toggleHeading2();
+                        setTimeout(() => {
+                          // Test H3
+                          toggleHeading3();
+                          setTimeout(() => {
+                            toggleHeading3();
+                            setTimeout(() => {
+                              // Test bullet list
+                              toggleBulletList();
+                              setTimeout(() => {
+                                toggleBulletList();
+                                setTimeout(() => {
+                                  // Test ordered list
+                                  toggleOrderedList();
+                                  setTimeout(() => {
+                                    toggleOrderedList();
+                                    setTimeout(() => {
+                                      // Test blockquote
+                                      toggleBlockquote();
+                                      setTimeout(() => {
+                                        toggleBlockquote();
+                                        setTimeout(() => {
+                                          // Test code block
+                                          toggleCodeBlock();
+                                          setTimeout(() => {
+                                            toggleCodeBlock();
+                                            console.log('All tests completed');
+                                          }, 100);
+                                        }, 100);
+                                      }, 100);
+                                    }, 100);
+                                  }, 100);
+                                }, 100);
+                              }, 100);
+                            }, 100);
+                          }, 100);
+                        }, 100);
+                      }, 100);
+                    }, 100);
+                  }, 100);
+                }, 100);
+              }, 100);
+            }, 100);
+          }, 100);
+        }, 100);
+      }, 100);
+    }, 1000);
+
+    // Update button states periodically
+    setInterval(updateButtonStates, 100);
+
+    console.log('Tiptap debug initialized');
+  </script>
+</body>
+</html>

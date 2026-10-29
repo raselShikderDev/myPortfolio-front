@@ -5,6 +5,7 @@ import Image from "next/image";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 import { Badge } from "@/components/ui/badge";
 import { MotionDiv } from "../animations/motionElements";
+import { getPlainTextFromHtml } from "@/lib/utils/sanitizeBlogContent";
 import { useEffect, useState } from "react";
 
 export default function BlogCard({ post }: { post: IBlog }) {
@@ -35,6 +36,8 @@ export default function BlogCard({ post }: { post: IBlog }) {
               src={post.images[0]}
               alt={post.title}
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority
               className="object-cover group-hover:scale-110 transition-transform duration-500"
             />
           </div>
@@ -54,30 +57,15 @@ export default function BlogCard({ post }: { post: IBlog }) {
           {/* Description */}
           {post.content && (
             <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm sm:text-base line-clamp-3">
-              {typeof post.content === 'string' ? post.content : 'Content formatted as JSON'}
+              {getPlainTextFromHtml(post.content)}
             </p>
-          )}
-
-          {/* Tags */}
-          {post.tags && post.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
-              {post.tags.map((tag, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="text-[10px] sm:text-xs"
-                >
-                  #{tag}
-                </Badge>
-              ))}
-            </div>
           )}
 
           {/* Author and Views */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
               <Image
-                src={authorImage}
+                src={authorImage || "https://cdn-icons-png.flaticon.com/512/9385/9385289.png"}
                 alt={authorName}
                 width={36}
                 height={36}

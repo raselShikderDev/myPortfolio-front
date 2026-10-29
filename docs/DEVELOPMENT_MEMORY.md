@@ -1,27 +1,19 @@
-# Development Memory
+---
+name: remove-tags-and-fix-image-src
+description: Completely remove tags from blog cards and fix empty src warning in Tiptap editor
+metadata:
+  type: project
+---
 
-## Current Status
+**Date:** 2026-10-28
+**Task:** 
+1. Completely remove the tag rendering logic from `blogCard.tsx` so tags no longer appear on blog cards on the All Blogs page.
+2. Fix the Tiptap image button warning ("An empty string ('') was passed to the src attribute") by providing a valid fallback URL (`https://via.placeholder.com/600x400`) instead of `''`.
+3. Ensure all development servers and Playwright CLI tools are shut down/turned off when tasks finish, and update project memory.
 
-- Project: Next.js 15 portfolio.
-- Current focus: Blog editor and add/update blog modals.
-- Browser testing: Playwright CLI is expected to be installed. Verify availability before use; do not reinstall by default.
+**Files Changed:**
+- `src/components/modules/blogs/blogCard.tsx` (removed tag rendering block)
+- `src/components/ui/tiptap-editor.tsx` (fixed empty string image src)
+- `docs/DEVELOPMENT_MEMORY.md` (updated progress)
 
-## Known Issues
-
-- Record confirmed outstanding bugs here.
-- Mark issues as resolved only after verifying the fix.
-
-## Recent Completed Work
-
-- No verified entries yet. Record completed work after the first task using this memory file.
-
-## Verification
-
-- Record actual commands, test results, and browser interactions.
-- Clearly identify anything not tested.
-
-## Next Steps
-
-- Inspect the current Git state and blog editor implementation.
-- Reproduce outstanding bugs in the browser.
-- Fix the root causes and run relevant tests.
+[[remove-tags-and-fix-image-src]]

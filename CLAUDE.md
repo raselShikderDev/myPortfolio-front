@@ -182,3 +182,15 @@ A task is complete when:
 - Remaining limitations are disclosed honestly.
 
 Final reports must distinguish implemented, tested, browser-verified, and unverified behavior.
+
+## 9. Development Server and Playwright Rules
+
+- Before starting a development server, check whether the project is already running and identify its port and process.
+- Prefer reusing an existing development server rather than starting another instance.
+- Start servers in a visible, dedicated terminal whenever possible.
+- Do not launch detached or background development servers unless explicitly necessary.
+- For Playwright testing, reuse the existing server when available.
+- If you start a server specifically for a task, stop the process you started after testing is complete.
+- Never terminate unrelated Node.js processes or other applications.
+- Before finishing, verify whether any server started by the task is still running. Report any server that could not be stopped.
+- Do not kill processes by name alone; identify the process ID and confirm it belongs to this project.

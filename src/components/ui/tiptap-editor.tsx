@@ -255,7 +255,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().setImage({ src: '' }).run()}
+          onClick={() => editor.chain().focus().setImage({ src: "https://via.placeholder.com/600x400" }).run()}
           className={editor.isActive('image') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Image"
         >
