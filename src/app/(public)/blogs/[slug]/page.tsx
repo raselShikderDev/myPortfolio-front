@@ -37,7 +37,7 @@ const BlogDetailsPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = await params;
 
   const res = await fetch(`${BASE_URL}/blogs/${slug}`, {
-    cache: "no-store",
+    next: { revalidate: 60, tags: ["blogs"] },
   });
 
   if (!res.ok) {
