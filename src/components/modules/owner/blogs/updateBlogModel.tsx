@@ -15,7 +15,6 @@ import {
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
-import { ImageDotTiptap } from "@/components/ui/image-tiptap";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BlogFormSchema } from "@/zodSchema/blogs.schema";
@@ -206,9 +205,6 @@ export function UpdateBlogModal({
                           onChange={field.onChange}
                           ref={editorRef}
                         />
-                        <div className="absolute top-2 right-2 z-10">
-                          <ImageDotTiptap editor={editorRef.current} />
-                        </div>
                       </div>
                     </div>
                   </FormControl>

@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { TiptapEditor } from "@/components/ui/tiptap-editor";
-import { ImageDotTiptap } from "@/components/ui/image-tiptap";
 import { useRef } from "react";
 import { Editor } from "@tiptap/react";
 import { useState } from "react";
@@ -152,104 +151,101 @@ export function AddBlogModal({ token }: { token: string }) {
               id="add-blog-form"
               onSubmit={form.handleSubmit(onsubmit)}
             >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormControl>
-                    <Input
-                      placeholder="Blog Title"
-                      {...field}
-                      className="grow"
-                      onPaste={(e) => {
-                        e.stopPropagation();
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormControl>
+                      <Input
+                        placeholder="Blog Title"
+                        {...field}
+                        className="grow"
+                        onPaste={(e) => {
+                          e.stopPropagation();
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem className="flex flex-col flex-1 min-h-0">
-                  <FormControl>
-                    <div className="flex-1 min-h-[200px] rounded-md border border-input bg-background">
-                      <div className="relative">
-                        <TiptapEditor
-                          value={field.value}
-                          onChange={field.onChange}
-                          ref={editorRef}
-                        />
-                        <div className="absolute top-2 right-2 z-10">
-                          <ImageDotTiptap editor={editorRef.current} />
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col flex-1 min-h-0">
+                    <FormControl>
+                      <div className="flex-1 min-h-[200px] rounded-md border border-input bg-background">
+                        <div className="relative">
+                          <TiptapEditor
+                            value={field.value}
+                            onChange={field.onChange}
+                            ref={editorRef}
+                          />
                         </div>
                       </div>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormControl>
-                    <Input
-                      placeholder="Tags (comma separated)"
-                      {...field}
-                      className="grow"
-                      onPaste={(e) => {
-                        e.stopPropagation();
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="published"
-              render={({ field }) => (
-                <FormItem className="flex items-center space-x-2">
-                  <FormControl>
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                      className="w-4 h-4"
-                    />
-                  </FormControl>
-                  <label className="text-sm">Published</label>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="publishedDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input type="datetime-local" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormControl>
+                      <Input
+                        placeholder="Tags (comma separated)"
+                        {...field}
+                        className="grow"
+                        onPaste={(e) => {
+                          e.stopPropagation();
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="published"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                        className="w-4 h-4"
+                      />
+                    </FormControl>
+                    <label className="text-sm">Published</label>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="publishedDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input type="datetime-local" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <MultipleImageUploader onChange={setImages} />
-            <div className="mt-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">Paste images directly from websites or drag and drop them here</p>
-            </div>
-          </form>
-        </Form>
+              <MultipleImageUploader onChange={setImages} />
+              <div className="mt-4">
+                <p className="text-sm text-gray-500 dark:text-gray-400">Paste images directly from websites or drag and drop them here</p>
+              </div>
+            </form>
+          </Form>
         </div>
 
         <div className="pt-4 mt-auto border-t border-border">

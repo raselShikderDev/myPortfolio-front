@@ -129,7 +129,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-1 rounded-md border border-input bg-muted/50 p-1 relative">
+      <div className="sticky top-0 z-20 flex flex-wrap items-center gap-1 rounded-md border border-input bg-background/95 p-1 shadow-sm backdrop-blur">
         <Button
           type="button"
           variant="ghost"
@@ -176,7 +176,6 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           variant="ghost"
           size="sm"
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          className={editor.isActive('heading', { level: 2 }) ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Heading 2"
         >
           <Heading2 className="h-4 w-4" />
@@ -226,7 +225,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          onClick={() => editor.chain().focus().toggleCode().run()}
           className={editor.isActive('codeBlock') ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/20'}
           title="Code Block"
         >
@@ -289,7 +288,7 @@ export const TiptapEditor = forwardRef((props: TiptapEditorProps, ref: React.Ref
           <Redo className="h-4 w-4" />
         </Button>
       </div>
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="blog-editor-content" />
     </div>
   );
 });
