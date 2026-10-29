@@ -21,28 +21,9 @@ interface IMenuItem {
   url: string;
 }
 
-interface AuthResponse {
-  user: {
-    id: number;
-    email: string;
-    role: "OWNER";
-    iat: number;
-    exp: number;
-  };
-  token: string;
-}
-
 export const Navbar2 = () => {
   const [isScroll, setIsScroll] = useState(false);
-  const [tokens, setTokens] = useState<null | AuthResponse>(null);
   const pathname = usePathname();
-
-  useEffect(() => {
-    fetch("/api/profile")
-      .then(async (res) => (res.ok ? res.json() : null))
-      .then((data) => setTokens(data))
-      .catch(console.error);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,13 +43,8 @@ export const Navbar2 = () => {
     { title: "Blogs", url: "/blogs" },
     { title: "Projects", url: "/projects" },
     { title: "Contact", url: "/contact" },
+    { title: "Dashboard", url: "/dashboard" },
   ];
-
-  if (tokens?.user.email) {
-    menu.push({ title: "Dashboard", url: "/dashboard" });
-  } else {
-    menu.push({ title: "Login", url: "/login" });
-  }
 
   const isMenuItemActive = (url: string) => {
     if (url === "/") {

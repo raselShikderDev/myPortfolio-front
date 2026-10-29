@@ -35,7 +35,8 @@ export default async function Page() {
           Authorization: token as string,
         },
         next: {
-          revalidate: 60,
+          tags: ["stats"],
+          revalidate: 300,
         },
       });
 

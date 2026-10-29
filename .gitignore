@@ -51,3 +51,7 @@ next-env.d.ts
 .env.production
 # Playwright CLI output (may contain credentials)
 .playwright-cli/
+.playwright
+.clinerules
+.claude
+.skill-lock.json
