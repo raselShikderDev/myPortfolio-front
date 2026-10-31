@@ -15,30 +15,26 @@ const fileToBase64 = (file: File): Promise<string> => {
 import { getImageBBApiKey, getImageBBApiLink } from '@/lib/apiConfig';
 
 export async function uploadToImageBB(imageFile: File): Promise<string> {
-  if (!getImageBBApiKey() || !getImageBBApiLink()) {
-    throw new Error("ImageBB configuration is missing. Please check environment variables.");
-  }
+  const formData = new FormData();
+  formData.append("image", imageFile);
 
-  const base64Image = await fileToBase64(imageFile);
-
-  const imageBBFormData = new FormData();
-  imageBBFormData.append("image", base64Image);
-  imageBBFormData.append("key", getImageBBApiKey());
-
-  const imageBBResponse = await fetch(
-    getImageBBApiLink(),
-    {
+  try {
+    const response = await fetch("/api/upload-image", {
       method: "POST",
-      body: imageBBFormData,
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (data.success && data.url) {
+      return data.url;
+    } else {
+      const errorMessage = data.error || "Image upload failed";
+      throw new Error(errorMessage);
     }
-  );
-
-  const imageBBData = await imageBBResponse.json();
-
-  if (imageBBData.success && imageBBData.data?.url) {
-    return imageBBData.data.url;
-  } else {
-    const errorMessage = imageBBData.error?.message || "ImageBB upload failed";
-    throw new Error(errorMessage);
+  } catch (error: unknown) {
+    console.error("Internal API Upload Error:", error);
+    const message = error instanceof Error ? error.message : "Failed to upload image";
+    throw new Error(message);
   }
 }

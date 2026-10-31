@@ -11,7 +11,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
 
-  const res = await fetch(`${BASE_URL}/blogs/${slug}`,{
+  const res = await fetch(`${BASE_URL}/blogs/${slug}`, {
     next: { tags: ["blogs"] },
   });
 
@@ -23,7 +23,7 @@ export async function generateMetadata({
   }
 
   const data = await res.json();
-  const blog:IBlog = data.data
+  const blog: IBlog = data.data
 
   return {
     title: blog.title || "Default Blog Title",
@@ -36,7 +36,7 @@ export async function generateMetadata({
 const BlogDetailsPage = async ({ params }: { params: { slug: string } }) => {
   const { slug } = await params;
 
-  const res = await fetch(`${BASE_URL}/blogs/${slug}`, {
+  const res = await fetch(`${BASE_URL}/blogs/${encodeURIComponent(slug)}`, {
     next: { revalidate: 60, tags: ["blogs"] },
   });
 
@@ -45,7 +45,7 @@ const BlogDetailsPage = async ({ params }: { params: { slug: string } }) => {
   }
 
 
-  const {data} = await res.json();
+  const { data } = await res.json();
 
   return (
     <div className="py-8 max-w-7xl mx-auto justify-center">

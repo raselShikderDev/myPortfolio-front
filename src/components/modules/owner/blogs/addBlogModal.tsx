@@ -33,6 +33,7 @@ import { BlogFormValues } from "@/interfaces/blogs.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
 import { BASE_URL } from "@/lib/apiConfig";
 import { Loader2 } from "lucide-react";
+import { generateSlug } from "@/lib/utils/generateSlug";
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -59,7 +60,7 @@ export function AddBlogModal({ token }: { token: string }) {
   const onsubmit = async (data: BlogFormValues) => {
     console.log("Form Data:", data);
     // Auto-generate slug from title
-    const slug = data.title.split(" ").join("-").toLowerCase();
+    const slug = generateSlug(data.title);
     const tags = data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [];
     const newData = { ...data, slug, tags };
     form.clearErrors();
@@ -241,9 +242,6 @@ export function AddBlogModal({ token }: { token: string }) {
               />
 
               <MultipleImageUploader onChange={setImages} />
-              <div className="mt-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Paste images directly from websites or drag and drop them here</p>
-              </div>
             </form>
           </Form>
         </div>
