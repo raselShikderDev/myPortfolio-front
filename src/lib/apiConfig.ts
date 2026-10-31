@@ -70,11 +70,21 @@ export const FRONTEND_BASE_URL = getFrontendBaseUrl();
  * Must be defined in .env as NEXT_PUBLIC_IMAGEBB_API_KEY
  */
 export const getImageBBApiKey = (): string => {
-  const key = process.env.NEXT_PUBLIC_IMAGEBB_API_KEY as string;
+  // On client side, prefer the NEXT_PUBLIC_IMAGEBB_API_KEY
+  if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_IMAGEBB_API_KEY) {
+    return process.env.NEXT_PUBLIC_IMAGEBB_API_KEY;
+  }
+
+  // On server side, allow environment variable without prefix for Docker/containerized deployments
+  const key = process.env.IMAGEBB_API_KEY || process.env.NEXT_PUBLIC_IMAGEBB_API_KEY;
 
   if (!key) {
+    // Return a placeholder key for development when running in browser (client-side)
+    if (typeof window !== "undefined") {
+      return "development_placeholder_key";
+    }
     throw new Error(
-      "NEXT_PUBLIC_IMAGEBB_API_KEY is not defined in environment variables. " +
+      "ImageBB_API_KEY or NEXT_PUBLIC_IMAGEBB_API_KEY is not defined in environment variables. " +
       "Please add it to your .env.local file."
     );
   }
@@ -90,11 +100,21 @@ export const IMAGEBB_API_KEY = getImageBBApiKey();
  * Must be defined in .env as NEXT_PUBLIC_IMAGEBB_API_LINK
  */
 export const getImageBBApiLink = (): string => {
-  const link = process.env.NEXT_PUBLIC_IMAGEBB_API_LINK as string;
+  // On client side, prefer the NEXT_PUBLIC_IMAGEBB_API_LINK
+  if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_IMAGEBB_API_LINK) {
+    return process.env.NEXT_PUBLIC_IMAGEBB_API_LINK;
+  }
+
+  // On server side, allow environment variable without prefix for Docker/containerized deployments
+  const link = process.env.IMAGEBB_API_LINK || process.env.NEXT_PUBLIC_IMAGEBB_API_LINK;
 
   if (!link) {
+    // Return a placeholder URL for development when running in browser (client-side)
+    if (typeof window !== "undefined") {
+      return "https://api.imgbb.com/1/upload";
+    }
     throw new Error(
-      "NEXT_PUBLIC_IMAGEBB_API_LINK is not defined in environment variables. " +
+      "ImageBB_API_LINK or NEXT_PUBLIC_IMAGEBB_API_LINK is not defined in environment variables. " +
       "Please add it to your .env.local file."
     );
   }

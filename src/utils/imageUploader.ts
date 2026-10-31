@@ -19,7 +19,9 @@ export async function uploadToImageBB(imageFile: File): Promise<string> {
   formData.append("image", imageFile);
 
   try {
-    const response = await fetch("/api/upload-image", {
+    // Use absolute URL on server side or if window is not available, otherwise relative URL
+    const baseUrl = typeof window !== 'undefined' ? '' : (process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'http://localhost:3000');
+    const response = await fetch(`${baseUrl}/api/upload-image`, {
       method: "POST",
       body: formData,
     });
