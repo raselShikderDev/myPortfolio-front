@@ -1,39 +1,98 @@
+
 import DOMPurify from 'isomorphic-dompurify';
 
-// Allowed HTML elements and attributes for Tiptap content
 const allowedTags = [
-  'p', 'strong', 'em', 's', 'h1', 'h2', 'h3',
-  'ul', 'ol', 'li', 'blockquote', 'code', 'a', 'img'
+  // Headings
+  'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+
+  // Text
+  'p', 'br', 'hr',
+  'strong', 'b', 'em', 'i', 'u', 's',
+  'del', 'sub', 'sup',
+
+  // Lists
+  'ul', 'ol', 'li',
+
+  // Links and images
+  'a', 'img',
+
+  // Quotes and code
+  'blockquote', 'pre', 'code',
+
+  // Tables
+  'table', 'thead', 'tbody', 'tfoot',
+  'tr', 'th', 'td',
+
+  // Image captions
+  'figure', 'figcaption',
 ];
 
-// Configure DOMPurify with our allowed tags and attributes
+const allowedAttributes = [
+  'href',
+  'src',
+  'alt',
+  'title',
+  'width',
+  'height',
+  'target',
+  'rel',
+  'class',
+  'start',
+  'colspan',
+  'rowspan',
+  'scope',
+];
+
 export const sanitizeBlogContent = (html: string): string => {
+  if (typeof html !== 'string' || !html.trim()) {
+    return '';
+  }
+
   return DOMPurify.sanitize(html, {
     ALLOWED_TAGS: allowedTags,
-    ALLOWED_ATTR: ['href', 'src', 'alt', 'class', 'target', 'rel'],
-    FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed'],
-    FORBID_ATTR: ['onclick', 'onerror', 'onload'],
-    ALLOWED_URI_REGEXP: /^(https?:\/\/|data:image\/)/,
+    ALLOWED_ATTR: allowedAttributes,
+
+    FORBID_TAGS: [
+      'script',
+      'style',
+      'iframe',
+      'object',
+      'embed',
+    ],
+
+    FORBID_ATTR: [
+      'onclick',
+      'onerror',
+      'onload',
+    ],
+
+    ALLOW_DATA_ATTR: false,
+
+    ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|data:image\/(?:png|gif|jpe?g|webp);base64,)/i,
   });
 };
 
-// Extract plain text from sanitized HTML using proper HTML parsing
+// Extract plain text from sanitized HTML
 export const getPlainTextFromHtml = (html: string): string => {
   const cleanHtml = sanitizeBlogContent(html);
-  
-  // Use DOMPurify RETURN_DOM_FRAGMENT to parse HTML and extract textContent
+
   const fragment = DOMPurify.sanitize(cleanHtml, {
     RETURN_DOM_FRAGMENT: true,
   });
-  
-  const rawText = fragment.textContent || '';
-  
-  // Normalize whitespace: replace any whitespace sequence (including &nbsp; parsed as non-breaking space) with a single space
-  return rawText.replace(/\s+/g, ' ').trim();
+
+  return (fragment.textContent || '')
+    .replace(/\s+/g, ' ')
+    .trim();
 };
 
 // Generate SEO description from HTML
-export const generateSeoDescription = (html: string, maxLength: number = 150): string => {
+export const generateSeoDescription = (
+  html: string,
+  maxLength: number = 150
+): string => {
   const plainText = getPlainTextFromHtml(html);
-  return plainText.length > maxLength ? `${plainText.substring(0, maxLength)}...` : plainText;
+
+  return plainText.length > maxLength
+    ? `${plainText.substring(0, maxLength)}...`
+    : plainText;
 };

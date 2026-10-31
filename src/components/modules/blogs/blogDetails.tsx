@@ -67,8 +67,10 @@ const BlogDetailsCard = ({ blog }: { blog: IBlog }) => {
 
           {/* Content */}
           <div
-            className="prose prose-sm sm:prose-base max-w-none text-gray-700 dark:text-gray-300"
-            dangerouslySetInnerHTML={{ __html: sanitizeBlogContent(String(blog.content || "")) }}
+            className="blog-content prose prose-sm sm:prose-base dark:prose-invert max-w-none"
+            dangerouslySetInnerHTML={{
+              __html: sanitizeBlogContent(String(blog.content || "")),
+            }}
           />
         </CardContent>
       </Card>
