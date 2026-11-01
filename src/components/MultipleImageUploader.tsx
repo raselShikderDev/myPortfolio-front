@@ -7,14 +7,17 @@ import { FileMetadata, useFileUpload } from "@/hooks/use-file-uploader";
 
 export default function MultipleImageUploader({
   onChange,
+  initialFiles = [],
   className = "",
 }: {
   onChange: Dispatch<React.SetStateAction<(File | FileMetadata)[]>>;
+  initialFiles?: FileMetadata[];
   className?: string;
 }) {
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
-  const maxFiles = 3;
+  // Allow existing (preloaded) images plus newly selected ones.
+  const maxFiles = 6;
 
   const [
     { files, isDragging, errors },
@@ -32,6 +35,7 @@ export default function MultipleImageUploader({
     maxSize,
     multiple: true,
     maxFiles,
+    initialFiles,
   });
 
   useEffect(() => {
@@ -54,7 +58,7 @@ export default function MultipleImageUploader({
         onDrop={handleDrop}
         data-dragging={isDragging || undefined}
         data-files={files.length > 0 || undefined}
-        className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
+        className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${className}`}
       >
         <input
           {...getInputProps()}

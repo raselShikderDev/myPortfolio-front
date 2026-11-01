@@ -10,7 +10,7 @@ export const BlogFormSchema = z.object({
   images: z.array(z.string()).optional(),
   published: z.boolean(),
   publishedDate: z.string().min(1, "Published date is required"),
-  tags: z.string().min(1, "At least one tag is required").optional(),
+  tags: z.string().optional(),
   authorId: z.number().optional(),
 });
 
