@@ -22,7 +22,7 @@ export class ApiError extends Error {
 export async function apiRequest<T>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> {
   const baseUrl = getBaseUrl();
   const url = `${baseUrl}${endpoint}`;
-
+  console.log(`Making API request to: ${url}`);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...options.headers,
