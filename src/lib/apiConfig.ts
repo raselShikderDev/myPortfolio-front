@@ -34,7 +34,7 @@ export const getBaseUrl = (): string => {
       "Please add it to your .env.local file."
     );
   }
-
+  console.log(`Using API base URL: ${url}`);
   return url;
 };
 
