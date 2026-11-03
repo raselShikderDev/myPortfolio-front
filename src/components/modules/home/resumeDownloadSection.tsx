@@ -13,13 +13,18 @@ export default function ResumeDownloadSection() {
     const fetchResumeUrl = async () => {
       try {
         const response = await fetch(`${BASE_URL}/resume`);
+
         if (!response.ok) {
-          throw new Error("Failed to fetch resume URL");
+          // If no resume exists, use fallback
+          if (response.status === 404) {
+            setResumeUrl(null);
+          } else {
+            throw new Error('Failed to fetch resume URL');
+          }
         }
-        const data = await response.json();
-        // Backend returns { { url: "..." } } (consistent with other endpoints)
-        // Handle both formats for robustness: data.data.url || data.url
-        setResumeUrl(data?.data?.url || data?.url || null);
+
+        const result = await response.json();
+        setResumeUrl(result.data?.resumeUrl || null);
       } catch (error) {
         console.error("Error fetching resume URL:", error);
         setResumeUrl(null);
@@ -38,7 +43,7 @@ export default function ResumeDownloadSection() {
     return (
       <Button size="lg" disabled>
         <GoDownload className="h-4 w-4" />
-        Resizing...
+        Loading...
       </Button>
     );
   }
