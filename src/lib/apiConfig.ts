@@ -164,6 +164,11 @@ export const API_PATHS = {
     getMe: "/users/getme",
   },
 
+  resume: {
+    get: "/resume",
+    upload: "/resume/upload",
+  },
+
   contact: "/contact",
 } as const;
 
