@@ -160,7 +160,7 @@ export default function SingleResumeUploader({
                             variant="outline"
                             size="sm"
                             onClick={openFileDialog}
-                            className="mt-1"
+                            className="mt-1 cursor-pointer"
                         >
                             <Upload className="mr-2 size-4" />
                             Select PDF

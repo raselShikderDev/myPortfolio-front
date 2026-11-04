@@ -23,6 +23,7 @@ export default function ManageResume({
 }: ManageResumeProps) {
   const [images, setImages] = useState<(File | FileMetadata)[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [uploaderKey, setUploaderKey] = useState(0);
 
   const handleUpload = async () => {
     if (!images.length) {
@@ -84,7 +85,9 @@ export default function ManageResume({
       }
 
       toast.success("Resume uploaded successfully.", { id: toastId });
+
       setImages([]);
+      setUploaderKey((prev) => prev + 1);
     } catch (error: unknown) {
       console.error("Resume Upload Error:", error);
 
@@ -121,7 +124,10 @@ export default function ManageResume({
       )}
 
       <div className="space-y-2">
-        <SingleResumeUploader onChange={setImages} />
+        <SingleResumeUploader
+          key={uploaderKey}
+          onChange={setImages}
+        />
 
         <Button
           onClick={handleUpload}
@@ -134,3 +140,10 @@ export default function ManageResume({
     </div>
   );
 }
+
+
+// {
+//     "success": false,
+//     "message": "Access token has expired. Please log in again.",
+//     "stack": "Error: Access token has expired. Please log in again.\n    at processRawError (E:\\programme\\myPortfolio-backend\\src\\middlewares\\globalError.ts:160:20)\n    at globalError (E:\\programme\\myPortfolio-backend\\src\\middlewares\\globalError.ts:232:19)\n    at handleError (E:\\programme\\myPortfolio-backend\\node_modules\\router\\lib\\layer.js:116:17)\n    at trimPrefix (E:\\programme\\myPortfolio-backend\\node_modules\\router\\index.js:340:13)\n    at <anonymous> (E:\\programme\\myPortfolio-backend\\node_modules\\router\\index.js:297:9)\n    at next (E:\\programme\\myPortfolio-backend\\node_modules\\router\\index.js:291:5)\n    at next (E:\\programme\\myPortfolio-backend\\node_modules\\router\\lib\\route.js:155:13)\n    at next (E:\\programme\\myPortfolio-backend\\node_modules\\router\\lib\\route.js:155:13)\n    at <anonymous> (E:\\programme\\myPortfolio-backend\\src\\middlewares\\authCheck.ts:66:7)\n    at processTicksAndRejections (native:7:39)"
+// }
