@@ -23,7 +23,10 @@ import { IUser } from "@/interfaces/user.interfaces";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { WorkExperienceFormSchema } from "@/zodSchema/workExperience.schema";
 import { toast } from "sonner";
+import { BASE_URL } from "@/lib/apiConfig";
 
 interface WorkExperienceFormValues {
   companyName: string;
@@ -36,7 +39,7 @@ interface WorkExperienceFormValues {
 export function AddWorkExperienceModal({ token }: { token: string }) {
   const [open, setOpen] = useState<boolean>(false);
 
-  const form = useForm<WorkExperienceFormValues>({
+  const form = useForm<WorkExperienceFormValues>({ resolver: zodResolver(WorkExperienceFormSchema),
     mode: "onChange",
     defaultValues: {
       companyName: "",
@@ -52,7 +55,7 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
 
     try {
       const userResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+        `${BASE_URL}/users/getme`,
         {
           method: "GET",
           headers: {
@@ -82,7 +85,7 @@ export function AddWorkExperienceModal({ token }: { token: string }) {
       const jsonData = JSON.stringify(finalWorkExpData);
 
       const apiResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/create`,
+        `${BASE_URL}/work-experience/create`,
         {
           method: "POST",
           headers: {

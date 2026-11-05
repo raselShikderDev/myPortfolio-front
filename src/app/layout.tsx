@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit as OutfitFont, Ovo as OvoFont } from "next/font/google";
-import "@/app/globals.css";
+import "./globals.css";
 import ThemeProviderWrapper from "@/provider/themeProviderWrapper";
 import { Toaster } from "sonner";
 
@@ -19,6 +19,18 @@ const Ovo = OvoFont({
 export const metadata: Metadata = {
   title: "Rasel Shikder",
   description: "Mern Stack Developer",
+  authors: [{ name: "Rasel Shikder" }],
+  creator: "Rasel Shikder",
+  openGraph: {
+    title: "Rasel Shikder",
+    description: "Mern Stack Developer",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Rasel Shikder",
+    description: "Mern Stack Developer",
+  },
 };
 
 export default function RootLayout({
@@ -32,7 +44,9 @@ export default function RootLayout({
         className={`${Outfit.variable} ${Ovo.variable} antialiased leading-8 dark:bg-[#11001f] dark:text-white overflow-x-hidden`}
       >
         <ThemeProviderWrapper>
-          <main>{children}</main>
+          <main id="main-content" tabIndex={-1}>
+            {children}
+          </main>
           <Toaster />
         </ThemeProviderWrapper>
       </body>

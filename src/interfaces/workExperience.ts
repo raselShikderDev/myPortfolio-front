@@ -10,3 +10,11 @@ export interface IWorkExperince {
   startDate: Date;
   endDate: Date;
 }
+
+export interface WorkExperienceFormValues {
+  companyName: string;
+  role: string;
+  descreption: string;
+  startDate: string;
+  endDate: string;
+}

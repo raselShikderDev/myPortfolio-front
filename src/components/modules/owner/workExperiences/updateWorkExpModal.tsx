@@ -24,7 +24,10 @@ import { IWorkExperince } from "@/interfaces/workExperience";
 import { Edit2, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { WorkExperienceFormSchema } from "@/zodSchema/workExperience.schema";
 import { toast } from "sonner";
+import { BASE_URL } from "@/lib/apiConfig";
 
 interface WorkExperienceFormValues {
   companyName: string;
@@ -59,7 +62,7 @@ export function UpdateWorkExperienceModal({
       .catch(console.error);
   }, []);
 
-  const form = useForm<WorkExperienceFormValues>({
+  const form = useForm<WorkExperienceFormValues>({ resolver: zodResolver(WorkExperienceFormSchema),
     defaultValues: {
       companyName: workExp.companyName,
       role: workExp.role,
@@ -79,7 +82,7 @@ export function UpdateWorkExperienceModal({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/edit/${workExp.id}`,
+        `${BASE_URL}/work-experience/edit/${workExp.id}`,
         {
           method: "PATCH",
           headers: {

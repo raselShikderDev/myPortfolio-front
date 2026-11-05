@@ -1,7 +1,6 @@
 import { serviceData } from "@/assets/assets";
 import Image from "next/image";
-import Link from "next/link";
-import { MdArrowRightAlt } from "react-icons/md";
+
 import { MotionDiv, MotionH2, MotionH3, MotionP } from "../animations/motionElements";
 
 const Services = () => {
@@ -50,13 +49,6 @@ const Services = () => {
           <p className="font-ovo dark:text-gray-300 text-gray-600 ovo sm:text-lg text-sm leading-5 flex-1">
             {description}
           </p>
-          <Link
-            style={{ fontFamily: "Ovo, serif" }}
-            className="mt-5 gap-2 flex items-center dark:text-gray-300 sm:text-lg text-sm text-gray-600"
-            href={"#"}
-          >
-            Read More <MdArrowRightAlt />
-          </Link>
         </MotionDiv>
       </div>
     ))}

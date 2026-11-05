@@ -1,15 +1,17 @@
 import BlogDetailsCard from "@/components/modules/blogs/blogDetails";
 import { IBlog } from "@/interfaces/blogs.interfaces";
 import { Metadata } from "next";
+import { BASE_URL } from "@/lib/apiConfig";
+import { generateSeoDescription } from "@/lib/utils/sanitizeBlogContent";
 
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${slug}`,{
+  const res = await fetch(`${BASE_URL}/blogs/${slug}`, {
     next: { tags: ["blogs"] },
   });
 
@@ -21,21 +23,21 @@ export async function generateMetadata({
   }
 
   const data = await res.json();
-  const blog:IBlog = data.data
+  const blog: IBlog = data.data
 
   return {
     title: blog.title || "Default Blog Title",
     description:
-      blog.content?.substring(0, 150) + "..." || "Read the full story here.",
+      generateSeoDescription(blog.content || "") || "Read the full story here.",
     keywords: blog.tags?.join(", ") || "blog, article, technology",
   };
 }
 
-const BlogDetailsPage = async ({ params }: { params: { slug: string } }) => {
+const BlogDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/${slug}`, {
-    cache: "no-store",
+  const res = await fetch(`${BASE_URL}/blogs/${encodeURIComponent(slug)}`, {
+    next: { revalidate: 60, tags: ["blogs"] },
   });
 
   if (!res.ok) {
@@ -43,7 +45,7 @@ const BlogDetailsPage = async ({ params }: { params: { slug: string } }) => {
   }
 
 
-  const {data} = await res.json();
+  const { data } = await res.json();
 
   return (
     <div className="py-8 max-w-7xl mx-auto justify-center">

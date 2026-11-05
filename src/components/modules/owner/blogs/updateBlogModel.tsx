@@ -1,8 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import MultipleImageUploader from "@/components/multipleFileUploader";
-import { Button } from "@/components/ui/button";
+import { useEffect, useRef } from "react";
+import { Editor } from "@tiptap/react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogClose,
@@ -12,7 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { FileMetadata } from "@/hooks/use-file-uploader";
 import {
   Form,
   FormControl,
@@ -21,23 +22,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { TiptapEditor } from "@/components/ui/tiptap-editor";
+import { FileMetadata } from "@/hooks/use-file-uploader";
+import { BlogFormSchema } from "@/zodSchema/blogs.schema";
 import { toast } from "sonner";
 import { IUser } from "@/interfaces/user.interfaces";
-import { Edit2, Loader2 } from "lucide-react";
-import { IBlog } from "@/interfaces/blogs.interfaces";
-
-interface BlogFormValues {
-  title: string;
-  content: string;
-  images: string[];
-  published: boolean;
-  publishedDate: string;
-  slug: string;
-  tags: string;
-}
+import { IBlog, BlogFormValues } from "@/interfaces/blogs.interfaces";
+import { BASE_URL } from "@/lib/apiConfig";
+import { Loader2 } from "lucide-react";
+import { generateSlug } from "@/lib/utils/generateSlug";
+import { Button } from "@/components/ui/button";
+import MultipleImageUploader from "@/components/MultipleImageUploader";
+import { uploadToImageBB } from "@/utils/imageUploader";
 
 // Type guard to narrow File | FileMetadata -> File
 function isFile(file: File | FileMetadata): file is File {
@@ -53,21 +49,59 @@ export function UpdateBlogModal({
 }) {
   const [images, setImages] = useState<(File | FileMetadata)[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const editorRef = useRef<Editor | null>(null);
 
   const form = useForm<BlogFormValues>({
+    resolver: zodResolver(BlogFormSchema),
     mode: "onChange",
     defaultValues: {
       title: blog.title,
-      content: blog.content,
+      content: blog.content || "",
       images: [],
       published: blog.published,
-      publishedDate: new Date().toISOString().slice(0, 16),
-      slug: blog.slug,
+      publishedDate: new Date(blog.publishedDate).toISOString().slice(0, 16),
       tags: blog.tags.join(", "),
     },
   });
 
-  const onsubmit = async (data: any) => {
+  // Reset form to the current blog's data whenever the dialog opens
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        title: blog.title,
+        content: blog.content || "",
+        images: [],
+        published: blog.published,
+        publishedDate: new Date(blog.publishedDate).toISOString().slice(0, 16),
+        tags: blog.tags.join(", "),
+      });
+      setImages([]);
+    }
+  }, [open, blog, form]);
+
+  const onsubmit = async (data: BlogFormValues) => {
+    console.log("Form Data:", data);
+    // Auto-generate slug from title
+    const slug = generateSlug(data.title);
+    const tags = data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [];
+    const newData = { ...data, slug, tags };
+    form.clearErrors();
+    let uploadedImageUrls: string[] = [];
+
+    // Filter for actual File objects from the 'images' state
+    const filesToUpload = images.filter(isFile);
+
+    if (filesToUpload.length > 0) {
+      try {
+        const uploadPromises = filesToUpload.map((file) => uploadToImageBB(file));
+        uploadedImageUrls = await Promise.all(uploadPromises);
+      } catch (error: unknown) {
+        console.error("ImageBB Upload Error:", error);
+        toast.error("Failed to upload some images");
+        return;
+      }
+    }
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
       {
@@ -84,49 +118,46 @@ export function UpdateBlogModal({
     const responseData = await response.json();
     const user: IUser = responseData.data;
 
-    data.authorId = user.id;
-    const processedTags = data.tags
-      .split(",")
-      .map((tag: any) => tag.trim())
-      .filter(Boolean);
+    // Preserve existing blog images that were not removed, plus newly uploaded ones
+    const preservedExistingImages = images
+      .filter((img): img is FileMetadata => !(img instanceof File))
+      .map((img) => img.url);
+    const finalImages = [...preservedExistingImages, ...uploadedImageUrls];
 
     const finalBlogData = {
-      ...data,
-      tags: processedTags,
-      images: images.filter(isFile).map((file) => file.name),
+      ...newData,
+      authorId: user.id,
+      images: finalImages,
     };
-
-
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(finalBlogData));
-
-    // Append only actual File objects
-    images.filter(isFile).forEach((file) => formData.append("files", file));
+    const jsonData = JSON.stringify(finalBlogData);
+    console.log("URL:", `${BASE_URL}/blogs/update/${blog.slug}`)
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/blogs/create`,
-        {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BASE_URL}/blogs/update/${blog.slug}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token as string,
+        },
+        body: jsonData,
+        credentials: "include",
+        next: { tags: ["blogs"] },
+      });
 
       const responseData = await response.json();
 
       if (!response.ok || !responseData.success) {
-        toast.error("Blog adding failed");
+        toast.error(responseData.message || "Blog update failed");
         return;
       }
 
-      toast.success("Blog added successfully!");
+      toast.success("Blog updated successfully!");
       setOpen(false);
       form.reset();
       setImages([]);
     } catch (err) {
       console.error(err);
-      toast.error("Adding blog failed");
+      toast.error("Updating blog failed");
     }
   };
 
@@ -134,123 +165,143 @@ export function UpdateBlogModal({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default" className="cursor-pointer">
-          <Edit2 className="w-4 h-4" />
+          Edit Blog
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] flex flex-col p-4">
         <DialogHeader>
-          <DialogTitle>Update Blog</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Update Blog</DialogTitle>
         </DialogHeader>
 
-        <Form {...form}>
-          <form
-            className="space-y-5"
-            id="add-blog-form"
-            onSubmit={form.handleSubmit(onsubmit)}
-          >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Blog Title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        <div className="flex-1 overflow-y-auto pr-1">
+          <Form {...form}>
+            <form
+              className="space-y-5"
+              id="add-blog-form"
+              onSubmit={form.handleSubmit(onsubmit)}
+            >
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormControl>
+                      <Input
+                        placeholder="Blog Title"
+                        {...field}
+                        className="grow"
+                        onPaste={(e) => {
+                          e.stopPropagation();
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="content"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea placeholder="Blog Content" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Tags (comma separated)" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="Slug (e.g., ai-changing-web)"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="published"
-              render={({ field }) => (
-                <FormItem className="flex items-center space-x-2">
-                  <FormControl>
-                    <input
-                      type="checkbox"
-                      checked={field.value}
-                      onChange={(e) => field.onChange(e.target.checked)}
-                      className="w-4 h-4"
-                    />
-                  </FormControl>
-                  <label>Published</label>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="publishedDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input type="datetime-local" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="content"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col flex-1 min-h-0">
+                    <FormControl>
+                      <div className="flex-1 min-h-[200px] rounded-md border border-input bg-background">
+                        <div className="relative">
+                          <TiptapEditor
+                            value={field.value}
+                            onChange={field.onChange}
+                            ref={editorRef}
+                          />
+                        </div>
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormControl>
+                      <Input
+                        placeholder="Tags (comma separated)"
+                        {...field}
+                        value={field.value || ""}
+                        className="grow"
+                        onPaste={(e) => {
+                          e.stopPropagation();
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="published"
+                render={({ field }) => (
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        checked={field.value}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                        className="w-4 h-4"
+                      />
+                    </FormControl>
+                    <label>Published</label>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="publishedDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input type="datetime-local" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <MultipleImageUploader onChange={setImages} />
-          </form>
-        </Form>
+              <MultipleImageUploader
+                initialFiles={blog.images.map((url) => ({
+                  name: url.split("/").pop() || "image",
+                  size: 0,
+                  type: "image/*",
+                  url,
+                  id: url,
+                }))}
+                onChange={setImages}
+              />
+            </form>
+          </Form>
+        </div>
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button disabled={form.formState.isSubmitting} variant="outline">Cancel</Button>
-          </DialogClose>
-          <Button
-            type="submit"
-            form="add-blog-form"
-            className="cursor-pointer"
-            disabled={form.formState.isSubmitting}
-          >
-            {!form.formState.isSubmitting && `Update Blog`}
-            {form.formState.isSubmitting && (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            )}
-            Update Blog
-          </Button>
-        </DialogFooter>
+        <div className="pt-4 mt-auto border-t border-border">
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button disabled={form.formState.isSubmitting} variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button
+              type="submit"
+              form="add-blog-form"
+              disabled={form.formState.isSubmitting}
+              className="cursor-pointer"
+            >
+              {!form.formState.isSubmitting && `Save Changes`}
+              {form.formState.isSubmitting && (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              )}
+            </Button>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

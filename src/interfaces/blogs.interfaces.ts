@@ -15,3 +15,13 @@ export interface IBlog {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface BlogFormValues {
+  title: string;
+  content: string;
+  images?: string[];
+  published: boolean;
+  publishedDate: string;
+  tags?: string;
+  authorId?: number;
+}

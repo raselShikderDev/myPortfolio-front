@@ -2,19 +2,21 @@
 import { AddProjectModal } from "@/components/modules/owner/projects/addProjectModal";
 import ProjectsTable from "@/components/modules/owner/projects/projectDatatable";
 import { getUserSession } from "@/lib/getUserSession";
+import { IProject } from "@/interfaces/projects.interfaces";
+import { BASE_URL } from "@/lib/apiConfig";
 
 export default async function ProjectShowCasePage() {
   const token = await getUserSession();
- if (!token) {
+  if (!token) {
     console.error("token not found")
   }
   // const projects = await getAllProjects()
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/projects/all`, {
+  const res = await fetch(`${BASE_URL}/projects/all`, {
     next: { tags: ["projects"] },
   });
   const data = await res.json();
 
-  const projects = data.data;
+  const projects: IProject[] = data.data;
 
   return (
     <main className="min-h-screen bg-background px-4 sm:px-6 lg:px-10 py-10 space-y-10">

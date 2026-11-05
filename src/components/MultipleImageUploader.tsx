@@ -5,14 +5,19 @@ import { useEffect, type Dispatch } from "react";
 import Image from "next/image";
 import { FileMetadata, useFileUpload } from "@/hooks/use-file-uploader";
 
-export default function MulptipleImageUploader({
+export default function MultipleImageUploader({
   onChange,
+  initialFiles = [],
+  className = "",
 }: {
-  onChange: Dispatch<React.SetStateAction<[] | (File | FileMetadata)[]>>;
+  onChange: Dispatch<React.SetStateAction<(File | FileMetadata)[]>>;
+  initialFiles?: FileMetadata[];
+  className?: string;
 }) {
   const maxSizeMB = 5;
   const maxSize = maxSizeMB * 1024 * 1024; // 5MB default
-  const maxFiles = 3;
+  // Allow existing (preloaded) images plus newly selected ones.
+  const maxFiles = 6;
 
   const [
     { files, isDragging, errors },
@@ -26,10 +31,11 @@ export default function MulptipleImageUploader({
       getInputProps,
     },
   ] = useFileUpload({
-    accept: "image/svg+xml,image/png,image/jpeg,image/jpg,image/gif",
+    accept: "image/svg+xml,image/png,image/jpeg,image/jpg,image/gif,image/webp,image/avif",
     maxSize,
     multiple: true,
     maxFiles,
+    initialFiles,
   });
 
   useEffect(() => {
@@ -52,7 +58,7 @@ export default function MulptipleImageUploader({
         onDrop={handleDrop}
         data-dragging={isDragging || undefined}
         data-files={files.length > 0 || undefined}
-        className="border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px]"
+        className={`border-input data-[dragging=true]:bg-accent/50 has-[input:focus]:border-ring has-[input:focus]:ring-ring/50 relative flex min-h-52 flex-col items-center overflow-hidden rounded-xl border border-dashed p-4 transition-colors not-data-[files]:justify-center has-[input:focus]:ring-[3px] ${className}`}
       >
         <input
           {...getInputProps()}
@@ -116,7 +122,7 @@ export default function MulptipleImageUploader({
             </div>
             <p className="mb-1.5 text-sm font-medium">Drop your images here</p>
             <p className="text-muted-foreground text-xs">
-              SVG, PNG, JPG or GIF (max. {maxSizeMB}MB)
+              SVG, PNG, JPG, GIF, WebP or AVIF (max. {maxSizeMB}MB)
             </p>
             <Button
               variant="outline"

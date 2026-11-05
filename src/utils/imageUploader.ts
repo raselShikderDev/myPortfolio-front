@@ -1,44 +1,28 @@
-// Converting file
-const fileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const base64String = reader.result?.toString().split(",")[1] || "";
-      resolve(base64String);
-    };
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 //Uplaoding image
+
 export async function uploadToImageBB(imageFile: File): Promise<string> {
-  const apiKey = process.env.NEXT_PUBLIC_IMAGEBB_API_KEY as string;
+  const formData = new FormData();
+  formData.append("image", imageFile);
 
-  if (!apiKey) {
-    throw new Error("ImageBB API Key is not set in environment variables.");
-  }
-
-  const base64Image = await fileToBase64(imageFile);
-
-  const imageBBFormData = new FormData();
-  imageBBFormData.append("image", base64Image);
-  imageBBFormData.append("key", apiKey);
-
-  const imageBBResponse = await fetch(
-    process.env.NEXT_PUBLIC_IMAGEBB_API_LINK as string,
-    {
+  try {
+    // Use absolute URL on server side or if window is not available, otherwise relative URL
+    const baseUrl = typeof window !== 'undefined' ? '' : (process.env.NEXT_PUBLIC_FRONTEND_BASE_URL || 'http://localhost:3000');
+    const response = await fetch(`${baseUrl}/api/upload-image`, {
       method: "POST",
-      body: imageBBFormData,
+      body: formData,
+    });
+
+    const data = await response.json();
+
+    if (data.success && data.url) {
+      return data.url;
+    } else {
+      const errorMessage = data.error || "Image upload failed";
+      throw new Error(errorMessage);
     }
-  );
-
-  const imageBBData = await imageBBResponse.json();
-
-  if (imageBBData.success && imageBBData.data?.url) {
-    return imageBBData.data.url;
-  } else {
-    const errorMessage = imageBBData.error?.message || "ImageBB upload failed";
-    throw new Error(errorMessage);
+  } catch (error: unknown) {
+    console.error("Internal API Upload Error:", error);
+    const message = error instanceof Error ? error.message : "Failed to upload image";
+    throw new Error(message);
   }
 }
