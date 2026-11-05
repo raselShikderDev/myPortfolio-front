@@ -2,10 +2,11 @@
 
 import { cookies } from "next/headers";
 import { getBaseUrl } from "@/lib/apiConfig";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 export const generateToken = async () => {
   try {
-    const res = await fetch(
+    const res = await fetchWithAuth(
       `${getBaseUrl()}/auth/generate-token`,
       {
         method: "POST",

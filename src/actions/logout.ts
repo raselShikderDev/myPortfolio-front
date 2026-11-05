@@ -2,11 +2,12 @@
 
 import { cookies } from "next/headers";
 import { buildApiUrl } from "@/lib/apiConfig";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 
 
 export const logout = async (token: string) => {
-  const res = await fetch(buildApiUrl("/auth/logout"), {
+  const res = await fetchWithAuth(buildApiUrl("/auth/logout"), {
     method: "POST",
     headers: {
       Authorization: token,
