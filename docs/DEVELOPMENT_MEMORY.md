@@ -1,42 +1,64 @@
-# Portfolio Project Development Memory
+--- 
+name: authentication-token-refresh-system
+description: Summary of authentication token refresh system implementation and validation.
+metadata:
+  type: project
+--- 
 
-## Verification Status
+## Authentication Token Refresh System
 
-### ✅ Resume Management Feature Verified
+### Overview
+Implemented a complete token refresh system for the frontend authentication flow.
 
-#### **Backend**
-- **GET /resume**: Returns resume URL in `{ data: { url: string } }` format
-- **POST /resume/upload**: Authenticated upload endpoint working correctly
-- Database integration confirmed with PostgreSQL
+### Components
 
-#### **Frontend**
-- **Resume Download**: Works with `/api/resume` endpoint
-- **Resume Upload**: Works with `/api/resume/upload` endpoint in dashboard
-- **Dashboard Integration**: Resume management section visible and functional
-- **CORS Handling**: Properly handles download attribute with `target="_blank"`
+#### 1. Custom Fetch Wrapper (`src/lib/fetchWithAuth.ts`)
+- Wraps native `fetch` API for automatic token refresh
+- Handles 401 responses by attempting token refresh
+- Retries original request with new token if refresh succeeds
+- Uses `cookies-next` for cookie management
 
-#### **User Workflow**
-- Upload resume through admin interface
-- Verify resume URL in dashboard
-- Download resume from home page
+#### 2. Token Refresh Endpoint (`src/app/api/auth/generate-token/route.ts`)
+- Validates refresh token from cookies
+- Issues new access token
+- Uses `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` from environment variables
+- Sets new access token in HTTP-only cookies
 
-### 📋 Implementation Summary
+#### 3. Client-Side Components Updated
+- `src/actions/getBlogs.ts`: Uses `fetchWithAuth`
+- `src/actions/getProjects.ts`: Uses `fetchWithAuth`
+- `src/actions/logout.ts`: Uses `fetchWithAuth`
+- `src/actions/generateToken.ts`: Uses `fetchWithAuth`
+- `src/components/modules/owner/profile/ManageResume.tsx`: Uses `fetchWithAuth`
 
-#### **Files Modified**
-- `src/app/(owner)/dashboard/page.tsx`: Added resume management section
-- `src/components/modules/home/resumeDownloadSection.tsx`: Updated to use new API endpoints
-- `src/components/modules/owner/profile/ManageResume.tsx`: Updated to use new API endpoint
-- `src/lib/apiConfig.ts`: Added resume API paths
-- Backend API routes: `/api/resume` and `/api/resume/upload`
+### Environment Variables
+- `JWT_ACCESS_SECRET`: Secret key for signing access tokens
+- `JWT_REFRESH_SECRET`: Secret key for signing refresh tokens
+- `cookies-next` package installed for cookie management
 
-### 🔧 Next Steps
-1. **Finalize error handling** for edge cases (invalid files, auth failures)
-2. **Implement caching** for resume downloads
-3. **Add comprehensive tests** for the resume feature
-4. **Configure file storage** for resumes (ImageBB or local fallback)
+### Verification Results
+- **ESLint**: Passed (all warnings/errors resolved)
+- **Production Build**: Passed (all TypeScript errors resolved)
+- **Tests**: Passed (all tests pass)
 
-### 📝 Action Items
-- [ ] Final error handling validation
-- [ ] Implement caching for resume downloads
-- [ ] Add tests for resume functionality
-- [ ] Configure file storage for resumes
+### Files Changed
+1. `src/lib/fetchWithAuth.ts` - Created custom fetch wrapper
+2. `src/app/api/auth/generate-token/route.ts` - Created token refresh endpoint
+3. `src/actions/getBlogs.ts` - Updated to use `fetchWithAuth`
+4. `src/actions/getProjects.ts` - Updated to use `fetchWithAuth`
+5. `src/actions/logout.ts` - Updated to use `fetchWithAuth`
+6. `src/actions/generateToken.ts` - Updated to use `fetchWithAuth`
+7. `src/components/modules/owner/profile/ManageResume.tsx` - Updated to use `fetchWithAuth`
+8. `src/lib/auth.ts` - Fixed TypeScript errors
+9. `src/app/api/resume/upload/route.ts` - Fixed token extraction and unused variables
+10. `src/app/api/upload-image/route.ts` - Fixed TypeScript errors and duplicate imports
+11. `tailwind.config.js` - Fixed ESLint errors
+
+### Next Steps
+- Monitor token refresh behavior in production
+- Consider adding token expiration tracking for proactive refresh
+- Update documentation for developers
+
+### Useful Commands
+- Run validation: `bun run lint && bun run build`
+- Check hook execution: Verify `frontend-auto-test.ps1` and `frontend-final-validation.ps1` logs

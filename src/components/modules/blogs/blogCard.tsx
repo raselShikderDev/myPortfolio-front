@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { IBlog } from "@/interfaces/blogs.interfaces";
-import { Badge } from "@/components/ui/badge";
+// import { Badge } from "@/components/ui/badge";
 import { MotionDiv } from "../animations/motionElements";
 import { getPlainTextFromHtml } from "@/lib/utils/sanitizeBlogContent";
 import { useEffect, useState } from "react";

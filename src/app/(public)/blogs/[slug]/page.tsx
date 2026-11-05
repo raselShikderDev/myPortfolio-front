@@ -7,7 +7,7 @@ import { generateSeoDescription } from "@/lib/utils/sanitizeBlogContent";
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
 
@@ -33,7 +33,7 @@ export async function generateMetadata({
   };
 }
 
-const BlogDetailsPage = async ({ params }: { params: { slug: string } }) => {
+const BlogDetailsPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
 
   const res = await fetch(`${BASE_URL}/blogs/${encodeURIComponent(slug)}`, {

@@ -4,6 +4,8 @@
  * This file provides a single source of truth for all public API configurations.
  * All environment variables used in both server and client code must be prefixed
  * with NEXT_PUBLIC_ in their definition.
+ *
+ * Last modified: 2024-02-20
  */
 
 /**
@@ -20,6 +22,8 @@
  * - Production: https://rasel-shikder-backend.vercel.app/api/v1
  * - Docker internal: http://backend:5000/api/v1
  */
+
+
 export const getBaseUrl = (): string => {
   // On the server, prefer the internal URL for Docker container networking
   if (typeof window === "undefined" && process.env.INTERNAL_API_BASE_URL) {

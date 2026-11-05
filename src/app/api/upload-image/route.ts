@@ -1,15 +1,14 @@
 
 
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { getImageBBApiKey, getImageBBApiLink } from '@/lib/apiConfig';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function POST(request: { formData: () => any; }) {
+export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const imageFile = formData.get('image'); // 'image' is the key expected from the frontend
+    const imageFile = formData.get('image') as File; // 'image' is the key expected from the frontend
 
-    if (!imageFile) {
+    if (!(imageFile instanceof File)) {
       return NextResponse.json({ success: false, error: 'No image file provided' }, { status: 400 });
     }
 

@@ -1,18 +1,4 @@
-// Converting file
-const fileToBase64 = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      const base64String = reader.result?.toString().split(",")[1] || "";
-      resolve(base64String);
-    };
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 //Uplaoding image
-import { getImageBBApiKey, getImageBBApiLink } from '@/lib/apiConfig';
 
 export async function uploadToImageBB(imageFile: File): Promise<string> {
   const formData = new FormData();

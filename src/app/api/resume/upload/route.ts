@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
+import pool from '@/lib/db';
 
 export async function POST(request: NextRequest) {
+  let user: Awaited<ReturnType<typeof verifyToken>>;
   try {
-    const user = await verifyToken(token);
+    const token = request.headers.get('authorization')?.split(' ')[1];
+    user = await verifyToken(token as string);
     if (!user) {
       return NextResponse.json({
         success: false,
         message: 'Invalid token'
       }, { status: 401 });
     }
-  } catch (error) {
+  } catch {
     return NextResponse.json({
       success: false,
       message: 'Authentication failed'
@@ -31,7 +34,7 @@ export async function POST(request: NextRequest) {
     // Validate URL format
     try {
       new URL(resumeUrl);
-    } catch (error) {
+    } catch {
       return NextResponse.json({
         success: false,
         message: 'Invalid URL format'
@@ -57,11 +60,11 @@ export async function POST(request: NextRequest) {
         fileName
       }
     });
-  } catch (error) {
-    console.error('Error uploading resume:', error);
+  } catch {
+    console.error('Error uploading resume');
     return NextResponse.json({
       success: false,
-      message: error instanceof Error ? error.message : 'Failed to upload resume'
+      message: 'Failed to upload resume'
     }, { status: 500 });
   }
 }

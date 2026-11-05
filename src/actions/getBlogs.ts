@@ -2,9 +2,10 @@
 
 import { IBlog } from "@/interfaces/blogs.interfaces";
 import { buildApiUrl } from "@/lib/apiConfig";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 export async function getAllBlogs(): Promise<IBlog[]> {
-  const res = await fetch(buildApiUrl("/blogs/all"));
+  const res = await fetchWithAuth(buildApiUrl("/blogs/all"));
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({ message: "Network error" }));

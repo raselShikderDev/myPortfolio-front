@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { BASE_URL } from "@/lib/apiConfig";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { FileMetadata } from "@/hooks/use-file-uploader";
 import { uploadToImageBB } from "@/utils/imageUploader";
 import SingleResumeUploader from "@/components/ui/SingleResumeUploader";
@@ -61,7 +62,7 @@ export default function ManageResume({
       }
 
       // Then upload the URL to Express backend
-      const response = await fetch(`${BASE_URL}/resume/upload`, {
+      const response = await fetchWithAuth(`${BASE_URL}/resume/upload`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +72,7 @@ export default function ManageResume({
           resumeUrl,
           fileName: filesToUpload[0].name,
         }),
-        credentials: "include",
+        credentials: "include" as const,
       });
 
       const responseData = await response.json();
