@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(playwright-cli)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "shadcn",
+    "playwright"
+  ]
+}

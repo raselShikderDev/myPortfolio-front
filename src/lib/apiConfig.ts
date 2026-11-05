@@ -133,7 +133,7 @@ export const IMAGEBB_API_LINK = getImageBBApiLink();
  */
 export const API_PATHS = {
   auth: {
-    login: "/auth/login",
+    signin: buildApiUrl('/auth/signin'),
     logout: "/auth/logout",
     generateToken: "/auth/generate-token",
   },
@@ -179,9 +179,9 @@ export const API_PATHS = {
 /**
  * Helper function to build a full API URL from a path.
  */
-export const buildApiUrl = (path: string): string => {
+export function buildApiUrl(path: string): string {
   const cleanPath = path.startsWith("/") ? path.slice(1) : path;
   const baseUrl = getBaseUrl().replace(/\/$/, "");
 
   return `${baseUrl}/${cleanPath}`;
-};
+}

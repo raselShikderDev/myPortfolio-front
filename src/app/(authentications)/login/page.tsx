@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import PasswordToggler from "@/components/passwordToggler";
 import { LoginFormSchema } from "@/zodSchema/authSchema";
 import { toast } from "sonner";
-import { login } from "../../../actions/auth";
+import { signin } from "../../../actions/auth";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 // import { cookies } from "next/headers";
@@ -25,8 +25,8 @@ export default function LoginPage() {
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     try {
-      const toastId = "login-process";
-      const response = await login(data);
+      const toastId = "signin-process";
+      const response = await signin(data);
 
       if (response.success) {
         router.push("/");
@@ -40,7 +40,7 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "A network error occurred.", {
-        id: "login-process",
+        id: "signin-process",
       });
     }
   };

@@ -53,5 +53,6 @@ next-env.d.ts
 .playwright-cli/
 .playwright
 .clinerules
-.claude
 .skill-lock.json
+
+.claude/hook-state/
