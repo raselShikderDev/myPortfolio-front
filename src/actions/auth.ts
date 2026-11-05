@@ -8,9 +8,9 @@ interface LoginData {
   password: string;
 }
 
-export const login = async (data: LoginData) => {
+export const signin = async (data: LoginData) => {
   try {
-    const result = await apiRequest<{ success: boolean; data: { accessToken: string } }>(API_PATHS.auth.login, {
+    const result = await apiRequest<{ success: boolean; data: { accessToken: string } }>(API_PATHS.auth.signin, {
       method: 'POST',
       body: data,
       credentials: 'include',

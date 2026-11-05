@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
 
   if (!token) {
-    url.pathname = "/login";
+    url.pathname = "/auth/signin";
     return NextResponse.redirect(url);
   }
 

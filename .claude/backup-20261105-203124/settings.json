@@ -1,0 +1,46 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(git push*)",
+      "Bash(git push)",
+      "PowerShell(git push*)",
+      "PowerShell(git push)",
+      "Bash(rm -rf *)",
+      "Bash(rm -r *)",
+      "Bash(rm -f *)",
+      "Bash(rm *)",
+      "Bash(del *)",
+      "Bash(del /q *)",
+      "PowerShell(Remove-Item -Recurse *)",
+      "PowerShell(Remove-Item -Force *)",
+      "PowerShell(Remove-Item *)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "& \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\frontend-auto-test.ps1\"",
+            "timeout": 120
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "& \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\frontend-final-validation.ps1\"",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}
