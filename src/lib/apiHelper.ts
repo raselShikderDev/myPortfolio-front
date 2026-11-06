@@ -1,4 +1,4 @@
-import { getBaseUrl } from './apiConfig';
+import { buildApiUrl } from './apiConfig';
 
 export interface ApiRequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -20,9 +20,7 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest<T>(endpoint: string, options: ApiRequestOptions = {}): Promise<T> {
-  const baseUrl = getBaseUrl();
-  const url = `${baseUrl}${endpoint}`;
-  console.log(`Making API request to: ${url}`);
+  console.log(`Making API request to: ${endpoint}`);
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...options.headers,
@@ -49,7 +47,7 @@ export async function apiRequest<T>(endpoint: string, options: ApiRequestOptions
   }
 
   try {
-    const response = await fetch(url, config);
+    const response = await fetch(endpoint, config);
 
     if (!response.ok) {
       let errorData: unknown;

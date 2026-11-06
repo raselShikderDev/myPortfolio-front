@@ -133,47 +133,47 @@ export const IMAGEBB_API_LINK = getImageBBApiLink();
  */
 export const API_PATHS = {
   auth: {
-    signin: buildApiUrl('/auth/signin'),
-    logout: "/auth/logout",
-    generateToken: "/auth/generate-token",
+    signin: buildApiUrl('/auth/login'),
+    logout: buildApiUrl('/auth/logout'),
+    generateToken: buildApiUrl('/auth/generate-token'),
   },
 
   blogs: {
-    getAll: "/blogs/all",
-    getOne: (slug: string) => `/blogs/${slug}`,
-    create: "/blogs/create",
-    update: (slug: string) => `/blogs/${slug}`,
-    delete: (slug: string) => `/blogs/${slug}`,
+    getAll: buildApiUrl('/blogs/all'),
+    getOne: (slug: string) => buildApiUrl(`/blogs/${slug}`),
+    create: buildApiUrl('/blogs/create'),
+    update: (slug: string) => buildApiUrl(`/blogs/${slug}`),
+    delete: (slug: string) => buildApiUrl(`/blogs/${slug}`),
     toggleStatus: (status: string, slug: string) =>
-      `/blogs/${status}/${slug}`,
-    stats: "/blogs/stats",
+      buildApiUrl(`/blogs/${status}/${slug}`),
+    stats: buildApiUrl('/blogs/stats'),
   },
 
   projects: {
-    getAll: "/projects/all",
-    getOne: (id: string) => `/projects/${id}`,
-    create: "/projects/create",
-    update: (id: string) => `/projects/edit/${id}`,
-    delete: (id: string) => `/projects/${id}`,
+    getAll: buildApiUrl('/projects/all'),
+    getOne: (id: string) => buildApiUrl(`/projects/${id}`),
+    create: buildApiUrl('/projects/create'),
+    update: (id: string) => buildApiUrl(`/projects/edit/${id}`),
+    delete: (id: string) => buildApiUrl(`/projects/${id}`),
   },
 
   workExperience: {
-    getAll: "/work-experience/all",
-    create: "/work-experience/create",
-    update: (id: string) => `/work-experience/edit/${id}`,
-    delete: (id: string) => `/work-experience/${id}`,
+    getAll: buildApiUrl('/work-experience/all'),
+    create: buildApiUrl('/work-experience/create'),
+    update: (id: string) => buildApiUrl(`/work-experience/edit/${id}`),
+    delete: (id: string) => buildApiUrl(`/work-experience/${id}`),
   },
 
   users: {
-    getMe: "/users/getme",
+    getMe: buildApiUrl('/users/getme'),
   },
 
   resume: {
-    get: "/resume",
-    upload: "/resume/upload",
+    get: buildApiUrl('/resume'),
+    upload: buildApiUrl('/resume/upload'),
   },
 
-  contact: "/contact",
+  contact: buildApiUrl('/contact'),
 } as const;
 
 /**

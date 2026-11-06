@@ -1,6 +1,6 @@
 import { getCookie } from 'cookies-next';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
 
 interface FetchOptions extends RequestInit {
   retry?: boolean;
@@ -17,7 +17,7 @@ export async function fetchWithAuth(
     headers.set('Authorization', `Bearer ${accessToken}`);
   }
 
-  const response = await fetch(`${API_BASE_URL}${input}`, {
+  const response = await fetch(input, {
     ...init,
     headers,
     credentials: 'include',
