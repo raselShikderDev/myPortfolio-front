@@ -21,7 +21,7 @@ interface IMenuItem {
   url: string;
 }
 
-export const Navbar2 = () => {
+export const Navbar2 = ({ isAuthenticated }: { isAuthenticated?: boolean }) => {
   const [isScroll, setIsScroll] = useState(false);
   const pathname = usePathname();
 
@@ -43,7 +43,7 @@ export const Navbar2 = () => {
     { title: "Blogs", url: "/blogs" },
     { title: "Projects", url: "/projects" },
     { title: "Contact", url: "/contact" },
-    { title: "Dashboard", url: "/dashboard" },
+    ...(isAuthenticated ? [{ title: "Dashboard", url: "/dashboard" }] : []),
   ];
 
   const isMenuItemActive = (url: string) => {
@@ -123,6 +123,17 @@ export const Navbar2 = () => {
               Contact
               <span className="text-sm md:text-base lg:text-lg">→</span>
             </Link>
+
+            {/* Desktop Dashboard CTA */}
+            {isAuthenticated && (
+              <Link
+                href="/dashboard"
+                className="hidden items-center gap-1 rounded-full border border-gray-600 px-3 py-1 font-ovo text-xs transition hover:bg-darktheme hover:text-white dark:hover:bg-white dark:hover:text-black sm:text-sm md:px-4 md:py-2 md:text-[14px] lg:flex lg:px-6 lg:text-base"
+              >
+                Dashboard
+                <span className="text-sm md:text-base lg:text-lg">→</span>
+              </Link>
+            )}
 
             {/* Mobile menu */}
             <Sheet>
