@@ -1,4 +1,3 @@
-import { buildApiUrl } from './apiConfig';
 
 export interface ApiRequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
