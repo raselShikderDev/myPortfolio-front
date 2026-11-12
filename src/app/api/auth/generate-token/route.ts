@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'default-secret';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'default-refresh-secret';
+const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback-secret';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'fallback-secret';
 
 interface TokenPayload {
   userId: string;

@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     const imageFile = formData.get('image') as File; // 'image' is the key expected from the frontend
 
     if (!(imageFile instanceof File)) {
-      return NextResponse.json({ success: false, error: 'No image file provided' }, { status: 400 });
+      return NextResponse.json({ success: false, message: 'No image file provided' }, { status: 400 });
     }
 
     // Convert the File object to a Buffer
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, url: imageUrl }, { status: 200 });
     } else {
       // ImageBB API returned an error
-      return NextResponse.json({ success: false, error: imageBBData.error?.message || 'ImageBB upload failed' }, { status: 500 });
+      return NextResponse.json({ success: false, message: imageBBData.error?.message || 'ImageBB upload failed' }, { status: 500 });
     }
   } catch (error) {
     console.error('Upload Error:', error);

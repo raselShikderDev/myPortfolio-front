@@ -6,23 +6,23 @@ import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 
 
-export const logout = async (token: string) => {
+export const logout = async (accessToken: string) => {
   const res = await fetchWithAuth(buildApiUrl("/auth/logout"), {
     method: "POST",
     headers: {
-      Authorization: token,
+      Authorization: accessToken,
     },
   });
 
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({ message: 'Network error' }));
-    throw new Error(errorData.message || 'Failed to logout. Please try again.');
+    return { success: false, message: errorData.message || 'Failed to logout. Please try again.' };
   }
 
   const result = await res.json();
   if (result?.success) {
     const cookiesStore = await cookies();
-    cookiesStore.delete("token");
+    cookiesStore.delete("accessToken");
     cookiesStore.delete("refreshToken");
   }
 

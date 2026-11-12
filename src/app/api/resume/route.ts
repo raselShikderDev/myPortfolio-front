@@ -57,9 +57,7 @@ export async function GET() {
     return NextResponse.json(
       {
         success: false,
-        error: {
-          message: 'Failed to fetch resume URL',
-        },
+        message: 'Failed to fetch resume URL',
       },
       { status: 500 }
     );
@@ -77,9 +75,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            message: 'Authentication required',
-          },
+          message: 'Authentication required',
         },
         { status: 401 }
       );
@@ -91,9 +87,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            message: 'Authentication token is missing',
-          },
+          message: 'Authentication token is missing',
         },
         { status: 401 }
       );
@@ -109,9 +103,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            message: 'Invalid or expired authentication token',
-          },
+          message: 'Invalid or expired authentication token',
         },
         { status: 401 }
       );
@@ -121,9 +113,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            message: 'Invalid authentication token',
-          },
+          message: 'Invalid authentication token',
         },
         { status: 401 }
       );
@@ -138,9 +128,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            message: 'Invalid form data',
-          },
+          message: 'Invalid form data',
         },
         { status: 400 }
       );
@@ -155,11 +143,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            message:
+          message:
               validationResult.error.issues[0]?.message ||
               'Invalid resume file',
-          },
         },
         { status: 400 }
       );
@@ -176,9 +162,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          error: {
-            message: 'Failed to upload resume to cloud storage',
-          },
+          message: 'Failed to upload resume to cloud storage',
         },
         { status: 502 }
       );

@@ -17,17 +17,17 @@ export const signin = async (data: LoginData) => {
     });
     if (result?.success) {
       const cookiesStore = await cookies();
-      cookiesStore.set('token', result.data.accessToken, {
+      cookiesStore.set('accessToken', result.data.accessToken, {
         httpOnly: true,
-        sameSite: 'none',
-        secure: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
         path: '/',
       });
     }
     return result;
   } catch (error) {
     console.error('Login error:', error);
-    throw error;
+    return { success: false, message: error instanceof Error ? error.message : 'Unknown error occurred' };
   }
 };
 

@@ -4,17 +4,17 @@ import jwt from "jsonwebtoken";
 export async function GET() {
   try {
     const cookieStore = await cookies();
-    const token = cookieStore.get("token")?.value || "";
+    const accessToken = cookieStore.get("accessToken")?.value || "";
 
-    if (!token) {
-      return Response.json({ user: null, token: null }, { status: 401 });
+    if (!accessToken) {
+      return Response.json({ success: false, message: 'Authentication required' }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string);
+    const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET as string);
 
-    return Response.json({ user: decoded, token });
+    return Response.json({ user: decoded, accessToken });
   } catch (err) {
     console.error("JWT verification failed:", err);
-    return Response.json({ user: null, token: null }, { status: 401 });
+    return Response.json({ success: false, message: 'Authentication required' }, { status: 401 });
   }
 }

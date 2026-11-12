@@ -7,7 +7,7 @@ export const verifyToken = async (token: string): Promise<{ userId: string; role
     if (!decoded) return null;
 
     // Verify token signature
-    jwt.verify(token, process.env.JWT_ACCESS_SECRET || 'default-secret');
+    jwt.verify(token, process.env.JWT_ACCESS_SECRET || 'fallback-secret');
 
     // In production, you'd fetch user from database
     // For now, return decoded payload
