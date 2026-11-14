@@ -37,11 +37,11 @@ function validateContactForm(data: FormData): { isValid: boolean; errors: string
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
-    const { isValid, errors } = validateContactForm(formData);
+    const { isValid } = validateContactForm(formData);
 
     if (!isValid) {
       return NextResponse.json(
-        { success: false, message: 'Validation failed', details: errors },
+        { success: false, message: 'Validation failed' },
         { status: 400 }
       );
     }

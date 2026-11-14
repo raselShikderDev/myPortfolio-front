@@ -76,13 +76,13 @@ export async function POST(request: NextRequest) {
     // Handle specific error types with user-friendly messages
     if (error instanceof Error) {
       if (error.message.includes('timed out')) {
-        return NextResponse.json({ success: false, error: 'Image upload service is taking too long. Please try again.' }, { status: 504 });
+        return NextResponse.json({ success: false, message: 'Image upload service is taking too long. Please try again.' }, { status: 504 });
       }
       if (error.message.includes('fetch failed')) {
-        return NextResponse.json({ success: false, error: 'Unable to connect to image service. Please check your internet connection and try again.' }, { status: 503 });
+        return NextResponse.json({ success: false, message: 'Unable to connect to image service. Please check your internet connection and try again.' }, { status: 503 });
       }
     }
 
-    return NextResponse.json({ success: false, error: 'Internal server error during upload' }, { status: 500 });
+    return NextResponse.json({ success: false, message: 'Internal server error during upload' }, { status: 500 });
   }
 }

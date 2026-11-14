@@ -3,6 +3,7 @@ import { Outfit as OutfitFont, Ovo as OvoFont } from "next/font/google";
 import "./globals.css";
 import ThemeProviderWrapper from "@/provider/themeProviderWrapper";
 import { Toaster } from "sonner";
+import { validateEnvs } from "@/lib/envValidation";
 
 const Outfit = OutfitFont({
   subsets: ["latin"],
@@ -32,6 +33,9 @@ export const metadata: Metadata = {
     description: "Mern Stack Developer",
   },
 };
+
+// Validate environment variables at startup
+validateEnvs();
 
 export default function RootLayout({
   children,

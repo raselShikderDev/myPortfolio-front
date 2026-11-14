@@ -2,8 +2,12 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 
-const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback-secret';
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'fallback-secret';
+const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET;
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+
+if (!JWT_ACCESS_SECRET || !JWT_REFRESH_SECRET) {
+  throw new Error('JWT_ACCESS_SECRET and JWT_REFRESH_SECRET environment variables are required');
+}
 
 interface TokenPayload {
   userId: string;
@@ -24,7 +28,7 @@ export async function POST() {
     }
 
     // Verify refresh token
-    const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as TokenPayload;
+    const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET as string) as unknown as TokenPayload;
 
     // Generate new access token
     const newAccessToken = jwt.sign(
@@ -33,7 +37,7 @@ export async function POST() {
         email: decoded.email,
         role: decoded.role,
       },
-      JWT_ACCESS_SECRET,
+      JWT_ACCESS_SECRET as string,
       { expiresIn: '15m' }
     );
 
