@@ -45,7 +45,7 @@ export const metadata: Metadata = {
 export default function About() {
   return (
     // Container with proper centering and padding
-    <div className="w-full max-w-screen-xl mx-auto px-6 py-10 md:mt-0 scroll-mt-20">
+    <div className="w-full max-w-screen-xl mx-auto px-6 pt-10 pb-2 md:mt-0 scroll-mt-20">
       <MotionH3
         initial={{ opacity: 0, y: -50 }}
         whileInView={{ opacity: 100, y: 0 }}
@@ -58,13 +58,13 @@ export default function About() {
         initial={{ opacity: 0, y: -40 }}
         whileInView={{ opacity: 100, y: 0 }}
         transition={{ duration: 1, delay: 0.4 }}
-        className="text-2xl md:text-5xl font-ovo ovo text-center mb-10"
+        className="text-2xl md:text-5xl font-ovo ovo text-center mb-3"
       >
         About me
       </MotionH2>
 
       {/* Flex container to align image and text/cards in center */}
-      <div className="w-full flex flex-col lg:flex-row gap-20 items-center justify-center sm:mt-7 my-0 sm:my-16">
+      <div className="w-full flex flex-col lg:flex-row gap-14 items-center justify-center sm:mt-7 my-0 sm:my-16">
         {/* Profile Image */}
         <MotionDiv
           initial={{ opacity: 0, x: -100 }}
@@ -85,7 +85,7 @@ export default function About() {
             initial={{ opacity: 0, x: 100 }}
             whileInView={{ opacity: 100, x: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mb-10 sm:text-lg text-sm font-ovo text-center lg:text-left"
+            className="mb-6 text-sm font-ovo text-center lg:text-left"
           >
             I’m a full-stack developer skilled in JavaScript/TypeScript, working
             with Node.js, Express, MongoDB, PostgreSQL, and Prisma on the
@@ -126,17 +126,17 @@ export default function About() {
           </ul>
 
           {/* Tools Section */}
-          <div className="my-10 mb-0 max-w-2xl">
+          <div className="my-7 mb-0 max-w-2xl">
             <MotionH5
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 100 }}
               transition={{ duration: 2, delay: 1 }}
               style={{ fontFamily: "Ovo, serif" }}
-              className="font-ovo dark:text-gray-300 text-gray-600 mt-8 my-5"
+              className="font-ovo dark:text-gray-300 text-gray-600 mt-8 mb-1.5"
             >
               Tools I use
             </MotionH5>
-            <div className="grid grid-cols-3 md:grid-cols-5 items-center justify-center gap-8">
+            <div className="grid grid-cols-3 md:grid-cols-5 items-center justify-center gap-4">
               {/* Icons with hover effect */}
               <MotionDiv
                 initial={{ opacity: 0 }}
