@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import Logout from "./modules/authentications/logout";
 import { getUserSession } from "@/lib/getUserSession";
+import { buildApiUrl, getBaseUrl } from "@/lib/apiConfig";
 import { IUser } from "@/interfaces/user.interfaces";
 import { redirect } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -83,22 +84,17 @@ export async function AppSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const token = await getUserSession();
-  let decoded: decoded | null = null;
 
-  try {
-    decoded = jwt.verify(
-      token,
-      process.env.JWT_ACCESS_SECRET as string
-    ) as decoded;
-  } catch (err) {
-    redirect("/login");
+  if (!token) {
+    console.error("Token not found");
+
   }
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+    `${getBaseUrl()}/users/getme`,
     {
       method: "GET",
       headers: {
-        Authorization: token,
+        Authorization: token as string,
       },
       next: {
         revalidate: 60,
@@ -106,7 +102,6 @@ export async function AppSidebar({
     }
   );
 
-  console.log(response);
 
   if (!response.ok) {
     redirect("/login");
@@ -114,9 +109,7 @@ export async function AppSidebar({
   }
 
   const responseData = await response.json();
-  // if (responseData.message === "jwt expired") {
-  //   redirect("/login");
-  // }
+
   const user: IUser = responseData.data;
 
   return (
@@ -147,7 +140,7 @@ export async function AppSidebar({
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <Logout user={user} token={token} />
+        <Logout user={user} token={token as string} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

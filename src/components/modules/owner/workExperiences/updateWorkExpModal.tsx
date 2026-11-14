@@ -21,10 +21,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IWorkExperince } from "@/interfaces/workExperience";
-import { Edit2 } from "lucide-react";
+import { Edit2, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { WorkExperienceFormSchema } from "@/zodSchema/workExperience.schema";
 import { toast } from "sonner";
+import { BASE_URL } from "@/lib/apiConfig";
 
 interface WorkExperienceFormValues {
   companyName: string;
@@ -59,7 +62,7 @@ export function UpdateWorkExperienceModal({
       .catch(console.error);
   }, []);
 
-  const form = useForm<WorkExperienceFormValues>({
+  const form = useForm<WorkExperienceFormValues>({ resolver: zodResolver(WorkExperienceFormSchema),
     defaultValues: {
       companyName: workExp.companyName,
       role: workExp.role,
@@ -79,7 +82,7 @@ export function UpdateWorkExperienceModal({
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/work-experience/edit/${workExp.id}`,
+        `${BASE_URL}/work-experience/edit/${workExp.id}`,
         {
           method: "PATCH",
           headers: {
@@ -129,7 +132,6 @@ export function UpdateWorkExperienceModal({
             id="add-work-exp"
             onSubmit={form.handleSubmit(onsubmit)}
           >
-            {/* --- Company Name --- */}
             <FormField
               control={form.control}
               name="companyName"
@@ -143,7 +145,6 @@ export function UpdateWorkExperienceModal({
               )}
             />
 
-            {/* --- Role --- */}
             <FormField
               control={form.control}
               name="role"
@@ -160,7 +161,6 @@ export function UpdateWorkExperienceModal({
               )}
             />
 
-            {/* --- Description --- */}
             <FormField
               control={form.control}
               name="descreption"
@@ -174,7 +174,6 @@ export function UpdateWorkExperienceModal({
               )}
             />
 
-            {/* --- Start Date --- */}
             <FormField
               control={form.control}
               name="startDate"
@@ -188,7 +187,6 @@ export function UpdateWorkExperienceModal({
               )}
             />
 
-            {/* --- End Date --- */}
             <FormField
               control={form.control}
               name="endDate"
@@ -206,7 +204,7 @@ export function UpdateWorkExperienceModal({
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button className="cursor-pointer" variant="outline">
+            <Button disabled={form.formState.isSubmitting} className="cursor-pointer" variant="outline">
               Cancel
             </Button>
           </DialogClose>
@@ -216,7 +214,10 @@ export function UpdateWorkExperienceModal({
             form="add-work-exp"
             disabled={form.formState.isSubmitting || !tokens?.token}
           >
-            Save Experience
+           {!form.formState.isSubmitting && `Update Experience`}
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

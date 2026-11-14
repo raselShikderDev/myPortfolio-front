@@ -23,7 +23,7 @@ const Footer = () => {
         transition={{ duration: 1, delay: 1 }}
         className="max-w-3xl mx-auto mt-1 dark:text-gray-400 text-gray-600 flex items-center justify-center gap-3 text-center"
       >
-        <Image src={assets.mail_icon} alt="mail" className="w-7" />{" "}
+        <Image src={assets.mail_icon} alt="Email" className="w-7" />{" "}
         rasel.sikder777.rk@gmail.com
       </MotionP>
       <div className="mt-8 border-b border-gray-400"></div>

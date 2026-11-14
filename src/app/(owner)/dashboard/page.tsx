@@ -1,34 +1,56 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { getUserSession } from "@/lib/getUserSession";
+import { BASE_URL } from "@/lib/apiConfig";
+import ResumeCard from "@/components/modules/owner/dashboard/ResumeCard";
 
-interface BlogStatsResponse {
-  stats: {
-    totalBlog: number;
-    totalViews: number;
-    avgViews: number;
-    totalExperience: number;
-    totalProject: number;
-  };
+interface BlogStats {
+  totalBlog: number;
+  totalViews: number;
+  avgViews: number;
+  totalExperience: number;
+  totalProject: number;
+}
+
+interface BlogStatsData {
+  stats: BlogStats;
   featuredCount: number;
   lastWeekPostCount: number;
   lastMonthPostCount: number;
 }
 
+interface BlogStatsResponse {
+  data: BlogStatsData;
+}
+
 export default async function Page() {
   const token = await getUserSession();
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/blogs/stats`, {
-    method: "GET",
-    headers: {
-      Authorization: token,
-    },
-    next: {
-      revalidate: 60,
-    },
-  });
+  let data: BlogStatsData | null = null;
+  let fetchError: string | null = null;
 
-  const result = await res.json();
-  const data: BlogStatsResponse = result.data;
+  if (token) {
+    try {
+      const res = await fetch(`${BASE_URL}/blogs/stats`, {
+        method: "GET",
+        headers: {
+          Authorization: token as string,
+        },
+        next: {
+          tags: ["stats"],
+          revalidate: 300,
+        },
+      });
+
+      if (!res.ok) {
+        fetchError = "Failed to load dashboard stats.";
+      } else {
+        const result: BlogStatsResponse = await res.json();
+        data = result.data;
+      }
+    } catch {
+      fetchError = "Failed to load dashboard stats.";
+    }
+  }
 
   // Compact card component
   const CompactCard = ({
@@ -51,30 +73,44 @@ export default async function Page() {
     </Card>
   );
 
+  console.log({ data });
+
   return (
     <main className="min-h-screen bg-background p-4 sm:p-8 space-y-6">
       <header className="text-center space-y-1">
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground">
-          Blog Dashboard
+          Dashboard
         </h1>
         <p className="text-sm text-muted-foreground">
-          Overview of your blogs and metrics
+          Overview of your portfolio and content
         </p>
       </header>
 
-      <section className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-        <CompactCard title="Total Blogs" value={data.stats.totalViews} />
-        <CompactCard title="Featured Blogs" value={data.featuredCount} />
-        <CompactCard title="Total Views" value={data.stats.totalViews} />
-        <CompactCard
-          title="Average Views"
-          value={data.stats.avgViews?.toFixed(0)}
-        />
-        <CompactCard title="Experiences" value={data.stats.totalExperience} />
-        <CompactCard title="Projects" value={data.stats.totalProject} />
-        <CompactCard title="Posts Last Week" value={data.lastWeekPostCount} />
-        <CompactCard title="Posts Last Month" value={data.lastMonthPostCount} />
-      </section>
+      {fetchError ? (
+        <section className="text-center py-8">
+          <p className="text-red-500">{fetchError}</p>
+        </section>
+      ) : data ? (
+        <>
+          <section className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+            <CompactCard title="Total Blogs" value={data.stats.totalBlog} />
+            <CompactCard title="Featured Blogs" value={data.featuredCount} />
+            <CompactCard title="Total Views" value={data.stats.totalViews} />
+            <CompactCard
+              title="Average Views"
+              value={data.stats.avgViews?.toFixed(0)}
+            />
+            <CompactCard title="Experiences" value={data.stats.totalExperience ?? 0} />
+            <CompactCard title="Projects" value={data.stats.totalProject ?? 0} />
+            <CompactCard title="Posts Last Week" value={data.lastWeekPostCount ?? 0} />
+            <CompactCard title="Posts Last Month" value={data.lastMonthPostCount ?? 0} />
+          </section>
+
+          <section className="mt-6">
+            <ResumeCard token={token} />
+          </section>
+        </>
+      ) : null}
     </main>
   );
 }

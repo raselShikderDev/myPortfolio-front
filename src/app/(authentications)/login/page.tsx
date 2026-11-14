@@ -1,18 +1,17 @@
 "use client";
 
-import { useForm, SubmitHandler } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PasswordToggler from "@/components/passwordToggler";
+import { LoginFormSchema } from "@/zodSchema/authSchema";
 import { toast } from "sonner";
+import { signin } from "../../../actions/auth";
 import { useRouter } from "next/navigation";
-
-const LoginFormSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
-});
+import { Loader2 } from "lucide-react";
+// import { cookies } from "next/headers";
 
 type LoginFormValues = z.infer<typeof LoginFormSchema>;
 
@@ -26,36 +25,22 @@ export default function LoginPage() {
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     try {
-      const toastId = "login-process";
-      toast.loading("Logging in...", { id: toastId });
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-          credentials: "include",
-        }
-      );
+      const toastId = "signin-process";
+      const response = await signin(data);
 
-      const responseData: {
-        success: boolean;
-        token?: string;
-        message?: string;
-      } = await response.json();
-
-      if (!response.ok || !responseData.success) {
-        toast.error(responseData.message || "Login failed", { id: toastId });
+      if (response.success) {
+        router.push("/");
+        toast.success("Successfully logged in", { id: toastId });
         return;
       }
 
-      router.push("/dashboard");
-      toast.success("Successfully logged in", { id: toastId });
+      toast.error("Login failed", { id: toastId });
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.error(err);
       toast.error(err.message || "A network error occurred.", {
-        id: "login-process",
+        id: "signin-process",
       });
     }
   };
@@ -95,7 +80,10 @@ export default function LoginPage() {
             disabled={!formState.isValid || formState.isSubmitting}
             className="w-full mt-4 cursor-pointer"
           >
-            Submit
+            {!formState.isSubmitting && `Login`}
+            {formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
           </Button>
         </form>
       </div>

@@ -20,21 +20,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IProject } from "@/interfaces/projects.interfaces";
+import { IProject, ProjectFormValues } from "@/interfaces/projects.interfaces";
 import { IUser } from "@/interfaces/user.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
-import { Edit2 } from "lucide-react";
+import { Edit2, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ProjectFormSchema } from "@/zodSchema/projects.schema";
 import { toast } from "sonner";
-
-interface UpdateProjectFormValues {
-  title: string;
-  description: string;
-  techStack: string;
-  liveUrl: string;
-  githubUrl: string;
-}
+import { BASE_URL } from "@/lib/apiConfig";
 
 export function UpdateProjectModal({
   token,
@@ -46,7 +41,7 @@ export function UpdateProjectModal({
   const [image, setImage] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
 
-  const form = useForm<UpdateProjectFormValues>({
+  const form = useForm<ProjectFormValues>({ resolver: zodResolver(ProjectFormSchema),
     defaultValues: {
       title: project.title || "",
       description: project.description || "",
@@ -56,21 +51,19 @@ export function UpdateProjectModal({
     },
   });
 
-  const onsubmit = async (data: UpdateProjectFormValues) => {
+  const onsubmit = async (data: ProjectFormValues) => {
     let imageUrl: string | null = null;
 
     try {
       const toastId = "update-project-process";
 
-      toast.loading("Updating Project...", { id: toastId });
 
       if (image) {
         try {
           imageUrl = await uploadToImageBB(image);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error(error);
-          toast.error(error.message || "Failed to upload project image.", {
+          toast.error(error instanceof Error ? error.message : "Failed to upload project image.", {
             id: toastId,
           });
           return;
@@ -78,10 +71,10 @@ export function UpdateProjectModal({
       }
 
       const userResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+        `${BASE_URL}/users/getme`,
         {
           method: "GET",
-          headers: { Authorization: token },
+          headers: { Authorization: token as string },
           next: { revalidate: 60 },
         }
       );
@@ -108,12 +101,12 @@ export function UpdateProjectModal({
       const jsonData = JSON.stringify(finalProjectData);
 
       const apiResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/edit/${project.id}`,
+        `${BASE_URL}/projects/edit/${project.id}`,
         {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: token as string,
           },
           body: jsonData,
           credentials: "include",
@@ -249,7 +242,10 @@ export function UpdateProjectModal({
             className="cursor-pointer"
             disabled={form.formState.isSubmitting}
           >
-            Save Project
+            {!form.formState.isSubmitting && `Update Project`}
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,0 +1,5 @@
+{
+  "files.autoSave": "afterDelay",
+  "github.copilot.chat.copilotDebugCommand.enabled": false,
+  "github.copilot.chat.tools.viewImage.enabled": false
+}

@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// src/components/AddProjectModal.tsx (or wherever your component resides)
 "use client";
 
 import SingleFileImageUploader from "@/components/singelFileuploader";
@@ -23,26 +21,20 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { IUser } from "@/interfaces/user.interfaces";
+import { ProjectFormValues } from "@/interfaces/projects.interfaces";
 import { uploadToImageBB } from "@/utils/imageUploader";
-// import { ProjectCreateSchema } from "@/zodSchema/projects.schema";
-// import { zodResolver } from "@hookform/resolvers/zod";
+import { BASE_URL } from "@/lib/apiConfig";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ProjectFormSchema } from "@/zodSchema/projects.schema";
 import { toast } from "sonner";
-// import z from "zod";
-
-interface IDefaultValue {
-  title: string;
-  description: string;
-  techStack: string;
-  liveUrl: string;
-  githubUrl: string;
-}
 
 export function AddProjectModal({ token }: { token: string }) {
   const [image, setImage] = useState<File | null>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const form = useForm<IDefaultValue>({
+  const form = useForm<ProjectFormValues>({ resolver: zodResolver(ProjectFormSchema),
     mode: "onChange",
     defaultValues: {
       title: "",
@@ -53,18 +45,17 @@ export function AddProjectModal({ token }: { token: string }) {
     },
   });
 
-  const onsubmit = async (data: any) => {
+  const onsubmit = async (data: ProjectFormValues) => {
     form.clearErrors();
     let imageUrl: string | null = null;
     const toastId = "project-process";
 
     try {
-      toast.loading("Adding Project...", { id: toastId });
       if (image) {
         try {
           imageUrl = await uploadToImageBB(image);
-        } catch (error: any) {
-          toast.error(error.message || "Failed to upload project image.", {
+        } catch (error: unknown) {
+          toast.error(error instanceof Error ? error.message : "Failed to upload project image.", {
             id: toastId,
           });
           console.error("ImageBB Upload Error:", error);
@@ -73,10 +64,10 @@ export function AddProjectModal({ token }: { token: string }) {
       }
 
       const userResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/users/getme`,
+        `${BASE_URL}/users/getme`,
         {
           method: "GET",
-          headers: { Authorization: token },
+          headers: { Authorization: token as string },
           next: { tags: ["projects"] },
         }
       );
@@ -92,7 +83,7 @@ export function AddProjectModal({ token }: { token: string }) {
       const user: IUser = userData.data;
       const processedTechStack = data.techStack
         .split(",")
-        .map((tech: any) => tech.trim())
+        .map((tech: string) => tech.trim())
         .filter(Boolean);
 
       const finalProjectData = {
@@ -103,15 +94,14 @@ export function AddProjectModal({ token }: { token: string }) {
       };
 
       const jsonData = JSON.stringify(finalProjectData);
-      console.log("FINAL PROCESSED PROJECT JSON DATA:", jsonData);
-      
+
       const apiResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/projects/create`,
+        `${BASE_URL}/projects/create`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: token,
+            Authorization: token as string,
           },
           body: jsonData,
           credentials: "include",
@@ -232,7 +222,7 @@ export function AddProjectModal({ token }: { token: string }) {
 
         <DialogFooter>
           <DialogClose asChild>
-            <Button className="cursor-pointer" variant="outline">
+            <Button disabled={form.formState.isSubmitting} className="cursor-pointer" variant="outline">
               Cancel
             </Button>
           </DialogClose>
@@ -242,7 +232,10 @@ export function AddProjectModal({ token }: { token: string }) {
             form="add-project"
             disabled={form.formState.isSubmitting}
           >
-            Save Project
+            {!form.formState.isSubmitting && `Add Project`}
+            {form.formState.isSubmitting && (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
