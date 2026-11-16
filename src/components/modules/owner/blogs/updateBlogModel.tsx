@@ -41,6 +41,7 @@ function isFile(file: File | FileMetadata): file is File {
 }
 
 export function UpdateBlogModal({
+import { logger } from "@/lib/logger";
   token,
   blog,
 }: {
@@ -80,7 +81,6 @@ export function UpdateBlogModal({
   }, [open, blog, form]);
 
   const onsubmit = async (data: BlogFormValues) => {
-    console.log("Form Data:", data);
     // Auto-generate slug from title
     const slug = generateSlug(data.title);
     const tags = data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [];
@@ -130,8 +130,6 @@ export function UpdateBlogModal({
       images: finalImages,
     };
     const jsonData = JSON.stringify(finalBlogData);
-    console.log("URL:", `${BASE_URL}/blogs/update/${blog.slug}`)
-
     try {
       const response = await fetch(`${BASE_URL}/blogs/update/${blog.slug}`, {
         method: "PATCH",

@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       }
     });
   } catch {
-    console.error('Error uploading resume');
+    logger.error('Error uploading resume');
     return NextResponse.json({
       success: false,
       message: 'Failed to upload resume'

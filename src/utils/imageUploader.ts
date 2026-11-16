@@ -21,7 +21,7 @@ export async function uploadToImageBB(imageFile: File): Promise<string> {
       throw new Error(errorMessage);
     }
   } catch (error: unknown) {
-    console.error("Internal API Upload Error:", error);
+    logger.error("Internal API Upload Error:", error);
     const message = error instanceof Error ? error.message : "Failed to upload image";
     throw new Error(message);
   }

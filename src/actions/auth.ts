@@ -26,7 +26,7 @@ export const signin = async (data: LoginData) => {
     }
     return result;
   } catch (error) {
-    console.error('Login error:', error);
+    logger.error('Login error:', error);
     return { success: false, message: error instanceof Error ? error.message : 'Unknown error occurred' };
   }
 };

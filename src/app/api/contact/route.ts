@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     const accessKey = process.env.WEB3FORMS_ACCESS_KEY;
 
     if (!accessKey) {
-      console.error('Web3Forms access key is not configured');
+      logger.error('Web3Forms access key is not configured');
       return NextResponse.json(
         { error: 'Server configuration error' },
         { status: 500 }
@@ -71,14 +71,14 @@ export async function POST(request: Request) {
     if (data.success) {
       return NextResponse.json({ success: true, message: 'Form submitted successfully' });
     } else {
-      console.error('Web3Forms error:', data);
+      logger.error('Web3Forms error:', data);
       return NextResponse.json(
         { error: 'Failed to submit form', details: data },
         { status: 500 }
       );
     }
   } catch (error: unknown) {
-    console.error('Error in contact API route:', error);
+    logger.error('Error in contact API route:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

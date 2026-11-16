@@ -18,6 +18,7 @@ import Logout from "./modules/authentications/logout";
 import { getUserSession } from "@/lib/getUserSession";
 import { buildApiUrl, getBaseUrl } from "@/lib/apiConfig";
 import { IUser } from "@/interfaces/user.interfaces";
+import { logger } from "@/lib/logger";
 import { redirect } from "next/navigation";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import SomeThingWrong from "./wrongPage";
@@ -86,7 +87,7 @@ export async function AppSidebar({
   const token = await getUserSession();
 
   if (!token) {
-    console.error("Token not found");
+    logger.error("Token not found");
 
   }
   const response = await fetch(

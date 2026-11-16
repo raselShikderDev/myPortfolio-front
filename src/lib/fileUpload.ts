@@ -28,7 +28,7 @@ const uploadToLocalStorage = async (file: File): Promise<UploadResult> => {
       },
     };
   } catch (error) {
-    console.error('Local storage upload failed:', error);
+    logger.error('Local storage upload failed:', error);
     return {
       success: false,
       error: 'Failed to upload to local storage',
@@ -65,7 +65,7 @@ const uploadToCloud = async (file: File): Promise<UploadResult> => {
       },
     };
   } catch (error) {
-    console.error('Cloud upload failed:', error);
+    logger.error('Cloud upload failed:', error);
     return {
       success: false,
       error: 'Failed to upload to cloud storage',
@@ -86,7 +86,7 @@ export const uploadFileToCloud = async (file: File): Promise<UploadResult> => {
     // If cloud upload fails, try local storage
     return await uploadToLocalStorage(file);
   } catch (error) {
-    console.error('Upload failed:', error);
+    logger.error('Upload failed:', error);
     return {
       success: false,
       error: 'Upload failed',

@@ -20,7 +20,7 @@ export const verifyToken = async (token: string): Promise<{ userId: string; role
       role: payload.role
     };
   } catch (error) {
-    console.error('Token verification failed:', error);
+    logger.error('Token verification failed:', error);
     return null;
   }
 };

@@ -14,7 +14,7 @@ export async function GET() {
 
     return Response.json({ user: decoded, accessToken });
   } catch (err) {
-    console.error("JWT verification failed:", err);
+    logger.error("JWT verification failed:", err);
     return Response.json({ success: false, message: 'Authentication required' }, { status: 401 });
   }
 }

@@ -38,7 +38,6 @@ export default function LoginPage() {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
-      console.error(err);
       toast.error(err.message || "A network error occurred.", {
         id: "signin-process",
       });

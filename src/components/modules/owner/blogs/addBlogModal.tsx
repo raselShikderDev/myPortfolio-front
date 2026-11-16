@@ -2,6 +2,7 @@
 
 import MultipleImageUploader from "@/components/MultipleImageUploader";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 import {
   Dialog,
   DialogClose,
@@ -58,7 +59,6 @@ export function AddBlogModal({ token }: { token: string }) {
   });
 
   const onsubmit = async (data: BlogFormValues) => {
-    console.log("Form Data:", data);
     // Auto-generate slug from title
     const slug = generateSlug(data.title);
     const tags = data.tags ? data.tags.split(",").map((tag) => tag.trim()) : [];

@@ -73,8 +73,6 @@ export default async function Page() {
     </Card>
   );
 
-  console.log({ data });
-
   return (
     <main className="min-h-screen bg-background p-4 sm:p-8 space-y-6">
       <header className="text-center space-y-1">

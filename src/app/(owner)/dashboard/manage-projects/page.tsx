@@ -8,7 +8,14 @@ import { BASE_URL } from "@/lib/apiConfig";
 export default async function ProjectShowCasePage() {
   const token = await getUserSession();
   if (!token) {
-    console.error("token not found")
+    return (
+      <main className="min-h-screen bg-background px-4 sm:px-6 lg:px-10 py-10">
+        <div className="text-center">
+          <h1 className="text-3xl">Authentication Required</h1>
+          <p>Please log in to manage projects.</p>
+        </div>
+      </main>
+    );
   }
   // const projects = await getAllProjects()
   const res = await fetch(`${BASE_URL}/projects/all`, {

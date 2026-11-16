@@ -15,11 +15,11 @@ export const testDbConnection = async () => {
   try {
     const client = await pool.connect();
     const result = await client.query('SELECT version()');
-    console.log('Database connected:', result.rows[0].version);
+    logger.log('Database connected:', result.rows[0].version);
     client.release();
     return true;
   } catch (error) {
-    console.error('Database connection failed:', error);
+    logger.error('Database connection failed:', error);
     return false;
   }
 };

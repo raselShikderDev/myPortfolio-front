@@ -52,7 +52,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('Error fetching resume:', error);
+    logger.error('Error fetching resume:', error);
 
     return NextResponse.json(
       {
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
     try {
       user = await verifyToken(token);
     } catch (error) {
-      console.error('Token verification failed:', error);
+      logger.error('Token verification failed:', error);
 
       return NextResponse.json(
         {
@@ -157,7 +157,7 @@ export async function POST(request: NextRequest) {
     const uploadResult = await uploadFileToCloud(file);
 
     if (!uploadResult.success || !uploadResult.data?.url) {
-      console.error('Cloud storage upload failed:', uploadResult);
+      logger.error('Cloud storage upload failed:', uploadResult);
 
       return NextResponse.json(
         {
@@ -202,7 +202,7 @@ export async function POST(request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Error uploading resume:', error);
+    logger.error('Error uploading resume:', error);
 
     return NextResponse.json(
       {

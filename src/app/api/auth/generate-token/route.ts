@@ -54,7 +54,7 @@ export async function POST() {
       { status: 200 }
     );
   } catch (error) {
-    console.error('Token refresh failed:', error);
+    logger.error('Token refresh failed:', error);
     return NextResponse.json(
       { success: false, message: 'Invalid refresh token' },
       { status: 401 }

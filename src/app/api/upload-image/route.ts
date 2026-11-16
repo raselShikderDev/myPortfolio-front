@@ -37,19 +37,19 @@ export async function POST(request: NextRequest) {
       });
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
-      console.error('ImageBB API request error:', errorMessage);
+      logger.error('ImageBB API request error:', errorMessage);
 
       // Type-check for timeout errors
       const errorObj = error as { code?: number; name?: string };
       if (errorObj.code === 23 || errorMessage.includes('timed out')) {
-        console.error('ImageBB API request timed out after 30 seconds');
+        logger.error('ImageBB API request timed out after 30 seconds');
         return NextResponse.json(
           { success: false, error: 'Image upload service timed out. Please try again.' },
           { status: 504 }
         );
       }
       if (errorObj.name === 'AbortError') {
-        console.error('ImageBB API request was aborted');
+        logger.error('ImageBB API request was aborted');
         return NextResponse.json(
           { success: false, error: 'Image upload was aborted.' },
           { status: 499 }
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, message: imageBBData.error?.message || 'ImageBB upload failed' }, { status: 500 });
     }
   } catch (error) {
-    console.error('Upload Error:', error);
+    logger.error('Upload Error:', error);
 
     // Handle specific error types with user-friendly messages
     if (error instanceof Error) {
