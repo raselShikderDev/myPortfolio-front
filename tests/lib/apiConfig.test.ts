@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from "bun:test";
+import { afterEach, describe, expect, test } from "vitest";
 import { getBaseUrl } from "@/lib/apiConfig";
 
 const originalInternalUrl = process.env.INTERNAL_API_BASE_URL;

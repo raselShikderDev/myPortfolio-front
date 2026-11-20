@@ -1,5 +1,5 @@
 import { BlogFormSchema } from "@/zodSchema/blogs.schema";
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 
 describe("BlogFormSchema", () => {
   test("should validate valid blog data", () => {

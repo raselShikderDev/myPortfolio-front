@@ -1,5 +1,5 @@
 import { sanitizeBlogContent, getPlainTextFromHtml, generateSeoDescription } from "@/lib/utils/sanitizeBlogContent";
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 
 describe("sanitizeBlogContent", () => {
   test("should allow valid HTML", () => {

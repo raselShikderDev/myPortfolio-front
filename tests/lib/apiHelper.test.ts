@@ -5,7 +5,7 @@ import {
   mock,
   spyOn,
   test,
-} from "bun:test";
+} from "vitest";
 
 mock.module("@/lib/apiConfig", () => ({
   getBaseUrl: () => "http://test.local",
